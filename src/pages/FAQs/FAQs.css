@@ -1,0 +1,98 @@
+/* ================= Wrapper (مهم عشان يتمركز) ================= */
+.faq-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* ================= Page Container ================= */
+.faq-page {
+  width: 100%;
+  max-width: 1000px;
+  padding: 110px 80px 100px; /* نفس مسافة النافبار */
+}
+
+/* ================= Title ================= */
+.faq-title {
+  font-family: "Urbanist", sans-serif;
+  font-size: 56px;
+  font-weight: 700;
+  margin-bottom: 75px;
+  line-height: 1.15;
+}
+
+/* ================= Section ================= */
+.faq-section {
+  margin-bottom: 90px;
+}
+
+.faq-section h2 {
+  font-family: "Urbanist", sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: #0088FF;
+  margin-bottom: 35px;
+}
+
+/* ================= Accordion Item ================= */
+.faq-item {
+  border-bottom: 1.2px solid #333333;
+  padding: 20px 0;
+}
+
+/* Question */
+.faq-question {
+  width: 100%;
+  background: none;
+  border: none;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  font-family: "Urbanist", sans-serif;
+  font-weight: 700;
+  font-size: 19px;
+  color: #333333;
+
+  cursor: pointer;
+  position: relative;
+}
+
+/* Plus / Minus */
+.faq-icon {
+  font-size: 22px;
+  font-weight: 700;
+  transition: 0.3s ease;
+}
+
+/* Answer */
+.faq-answer {
+  margin-top: 15px;
+  font-family: "Urbanist", sans-serif;
+  font-size: 16px;
+  color: #555;
+  line-height: 1.6;
+  max-width: 92%;
+}
+
+/* ================= Responsive ================= */
+@media (max-width: 992px) {
+  .faq-title {
+    font-size: 44px;
+  }
+}
+
+@media (max-width: 768px) {
+  .faq-page {
+    padding: 90px 20px 80px;
+  }
+
+  .faq-title {
+    font-size: 36px;
+  }
+
+  .faq-section h2 {
+    font-size: 22px;
+  }
+}

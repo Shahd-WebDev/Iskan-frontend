@@ -1,19 +1,11 @@
-import WavesBg from "../../assets/Group.png";
+import { Outlet } from "react-router-dom";
 import "../../styles/auth.css";
 
-export default function AuthLayout({ children }) {
+export default function AuthLayout() {
   return (
-    <div
-      className="auth-page"
-      style={{
-        backgroundColor: "#E5F3FF",
-        backgroundImage: `url(${WavesBg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
+    <div className="auth-page">
       <div className="auth-card">
-        {children}
+        <Outlet />
       </div>
     </div>
   );

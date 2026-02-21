@@ -31,6 +31,13 @@ body {
   width: 100%;
   min-height: 100vh;
 
+  /* ✅ Waves Background */
+  background-color: #e5f3ff;
+  background-image: url("/Group.png");
+  background-repeat: no-repeat;
+  background-position: top;
+  background-size: cover;
+
   display: flex;
   justify-content: center;
   align-items: center;
@@ -43,72 +50,84 @@ body {
 /* ============================= */
 
 .auth-card {
-  width: 460px;
-  max-width: 100%;
+  width: 680px;
+  max-width: 95%;
+  padding: 60px 90px;
 
-  padding: 55px 45px;
-  border-radius: 28px;
+  border-radius: 25px;
+  border: none;
 
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(18px);
+  background:
+    radial-gradient(
+      circle 500px at center,
+      rgba(229, 243, 255, 0.95) 0%,
+      rgba(229, 243, 255, 0.65) 40%,
+      transparent 70%
+    ),
+    rgba(255, 255, 255, 0.85);
 
-  border: 1px solid rgba(220, 220, 220, 0.6);
+  backdrop-filter: blur(126px);
 
-  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.10);
+  box-shadow: 25px 50px 75px rgba(0, 0, 0, 0.15);
 
   position: relative;
-  overflow: hidden;
   text-align: center;
 }
 
-/* ✨ Blue Glow */
-.auth-card::before {
-  content: "";
-  position: absolute;
 
-  width: 320px;
-  height: 320px;
-
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
-  background: radial-gradient(
-    circle,
-    rgba(13, 110, 253, 0.14),
-    transparent 70%
-  );
-
-  pointer-events: none;
-}
 
 /* Content فوق الـ Glow */
 .auth-container {
   position: relative;
   z-index: 2;
 }
+.auth-card::before {
+  content: "";
+  position: absolute;
 
+  width: 500px;   /* أصغر من الكارد */
+  height: 350px;
+
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  background: radial-gradient(
+    circle at center,
+    rgba(229, 243, 255, 0.8) 0%,
+    rgba(229, 243, 255, 0.4) 40%,
+    transparent 70%
+  );
+
+  pointer-events: none;
+  z-index: 0;
+}
 /* ============================= */
 /* LOGO + TITLE */
 /* ============================= */
 
 .iskan-logo {
-  width: 65px;
-  margin-bottom: 10px;
+  width: 70px;
+  height: 56px;
+  object-fit: cover;
+  object-position: left  top;
+  margin-bottom: 15px;
 }
-
 .welcome-text {
-  font-size: 14px;
-  color: #666;
-  font-weight: 500;
-  margin-bottom: 6px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 100%;
+  color: #000000;
 }
 
 .login-title {
-  font-size: 32px;
-  font-weight: 750;
-  margin-bottom: 28px;
-  color: #111;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 35px;
+  line-height: 100%;
+  color: #000000;
+   margin-bottom: 30px;
 }
 
 /* ============================= */
@@ -117,25 +136,26 @@ body {
 
 .google-btn {
   width: 100%;
-  height: 52px;
-  border-radius: 14px;
+  height: 60px;
 
-  background: black;
-  color: white;
+  border-radius: 10px;
+  padding: 20px;
 
-  font-size: 15px;
-  font-weight: 500;
+  background: #000000;
+  color: #FFFFFF;
 
-  border: none;
+  font-family: "Poppins", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
 
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
 
+  border: none;
   cursor: pointer;
 }
-
 .google-btn:hover {
   background: #111;
 }
@@ -147,20 +167,24 @@ body {
 .divider {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin: 22px 0;
+  gap: 15px;
+  margin: 25px 0;
+    width: 100%;
 }
 
 .divider hr {
   flex: 1;
   border: none;
   height: 1px;
-  background: rgba(0, 0, 0, 0.15);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .divider span {
-  font-size: 14px;
-  color: #777;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 100%;
+  color: #808080;
 }
 
 /* ============================= */
@@ -173,30 +197,39 @@ body {
 
 .form-group {
   width: 100%;
-  margin-bottom: 18px;
+  margin-bottom: 30px;
   text-align: left;
 }
 
 .form-group label {
-  display: block;
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 6px;
-  color: #222;
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+  color: #000000;
 }
 
 /* Inputs */
 .auth-input {
   width: 100%;
-  height: 52px;
+  height: 60px;
 
-  border-radius: 12px;
-  border: 1px solid #ddd;
+  border-radius: 10px;
+  border: 1.5px solid #333333;
 
-  padding: 0 16px;
+  padding: 15px 20px;
 
-  font-size: 15px;
-  background: #f8fbff;
+  font-family: "Poppins", sans-serif;
+  font-size: 18px;
+
+  background: transparent;
+
+  transition: 0.2s ease;
+}
+
+.auth-input:focus {
+  outline: none;
+  border: 1.8px solid #0088FF;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
 }
 
 .auth-input:focus {
@@ -235,7 +268,8 @@ body {
   position: absolute;
   right: 16px;
   top: 42px;
-
+  width: 35.26px;
+  height: 35.26px;
   cursor: pointer;
   color: #666;
 }
@@ -246,22 +280,24 @@ body {
 
 .auth-btn {
   width: 100%;
-  height: 55px;
+  height: 60px;
 
-  border-radius: 14px;
+  border-radius: 10px;
   border: none;
 
-  background: #0d6efd;
-  color: white;
+  background: #0088FF;
+  color: #FFFFFF;
 
-  font-size: 16px;
+  font-family: "Poppins", sans-serif;
+  font-size: 20px;
   font-weight: 600;
 
   cursor: pointer;
+  transition: 0.2s ease;
 }
 
 .auth-btn:hover {
-  background: #0b5ed7;
+  background: #0077e6;
 }
 
 /* ============================= */
@@ -269,16 +305,20 @@ body {
 /* ============================= */
 
 .register-text {
-  margin-top: 26px;
-  font-size: 14px;
-  color: #666;
+  margin-top: 30px;
+
+  font-family: "Poppins", sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: #70707B;
+
   text-align: center;
 }
 
 .register-text a {
-  color: #0d6efd;
-  font-weight: 600;
+  color: #0088FF;
   text-decoration: none;
+  font-weight: 400;
 }
 
 .register-text a:hover {
@@ -293,36 +333,33 @@ body {
   padding-top: 10px;
 }
 
-/* Create an account */
 .small-top-text {
-  font-size: 15px;
+  font-family: "Poppins", sans-serif;
   font-weight: 600;
-  color: #111;
-  margin-bottom: 18px;
-}
+  font-size: 35px;
+  color: #101828;
 
-/* Welcome */
+  margin-bottom: 50px;
+}
 .welcome-sub {
   font-size: 14px;
   color: #777;
   margin-bottom: 8px;
 }
 
-/* ✅ Choose Title (UI Perfect) */
 .choose-title {
-  font-size: 24px;        /* أصغر علشان يبان كامل */
-  font-weight: 700;       /* مش بولد زيادة */
-  color: #111;
+    font-family: "Poppins", sans-serif;
+  font-size: 34px;
+  font-weight: 600;
+  color: #101828;
 
   text-align: center;
-  margin: 12px auto 30px;
+  margin: 10px 0 40px;
 
   line-height: 1.2;
-
-  white-space: nowrap;    /* سطر واحد */
+  white-space: nowrap;
 }
 
-/* Responsive لو الشاشة صغيرة */
 @media (max-width: 500px) {
   .choose-title {
     font-size: 22px;
@@ -330,64 +367,58 @@ body {
   }
 }
 
-/* Options Layout */
 .account-options {
   display: flex;
   flex-direction: column;
-  gap: 22px;
-  margin-bottom: 35px;
+  gap: 46px;
+  margin-bottom: 40px;
 }
 
-/* Account Cards */
 .account-card {
-  width: 85%;
-  margin: 0 auto;
+width: 430px;
+  height: 137px;  margin: 0 auto;
 
-  padding: 18px 15px;     /* ارتفاع مناسب زي UI */
-  border-radius: 18px;
+  padding: 18px 15px;
+  border-radius: 15px;
 
-  border: 2px solid rgba(0, 0, 0, 0.25);
-  background: white;
+  border: 1.5px solid #D0D5DD;
+  background: #FFFFFF;
 
   text-align: center;
   cursor: pointer;
-  transition: 0.25s ease;
+  transition: 0.3s ease;
 }
 
-/* Icon Circle */
 .icon-circle {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
 
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
 
-  border: 2px solid rgba(0, 0, 0, 0.25);
-  margin: 0 auto 10px;
+  border: 1.5px solid #D0D5DD;
+    margin: 0 auto 15px;
 }
 
-/* Card Title */
 .account-card h3 {
   font-size: 16px;
   font-weight: 700;
   margin-bottom: 4px;
 }
 
-/* Subtitle */
 .account-card p {
   font-size: 12px;
   color: #666;
 }
 
-/* Active Selected */
 .account-card.active {
-  background: #0d6efd;
-  border-color: #0d6efd;
+  background: #0088FF;
+  border-color: #0088FF;
   color: white;
 
-  box-shadow: 0 12px 28px rgba(13, 110, 253, 0.25);
+  box-shadow: 0 0 20px rgba(0, 136, 255, 0.5);
 }
 
 .account-card.active p {
@@ -398,11 +429,9 @@ body {
   border-color: white;
 }
 
-/* Continue Button Spacing */
 .choose-btn {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
-
 
 /* ============================= */
 /* ERROR + HINT TEXT */

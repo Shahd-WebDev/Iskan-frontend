@@ -2,38 +2,33 @@ import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
-import AuthLayout from "../../components/AuthLayout/AuthLayout";
 import "../../styles/auth.css";
 
 export default function Login() {
   const navigate = useNavigate();
-
   const [showPassword, setShowPassword] = useState(false);
 
-  // ✅ Form Data
+  // Form Data
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
-  // ✅ Errors
+  // Errors
   const [errors, setErrors] = useState({});
 
-  // تحديث القيم
   function handleChange(e) {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
 
-    // امسح الخطأ أول ما يكتب
     setErrors({
       ...errors,
       [e.target.name]: "",
     });
   }
 
-  // ✅ Validation
   function validate() {
     let newErrors = {};
 
@@ -50,99 +45,107 @@ export default function Login() {
     return Object.keys(newErrors).length === 0;
   }
 
-  // ✅ Submit
   function handleSubmit(e) {
     e.preventDefault();
 
     if (validate()) {
-      // 🔥 بعدين هنا هنربط API Login
-      navigate("/home");
+      // ✅ Generate clean name from email
+      const rawName = formData.email.split("@")[0];
+      const cleanName = rawName.replace(/[^a-zA-Z]/g, "");
+
+      const finalName =
+        cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
+
+      // ✅ Save user
+      const userData = {
+        name: finalName || "User",
+        email: formData.email,
+        avatar: null, // ❌ no image now
+      };
+
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      navigate("/");
     }
   }
 
   return (
-    <AuthLayout>
-      <div className="auth-container">
-        {/* Logo */}
-        <div className="text-center">
-          <img src="/logo.png" alt="ISKAN Logo" className="iskan-logo" />
+    <div className="auth-container">
+      {/* Logo */}
+      <div className="text-center">
+        <img src="/logo.png" alt="ISKAN Logo" className="iskan-logo" />
 
-          <p className="welcome-text">Welcome back</p>
-          <h1 className="login-title">Login to your account</h1>
-        </div>
-
-        {/* Google Button */}
-        <button className="google-btn" type="button">
-          <img
-            src="https://www.svgrepo.com/show/475656/google-color.svg"
-            alt="Google"
-            width="18"
-          />
-          Google
-        </button>
-
-        {/* Divider */}
-        <div className="divider">
-          <hr />
-          <span>Or</span>
-          <hr />
-        </div>
-
-        {/* Form */}
-        <form className="auth-form" onSubmit={handleSubmit}>
-          {/* Email */}
-          <div className="form-group">
-            <label>Email *</label>
-            <input
-              type="email"
-              name="email"
-              className="auth-input"
-              placeholder="Enter email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-
-            {errors.email && (
-              <p className="error-text">{errors.email}</p>
-            )}
-          </div>
-
-          {/* Password */}
-          <div className="form-group password-wrapper">
-            <label>Password *</label>
-
-            <input
-              type={showPassword ? "text" : "password"}
-              name="password"
-              className="auth-input"
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={handleChange}
-            />
-
-            <span
-              className="eye-icon"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </span>
-
-            {errors.password && (
-              <p className="error-text">{errors.password}</p>
-            )}
-          </div>
-
-          {/* Login Button */}
-          <button type="submit" className="auth-btn">
-            Login now
-          </button>
-        </form>
-
-        {/* Register */}
-        <p className="register-text">
-          Don’t Have An Account? <Link to="/signup">Register</Link>
-        </p>
+        <p className="welcome-text">Welcome back</p>
+        <h1 className="login-title">Login to your account</h1>
       </div>
-    </AuthLayout>
+
+      {/* Google Button */}
+      <button className="google-btn" type="button">
+        <img
+          src="https://www.svgrepo.com/show/475656/google-color.svg"
+          alt="Google"
+          width="18"
+        />
+        Google
+      </button>
+
+      {/* Divider */}
+      <div className="divider">
+        <hr />
+        <span>Or</span>
+        <hr />
+      </div>
+
+      {/* Form */}
+      <form className="auth-form" onSubmit={handleSubmit}>
+        {/* Email */}
+        <div className="form-group">
+          <label>Email </label>
+          <input
+            type="email"
+            name="email"
+            className="auth-input"
+            placeholder="Enter email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+
+          {errors.email && <p className="error-text">{errors.email}</p>}
+        </div>
+
+        {/* Password */}
+        <div className="form-group password-wrapper">
+          <label>Password </label>
+
+          <input
+            type={showPassword ? "text" : "password"}
+            name="password"
+            className="auth-input"
+            placeholder="Enter your password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+
+          <span
+            className="eye-icon"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </span>
+
+          {errors.password && <p className="error-text">{errors.password}</p>}
+        </div>
+
+        {/* Login Button */}
+        <button type="submit" className="auth-btn">
+          Login now
+        </button>
+      </form>
+
+      {/* Register */}
+      <p className="register-text">
+        Don’t Have An Account? <Link to="/signup">Register</Link>
+      </p>
+    </div>
   );
 }
