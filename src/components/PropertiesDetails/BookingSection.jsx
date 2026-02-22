@@ -1,58 +1,60 @@
-import { FaWhatsapp } from "react-icons/fa";
-import { MdEmail } from "react-icons/md";
+import { useState } from "react";
+import RatingStars from "./RatingStars";
 import abstractDesign from "../../assets/home/Abstract Design.png";
-import avtatarImg from "../../assets/PropertiesDetails/Ahmed Osman.jpg"
 
-const defaultAgent = {
-  name: "Ahmed Osman",
-  avatar: avtatarImg,
-};
+export default function FeedbackSection() {
+  const [rating, setRating] = useState(4);
+  const [feedback, setFeedback] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
-function BookingContact({ agent = defaultAgent}) {
+  const handleSubmit = () => {
+    if (!feedback.trim()) return;
+
+    setSubmitted(true);
+    setTimeout(() => setSubmitted(false), 3000);
+    setFeedback("");
+  };
+
   return (
-    <div className="pd-booking-section align-items-start">
-
-      <div className="pd-booking-left">
-        <div className="section-badge">
-          <img src={abstractDesign} alt="Abstract Design" />
-        </div>
-        
-        <h2 className="pd-booking-title">
-          Request a Booking to
-          <br />
-          Get in touch
-        </h2>
-        <p className="pd-booking-desc m-0">
-          Interested in this property? Submit a booking request and wait for the
-          owner's approval to unlock contact details.
-        </p>
+    <div className="pd-review-left">
+      <div className="section-badge">
+        <img src={abstractDesign} alt="Abstract Design" />
       </div>
-      <div className="pd-booking-right mt-0">
-        <div className="pd-agent-card">
-          <div className="pd-agent-info d-flex">
-            <img  src={avtatarImg}  className="pd-agent-avatar rounded-circle flex-shrink-0"/>
-            <div className="pd-agent-contacts d-flex flex-column">
-              <span className="pd-agent-name">{agent.name}</span>
-              <div className="pd-contact-button d-flex flex-wrap">
-                <button className="pd-contact-btn d-inline-flex align-items-center">
-                  <FaWhatsapp size={18}  />
-                    WhatsApp
-                </button>
-                <button className="pd-contact-btn d-inline-flex align-items-center">
-                <MdEmail size={18} />
-                  Email
-                </button>
-              </div>
-            </div>
-          </div>
-          <p className="pd-contact-note">
-            Contact details will be available after the owner approves your
-            booking request
-          </p>
+
+      <div className="pd-feedback-card">
+        <p className="pd-feedback-q text-center">
+          How would you rate the overall user experience of This Property?
+        </p>
+
+        <p className="pd-feedback-sub text-center">
+          Do you find the deal isn't owner good?
+        </p>
+
+        <RatingStars value={rating} onChange={setRating} />
+
+        <p className="pd-feedback-label">Can you tell us more?</p>
+
+        <textarea
+          className="pd-feedback-textarea"
+          placeholder="Add feedback"
+          value={feedback}
+          onChange={(e) => setFeedback(e.target.value)}
+          rows={4}
+        />
+
+        <div className="pd-feedback-actions d-flex justify-content-center">
+          <button
+            className="pd-feedback-cancel"
+            onClick={() => setFeedback("")}
+          >
+            Cancel
+          </button>
+
+          <button className="pd-feedback-submit" onClick={handleSubmit}>
+            {submitted ? "Submitted!" : "Submit"}
+          </button>
         </div>
       </div>
     </div>
   );
 }
-
-export default BookingContact;

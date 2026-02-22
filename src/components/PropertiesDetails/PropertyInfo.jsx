@@ -1,11 +1,14 @@
 import { Bed, Bath, Wifi } from "lucide-react";
+import { useState } from "react";
+import RequestBookingModal from "./RequestBookingModal";
 
 function PropertyInfo() {
+  const [showModal, setShowModal] = useState(false);
   return (
     <div className="property-info">
 
       <div className="actions">
-        <button className="primary">Request Booking</button>
+        <button className="primary" onClick={() => setShowModal(true)}>Request Booking</button>
         <button>Save</button>
         <button>Share</button>
       </div>

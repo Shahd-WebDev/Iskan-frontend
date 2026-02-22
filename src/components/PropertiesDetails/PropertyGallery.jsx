@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ArrowLeft,ArrowRight } from "lucide-react";
 
-function PropertyGallery({ images }) {
+function ImageGallery({ images }) {
   const [active, setActive] = useState(0);
 
   const prev = () => setActive((a) => (a - 1 + images.length) % images.length);
@@ -51,4 +51,4 @@ function PropertyGallery({ images }) {
   );
 }
 
-export default PropertyGallery;
+export default ImageGallery;
