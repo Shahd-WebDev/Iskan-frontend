@@ -1,29 +1,22 @@
-import FilterDropdown from "../home/FilterdropDown";
-import locationIcon from "../../assets/home/location.png";
-import propertyIcon from "../../assets/home/property.png";
-import pricingIcon from "../../assets/home/pricing.png";
-import roomsIcon from "../../assets/home/n.roums.png";
-import facilitiesIcon from "../../assets/home/facilities.png";
+import SearchBar from "../home/SearchBar";
+import FiltersRow from "../home/FiltersRow";
 
-function FiltersRow() {
+function HeroSection() {
   return (
-    <div className="filters-row position-relative">
-      <div className="dropdown-container position-relative">
-        <FilterDropdown icon={locationIcon}   label="Location"            options={[]} />
+    <section className="hero-section">
+      <div className="hero-content">
+        <h1 className="hero-title">Find Your Dream Property</h1>
+        <p className="hero-description">
+          Welcome to Iskan, where your dream property awaits in every corner of our beautiful world.
+          Explore our curated selection of properties, each offering a unique story and a chance to redefine your life.
+          With categories to suit every dreamer, your journey
+        </p>
       </div>
-      <div className="dropdown-container position-relative">
-        <FilterDropdown icon={propertyIcon}   label="Property Type"       options={[]} />
+      <div className="search-section position-relative">
+        <SearchBar />
+        <FiltersRow />
       </div>
-      <div className="dropdown-container position-relative">
-        <FilterDropdown icon={pricingIcon}    label="Pricing Range"       options={[]} />
-      </div>
-      <div className="dropdown-container position-relative">
-        <FilterDropdown icon={roomsIcon}      label="No. of Rooms / Beds" options={[]} />
-      </div>
-      <div className="dropdown-container position-relative">
-        <FilterDropdown icon={facilitiesIcon} label="Facilities"          options={[]} />
-      </div>
-    </div>
+    </section>
   );
 }
-export default  FiltersRow
+export default  HeroSection

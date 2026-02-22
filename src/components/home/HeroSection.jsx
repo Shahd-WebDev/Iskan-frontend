@@ -1,4 +1,4 @@
-import SearchBar from "../../components/home/SearchBar";
+import SearchBar from "../home/SearchBar";
 import FiltersRow from "../home/FiltersRow";
 
 function HeroSection() {

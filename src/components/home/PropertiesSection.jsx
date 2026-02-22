@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-// import { ArrowLeft, ArrowRight } from "lucide-react";
 import abstractDesign from "../../assets/home/Abstract Design.png";
 import { allProperties } from "../data/PropertiesData";
 import PropertyCard from "../home/propertyCard";

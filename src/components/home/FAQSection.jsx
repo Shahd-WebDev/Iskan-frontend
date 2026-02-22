@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
 import abstractDesign from "../../assets/home/Abstract Design.png";
 import FAQCard from "../home/FAQCard";
-import PaginationControls from "../../components/Pagination/Pagination";
+import PaginationControls from "../Pagination/Pagination";
 
 const faqs = [
   { id: 1,  question: "How do I search for properties on Iskan?", answer: "Learn how to use our user-friendly search tools to find properties that match your criteria." },
@@ -55,7 +54,7 @@ function FAQSection() {
           <div className="section-badge">
             <img src={abstractDesign} alt="Abstract Design" />
           </div>
-          <h2 className="section-title  text-black">Frequently Asked Questions</h2>
+          <h2 className="section-title text-black">Frequently Asked Questions</h2>
           <p className="section-description">
             Find answers to common questions about Iskan's services, property
             listings, and the real estate process. We're here to provide clarity
