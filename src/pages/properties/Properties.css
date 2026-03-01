@@ -1,0 +1,92 @@
+/* ================= Page Layout ================= */
+
+.properties-page {
+ 
+}
+
+/* top spacing */
+.properties-top {
+  margin-top: 35px;
+  margin-bottom: 28px;
+}
+
+/* grid wrapper */
+.properties-grid {
+  width: 100%;
+}
+
+/* pagination */
+/* ===== Pagination Line ===== */
+
+.pagination-wrapper {
+  width: 100%;
+  border-top: 1px solid #dcdcdc; /* الخط الطويل */
+  margin-top: 60px;
+  padding-top: 18px;
+}
+
+.pagination-inner {
+  display: flex;
+  justify-content: space-between; /* شمال + يمين */
+  align-items: center;
+}
+
+/* text */
+.pagination-info {
+  font-size: 14px;
+  color: #000;
+}
+
+/* arrows container */
+.pagination-controls {
+  display: flex;
+  gap: 10px;
+}
+
+/* arrow buttons */
+.pagination-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1.5px solid #0088ff;
+  background: #fff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: #eaf3ff;
+  transform: translateY(-2px);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ================= Responsive ================= */
+
+@media (max-width: 992px) {
+  .properties-page {
+    padding: 24px 24px 70px;
+  }
+}
+
+@media (max-width: 768px) {
+  .properties-page {
+    padding: 20px 16px 60px;
+  }
+}
+.search-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

@@ -2,32 +2,67 @@
    HOME PAGE STYLES
    ============================================ */
 
-/* ========== HERO SECTION ========== */
+/* ================= HERO SECTION ================= */
+
 .hero-section {
-  height: 550px;
-}
-.hero-content {
-  height: 400px;
-  padding: 150px 400px 160px 162px;
-  background: linear-gradient(to right, #C2E2FF 0%, #FFFFFF 100%);
-}
-.hero-title {
-  font-size: 34px;
-  font-weight: 600;
-  color: #000000;
-  font-family: "Urbanist", sans-serif;
-  height: 60px;
-  line-height: 60px;
-}
-.hero-description {
-  font-size: 12.5px;
-  font-weight: 500;
-  color: #333333;
-  height: 54px;
-  line-height: 150%;
-  font-family: "Urbanist", sans-serif;
+  position: relative;
+  width: 100%;
+  background: #ffffff;
 }
 
+.hero-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 390px; /*  ارتفاع الجريدينت */
+
+  background: linear-gradient(
+    80deg,
+    #fafdff 0%,
+    #F7FBFF 35%,
+    #FFFFFF 55%
+  );
+
+  z-index: 0;
+}
+
+.hero-content,
+.search-section {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-content {
+  max-width: 1358px;
+  margin: 0 ;
+  
+  text-align: left;
+  padding: 120px 0 40px;
+}
+
+.hero-title {
+  font-size: 48px;
+  font-weight: 600;
+  color: #000;
+  font-family: "Urbanist", sans-serif;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.hero-description {
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+  line-height: 1.6;
+  font-family: "Urbanist", sans-serif;
+  margin-bottom: 80px;
+}
+
+.search-section {
+  margin-top: 20px;
+}
 /* ========== SEARCH SECTION ========== */
 .search-section {
   height: 205px;
@@ -36,9 +71,9 @@
   z-index: 10;
 }
 .search-bar {
-  margin-left: 162px;
-  margin-right: 162px;
-  padding: 0 148px;
+    width: 100%;
+  padding: 0 148px;   
+  box-sizing: border-box;
 }
 .search-input {
   flex: 1;
@@ -77,6 +112,7 @@
 
 /* ========== FILTERS ========== */
 .filters-row {
+    width: 100%;
   background: #F0F8FF;
   padding: 10px;
   border-radius: 12px;
@@ -84,8 +120,7 @@
   grid-template-columns: repeat(5, 1fr);
   gap: 20px;
   overflow: visible !important;
-  margin-left: 162px;
-  margin-right: 162px;
+margin-bottom: 32px; 
 }
 .dropdown-container {
   z-index: 100;
@@ -164,7 +199,6 @@
 /* ========== PROPERTIES SECTION ========== */
 .properties-section {
   margin: 0 162px;
-  padding-top: 4rem;
 }
 .section-header {
   margin-bottom: 3rem;
@@ -324,6 +358,7 @@
 .pagination {
   padding-top: 20px;
   border-top: 1px solid #333333;
+  
 }
 .pagination-info {
   font-size: 15px;
@@ -346,8 +381,14 @@
 }
 
 /* ========== FAQ SECTION ========== */
+
 .faq-section {
-  margin: 4rem 162px 0 162px;
+  padding: 4rem 162px 0;
+}
+
+.faq-section .row {
+  margin-left: 0;
+  margin-right: 0;
 }
 .faq-card {
   height: 275px;
@@ -388,9 +429,48 @@
   border-bottom: 1px solid #333333;
   gap: 80px;
   padding-right: 162px;
+margin-top: 150px;
+  position: relative;
+  overflow: hidden;
+  background-color: #ffffff;
+
+  /*  صورة الشمال */
+  background-image: url("../../assets/home/bghome.png");
+  background-repeat: no-repeat;
+  background-position: left -80px center;
+  background-size: 566px 308px;
+}
+
+/*  صورة اليمين ) */
+.cta-section::after {
+  content: "";
+  position: absolute;
+
+  width: 566px;
+  height: 308px;
+
+  right: -80px;
+  top: 50%;
+  transform: translateY(-50%) scaleX(-1); 
+
+  background-image: url("../../assets/home/bghome.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+
+  pointer-events: none; 
+  z-index: 0;
+}
+
+.cta-section > * {
+  position: relative;
+  z-index: 1;
 }
 .cta-content {
   margin: 3.5rem 162px;
+  position: relative;
+  z-index: 1;
+  
 }
 .cta-title {
   font-size: 34px;
@@ -635,6 +715,7 @@
     gap: 1rem;
     align-items: center;
   }
+  
   .pagination-info {
     order: 2;
   }
@@ -691,10 +772,11 @@
     height: 200px;
   }
   .faq-section {
-    margin: 2rem 16px;
+    margin: 2rem 16px 0px;
   }
   .faq-card {
     padding: 20px;
+
   }
   .cta-section {
     padding: 30px 16px;

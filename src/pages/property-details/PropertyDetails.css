@@ -1,12 +1,6 @@
-/* ═══════════════════════════════════════
-   PROPERTY DETAILS PAGE — Complete Styles
-   ═══════════════════════════════════════ */
-
 /* ── Page Shell ── */
 .pd-page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 28px 20px 80px;
+ 
   font-family: 'Segoe UI', sans-serif;
   animation: pd-fadeIn 0.4s ease;
 }
@@ -174,8 +168,7 @@
    ══════════════════════════ */
 .pd-mid-section {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));  gap: 40px;
   margin-bottom: 52px;
 }
 /* ── Actions ── */
@@ -286,7 +279,7 @@
   line-height: 1.6;
   padding: 6px 24px;
   border-left: 1px solid #0088FF;
-  background: linear-gradient(to right, #C2E2FF 0%, #FFFFFF 100%);
+  background: linear-gradient(to right, #f2f9ff 0%, #FFFFFF 100%);
 }
 .pd-feature-icon {
   color: #000000;
@@ -297,8 +290,7 @@
    ══════════════════════════ */
 .pd-booking-section {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));  gap: 40px;
   padding: 0 0 44px 0;
   margin-bottom: 52px;
 }
@@ -373,8 +365,7 @@
    ══════════════════════════ */
 .pd-review-section {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));  gap: 40px;
   align-items: stretch;
   margin-bottom: 60px;
 }
@@ -547,8 +538,7 @@
   .pd-mid-section,
   .pd-booking-section,
   .pd-review-section {
-    grid-template-columns: 300px 1fr;
-    gap: 30px;
+    grid-template-columns: 1fr;    gap: 30px;
   }
   .pd-booking-title {
     font-size: 26px;
@@ -688,4 +678,35 @@
   max-width: 100%;
   width: 100%;
   }
+}
+/* ══════════════════════════
+   BOOKING BUTTON STATES
+   ══════════════════════════ */
+
+/* الحالة الافتراضية */
+.booking-btn.request {
+  background: #ffffff;
+  color: #FF383C;
+  border: 1px solid #FF383C;
+}
+
+/* Pending */
+.booking-btn.pending {
+  background: #ff8d28;
+  color: #ffffff;
+  border: none;
+}
+
+/* Approved */
+.booking-btn.approved {
+  background: #34c759;
+  color: #ffffff;
+  border: none;
+}
+
+/* Confirmed */
+.booking-btn.confirmed {
+  background: #e9f9ef;
+  color: #34c759;
+  border: 1px solid #34c759;
 }

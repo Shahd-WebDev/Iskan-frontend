@@ -23,9 +23,10 @@
 }
 
 .iskan-topbar {
-  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
   height: 63px;
-  padding: 0 160px;
+  padding: 0 40px;
 
   display: flex;
   justify-content: center;
@@ -35,19 +36,12 @@
   font-family: "Urbanist", sans-serif;
   font-size: 18px;
   font-weight: 500;
-  line-height: 150%;
-  letter-spacing: 0%;
   color: #000000;
 
   position: relative;
 }
 
-/* Learn More */
 .iskan-learn {
-  font-family: "Urbanist", sans-serif;
-  font-size: 18px;
-  font-weight: 500;
-  line-height: 150%;
   color: #0088FF;
   text-decoration: underline;
   transition: 300ms ease-out;
@@ -57,11 +51,9 @@
   opacity: 0.8;
 }
 
-/* Close Button */
 .iskan-close {
   position: absolute;
-  right: 0;      /* بدل 160px */
-  margin-right: 30px; /* يمشي مع البادينج */
+  right: 40px;
   top: 50%;
   transform: translateY(-50%);
   border: none;
@@ -70,32 +62,35 @@
   cursor: pointer;
 }
 
-/* ================= Main Navbar ================= */
+/* ================= Navbar ================= */
 .iskan-navbar {
   width: 100%;
-  height: 99px;
-  padding: 20px 162px;
   background: #ffffff;
-    box-shadow: 0 1px 0 rgba(0,0,0,0.04);
-     border-bottom: 1px solid #EEEEEE; /* 👈 الخط الفاصل */
+  box-shadow: 0 1px 0 rgba(0,0,0,0.04);
+  border-bottom: 1px solid #EEEEEE;
 }
 
 .iskan-nav-content {
+  max-width: 1200px;
   width: 100%;
+  margin: 0 auto;
+  padding: 20px 40px;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-/* Logo */
+/* ================= Logo ================= */
 .iskan-logo img {
   width: 120px;
+  display: block;
 }
 
 /* ================= Links ================= */
 .iskan-links {
   display: flex;
-  gap: 25px;
+  gap: 24px;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -105,24 +100,24 @@
   font-family: "Urbanist", sans-serif;
   font-size: 18px;
   font-weight: 500;
-  line-height: 150%;
-  letter-spacing: 0%;
-
   color: #000000;
   text-decoration: none;
 
   padding: 8px 16px;
   border-radius: 12px;
-
-  transition: 300ms ease-out;
+  transition: 300ms ease;
 }
 
-.nav-item-link:hover {
-  background: #EAF3FF;
-}
-
+.nav-item-link:hover,
 .active-link {
   background: #EAF3FF;
+}
+
+/* ================= Right Side ================= */
+.iskan-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 /* ================= Login Button ================= */
@@ -130,10 +125,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
 
-  height: 59px;
-  padding: 16px 24px;
+  height: 52px;
+  padding: 12px 22px;
 
   border-radius: 10px;
   border: 1px solid #CCCCCC;
@@ -144,12 +138,10 @@
   font-family: "Urbanist", sans-serif;
   font-size: 16px;
   font-weight: 500;
-  line-height: 150%;
 
   text-decoration: none;
   cursor: pointer;
-
-  transition: 300ms ease-out;
+  transition: 300ms ease;
 }
 
 .iskan-login-btn:hover {
@@ -157,67 +149,53 @@
   border-color: #BDBDBD;
 }
 
-/* ================= Profile Circle ================= */
+/* ================= Profile ================= */
 .profile-btn {
   width: 32px;
   height: 32px;
-  border-radius: 75px;
-  padding: 4px;
-
-  background: rgba(255,255,255,0.1);
-
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  transition: 300ms ease-out;
-}
-
-/* ================= Right Side ================= */
-.iskan-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
 }
 
 /* ================= Mobile Menu Button ================= */
 .mobile-menu-btn {
-  display: none;   /* 👈 مخفية افتراضيًا على اللاب */
+  display: none;
   border: none;
   background: transparent;
   cursor: pointer;
 }
-/* ================= Responsive ================= */
-/* ================= Responsive ================= */
+
+/* ================= Tablet ================= */
 @media (max-width: 992px) {
 
   .iskan-topbar {
-    padding: 0 30px;
+    padding: 0 24px;
+    font-size: 16px;
   }
 
-  .iskan-navbar {
-    padding: 20px 30px;
+  .iskan-nav-content {
+    padding: 18px 24px;
   }
 
-  /* 👇 نخفي اللينكات */
   .iskan-links {
     display: none;
   }
 
-  /* 👇 نظهر التلت شرط */
   .mobile-menu-btn {
     display: block;
   }
 
   .iskan-logo img {
-    width: 95px;
+    width: 110px;
   }
 
   .mobile-dropdown {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    background: white;
+    background: #ffffff;
     padding: 18px;
     border-top: 1px solid #eee;
   }
@@ -234,5 +212,23 @@
 
   .mobile-link:hover {
     background: #EAF3FF;
+  }
+}
+
+/* ================= Mobile ================= */
+@media (max-width: 480px) {
+
+  .iskan-nav-content {
+    padding: 14px 16px;
+  }
+
+  .iskan-logo img {
+    width: 100px;
+  }
+
+  .iskan-login-btn {
+    height: 44px;
+    padding: 10px 16px;
+    font-size: 14px;
   }
 }
