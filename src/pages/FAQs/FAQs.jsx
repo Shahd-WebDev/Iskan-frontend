@@ -59,9 +59,11 @@ export default function FAQs() {
   return (
     <div className="faq-wrapper">
       <div className="faq-page">
-        <h1 className="faq-title">
-          Frequently Asked <br /> Questions
-        </h1>
+       <div className="faq-header">
+  <h1 className="faq-title">
+    Frequently Asked <br /> Questions
+  </h1>
+</div>
 
         {sections.map((sec, index) => (
           <FAQSection key={index} section={sec} />

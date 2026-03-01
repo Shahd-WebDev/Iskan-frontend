@@ -43,8 +43,7 @@ export default function Navbar() {
 
       {/* ✅ Main Navbar */}
       <nav className="iskan-navbar">
-        <div className="container iskan-nav-content">
-          
+<div className="iskan-nav-content">          
           {/* Logo */}
           <Link to="/" className="iskan-logo">
             <img src="/logo.png" alt="ISKAN Logo" />

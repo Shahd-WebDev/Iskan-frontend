@@ -6,14 +6,14 @@ export default function RequestBookingModal({ open, onClose, onSubmit }) {
   return (
     <div className="modal-overlay">
       <div className="modal-box">
-        {/* Header */}
+
+        {/* ================= HEADER ================= */}
         <div className="modal-header">
           <div>
             <h2>Request Booking</h2>
             <p>
               This is a preliminary booking request. <br />
-              No payment or commitment is
-              required at this stage.
+              No payment or commitment is required at this stage.
             </p>
           </div>
 
@@ -22,17 +22,25 @@ export default function RequestBookingModal({ open, onClose, onSubmit }) {
           </button>
         </div>
 
-        {/* Form */}
+        {/* ================= FORM ================= */}
         <form
           className="modal-form"
           onSubmit={(e) => {
             e.preventDefault();
+
+            // ✅ يمسح الفورم بعد الإرسال
+            e.target.reset();
+
             onSubmit();
           }}
         >
           {/* Property Title */}
           <label>Property Title</label>
-          <input type="text" value="Elestad Apartment" disabled />
+          <input
+            type="text"
+            defaultValue="Elestad Apartment"
+            
+          />
 
           {/* Date + Duration */}
           <div className="row">
@@ -43,7 +51,7 @@ export default function RequestBookingModal({ open, onClose, onSubmit }) {
 
             <div>
               <label>Duration of Stay</label>
-              <select>
+              <select defaultValue="1 month">
                 <option>1 month</option>
                 <option>3 months</option>
                 <option>6 months</option>
@@ -53,7 +61,7 @@ export default function RequestBookingModal({ open, onClose, onSubmit }) {
 
           {/* Occupants */}
           <label>Number of Occupants</label>
-          <select>
+          <select defaultValue="1">
             <option>1</option>
             <option>2</option>
             <option>3+</option>
@@ -62,37 +70,50 @@ export default function RequestBookingModal({ open, onClose, onSubmit }) {
           {/* Message */}
           <label>Message</label>
           <textarea placeholder="Introduce yourself briefly or mention any important details..." />
-<hr className="divider" />
 
-          {/* Auto-filled info */}
+          <hr className="divider" />
+
+          {/* ================= STUDENT INFO ================= */}
           <div className="student-info">
             <h4>Student Info (Auto-filled)</h4>
             <p>Displayed to the owner</p>
 
             <label>Full name</label>
-            <input type="text" value="Khaled Osama" disabled />
+            <input
+              type="text"
+              defaultValue="Khaled Osama"
+              
+            />
 
             <label>University</label>
-            <input type="text" value="Tanta University" disabled />
+            <input
+              type="text"
+              defaultValue="Tanta University"
+              
+            />
           </div>
-<hr className="divider" />
 
-        {/* Terms */}
-<div className="terms-section">
-  <p className="terms-title">Terms</p>
+          <hr className="divider" />
 
-  <label className="terms-line">
-    <input type="checkbox" required />
-    <span>
-      I understand that this is a booking request and not a final reservation.
-    </span>
-  </label>
-</div>
+          {/* ================= TERMS ================= */}
+          <div className="terms-section">
+            <p className="terms-title">Terms</p>
 
+            <label className="terms-line">
+              <input type="checkbox" required />
+              <span>
+                I understand that this is a booking request and not a final reservation.
+              </span>
+            </label>
+          </div>
 
-          {/* Buttons */}
+          {/* ================= BUTTONS ================= */}
           <div className="modal-actions">
-            <button type="button" className="cancel-btn" onClick={onClose}>
+            <button
+              type="button"
+              className="cancel-btn"
+              onClick={onClose}
+            >
               Cancel
             </button>
 
