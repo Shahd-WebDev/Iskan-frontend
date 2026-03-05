@@ -1,7 +1,12 @@
 import AppRoutes from "./routes/AppRoutes";
+import { SavedProvider } from "./context/SavedContext";
 
 function App() {
-  return <AppRoutes />;
+  return (
+    <SavedProvider>
+      <AppRoutes />
+    </SavedProvider>
+  );
 }
 
 export default App;

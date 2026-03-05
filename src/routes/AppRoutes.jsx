@@ -9,6 +9,7 @@ import Home from "../pages/Home/Home";
 import Properties from "../pages/properties/Properties";
 import PropertyDetails from "../pages/property-details/PropertyDetails";
 import FAQs from "../pages/FAQs/FAQs";
+import SavedProperties from "../pages/SavedProperties/SavedProperties";
 
 /* Auth Pages */
 import Login from "../pages/auth/Login";
@@ -35,6 +36,7 @@ export default function AppRoutes() {
         <Route path="/properties" element={<Properties />} />
         <Route path="/properties/:id" element={<PropertyDetails />} />
         <Route path="/faqs" element={<FAQs />} />
+        <Route path="/saved" element={<SavedProperties />} />
       </Route>
 
       {/* ================= Not Found ================= */}
