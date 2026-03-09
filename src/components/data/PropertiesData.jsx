@@ -19,11 +19,16 @@ const types = ["Apartment", "Room", "Bed"];
 
 export const allProperties = Array.from({ length: 70 }, (_, index) => ({
   id: index + 1,
-  image: [img1, img2, img3, img4][index % 4],   // ← الصورة الرئيسية (للكارد)
-  images: [imgProperty1,imgProperty2,imgProperty3,imgProperty4,imgProperty5,imgProperty6,imgProperty7,imgProperty8,imgProperty9],   
+  image: [img1, img2, img3, img4][index % 4],
+  images: [imgProperty1,imgProperty2,imgProperty3,imgProperty4,imgProperty5,imgProperty6,imgProperty7,imgProperty8,imgProperty9],
+
   price: `${800 + index * 50} EGP`,
   title: "Elmorshdy Apartment",
   location: "Helwan, Mostafa Fahmy Street",
+
+  lat: 30.0444 + index * 0.001,   // 👈 أضيفي دول
+  lng: 31.2357 + index * 0.001,   // 👈 أضيفي دول
+
   type: types[index % 3],
   rooms: (index % 5) + 1,
   bathrooms: (index % 3) + 1,
