@@ -16,6 +16,8 @@ import imgProperty9 from "../../assets/PropertiesDetails/imgProperty9.png"
 
 // const propertyImages = [img1, img2, img3, img4];
 const types = ["Apartment", "Room", "Bed"];
+const locations = ["Helwan", "Tanta", "Cairo", "Alexandria", "Giza","banha","Mansoura","Aswan","Luxor","Ismailia"];
+const titles = ["Elmorshdy Apartment", "Nile View Flat", "Garden Suite", "Downtown Room", "Elstad Apartment"];
 
 export const allProperties = Array.from({ length: 70 }, (_, index) => ({
   id: index + 1,
@@ -23,8 +25,8 @@ export const allProperties = Array.from({ length: 70 }, (_, index) => ({
   images: [imgProperty1,imgProperty2,imgProperty3,imgProperty4,imgProperty5,imgProperty6,imgProperty7,imgProperty8,imgProperty9],
 
   price: `${800 + index * 50} EGP`,
-  title: "Elmorshdy Apartment",
-  location: "Helwan, Mostafa Fahmy Street",
+   title: titles[index % titles.length],
+  location: `${locations[index % locations.length]}, Street ${index + 1}`,
 
   lat: 30.0444 + index * 0.001,   // 👈 أضيفي دول
   lng: 31.2357 + index * 0.001,   // 👈 أضيفي دول

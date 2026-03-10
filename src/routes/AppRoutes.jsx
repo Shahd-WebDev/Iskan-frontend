@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-
+import SearchResult from "../pages/SearchResults/SearchResults"; // ✅ عدّلي المسار حسب مكان الملف عندك
 /* Layouts */
 import Layout from "../components/layout/Layout";
 import AuthLayout from "../components/AuthLayout/AuthLayout";
@@ -37,6 +37,7 @@ export default function AppRoutes() {
         <Route path="/properties/:id" element={<PropertyDetails />} />
         <Route path="/faqs" element={<FAQs />} />
         <Route path="/saved" element={<SavedProperties />} />
+        <Route path="/search" element={<SearchResult />} />
       </Route>
 
       {/* ================= Not Found ================= */}
