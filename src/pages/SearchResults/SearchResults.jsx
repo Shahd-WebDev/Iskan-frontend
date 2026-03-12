@@ -21,26 +21,32 @@ function SearchResult() {
   const [searchMatched, setSearchMatched] = useState(() =>
     initialQuery ? detectSearchIntent(initialQuery).matched : false
   );
+  const [titleResults, setTitleResults]   = useState(() =>
+    initialQuery ? detectSearchIntent(initialQuery).titleResults || null : null
+  );
   const [showResults, setShowResults]     = useState(!!initialQuery);
   const ITEMS_PER_PAGE = 8;
 
   const results = useMemo(() => {
     if (!showResults) return [];
     if (searchText.trim() && !searchMatched) return [];
-    return applyFilters(allProperties, activeFilters);
-  }, [activeFilters, showResults, searchMatched, searchText]);
+    // If search was by title, filter only within those title matches
+    const baseList = titleResults || allProperties;
+    return applyFilters(baseList, activeFilters);
+  }, [activeFilters, showResults, searchMatched, searchText, titleResults]);
 
   const dynamicOptions = useMemo(() => {
+    const baseList = titleResults || allProperties;
     if (!hasAnyFilter(activeFilters) && !hasSearched) {
       return {
-        locations:  [...new Set(allProperties.map((p) => p.location.split(",")[0].trim()))].sort(),
-        types:      [...new Set(allProperties.map((p) => p.type))].sort(),
+        locations:  [...new Set(baseList.map((p) => p.location.split(",")[0].trim()))].sort(),
+        types:      [...new Set(baseList.map((p) => p.type))].sort(),
         prices:     PRICE_BUCKETS.map((b) => b.label),
-        rooms:      [...new Set(allProperties.map((p) => String(p.rooms)))].sort((a, b) => a - b),
-        facilities: [...new Set(allProperties.flatMap((p) => p.amenities))].sort(),
+        rooms:      [...new Set(baseList.map((p) => String(p.rooms)))].sort((a, b) => a - b),
+        facilities: [...new Set(baseList.flatMap((p) => p.amenities))].sort(),
       };
     }
-    const without = (key) => applyFilters(allProperties, { ...activeFilters, [key]: key === "facilities" ? [] : "" });
+    const without = (key) => applyFilters(baseList, { ...activeFilters, [key]: key === "facilities" ? [] : "" });
     return {
       locations:  [...new Set(without("location").map((p) => p.location.split(",")[0].trim()))].sort(),
       types:      [...new Set(without("propertyType").map((p) => p.type))].sort(),
@@ -50,20 +56,11 @@ function SearchResult() {
       rooms:      [...new Set(without("rooms").map((p) => String(p.rooms)))].sort((a, b) => a - b),
       facilities: [...new Set(without("facilities").flatMap((p) => p.amenities))].sort(),
     };
-  }, [activeFilters, hasSearched]);
+  }, [activeFilters, hasSearched, titleResults]);
 
   const handleFilterChange = useCallback((key, value) => {
-    setActiveFilters((prev) => {
-      const next = { ...prev, [key]: value };
-      const filled =
-        !!next.location &&
-        !!next.propertyType &&
-        !!next.priceRange &&
-        !!next.rooms &&
-        next.facilities?.length > 0;
-      setShowResults(filled);
-      return next;
-    });
+    setActiveFilters((prev) => ({ ...prev, [key]: value }));
+    setShowResults(true);
   }, []);
 
   const handleSubmit = (e) => {
@@ -76,10 +73,11 @@ function SearchResult() {
       setCurrentPage(1);
       return;
     }
-    const { filters, matched } = detectSearchIntent(searchText);
+    const { filters, matched, titleResults: tr } = detectSearchIntent(searchText);
     setActiveFilters(filters);
     setHasSearched(true);
     setSearchMatched(matched);
+    setTitleResults(tr || null);
     setShowResults(matched);
     setCurrentPage(1);
   };
@@ -104,6 +102,7 @@ function SearchResult() {
             setActiveFilters(EMPTY_FILTERS);
             setHasSearched(false);
             setSearchMatched(false);
+            setTitleResults(null);
             setShowResults(false);
           }
         }}

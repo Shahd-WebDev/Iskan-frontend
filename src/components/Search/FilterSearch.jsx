@@ -73,6 +73,12 @@ export function detectSearchIntent(query) {
     return { filters: { ...EMPTY_FILTERS, facilities: [original || matchedAmenity] }, matched: true };
   }
 
+  // 6. Title
+  const titleMatches = allProperties.filter((p) => p.title.toLowerCase().includes(q));
+  if (titleMatches.length > 0) {
+    return { filters: EMPTY_FILTERS, matched: true, titleResults: titleMatches };
+  }
+
   return { filters: EMPTY_FILTERS, matched: false };
 }
 
