@@ -1,0 +1,9 @@
+.results-label {
+  font-size: 25px;
+  font-weight: 500;
+  color: #000;
+  border-left:1px solid #0088FF;
+ padding: 16px 21px;
+  margin-bottom: 35px;
+  /* gap:10px */
+}
