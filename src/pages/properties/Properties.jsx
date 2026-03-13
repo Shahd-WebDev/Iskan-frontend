@@ -3,69 +3,80 @@ import FiltersRow from "../../components/home/FiltersRow";
 import PropertyCard from "../../components/home/propertyCard";
 import { allProperties } from "../../components/data/PropertiesData";
 import PaginationControls from "../../components/Pagination/Pagination";
-import { useState } from "react";
-
+import { useState, useMemo, useCallback } from "react";
+import { applyFilters, hasAnyFilter, EMPTY_FILTERS, PRICE_BUCKETS } from "../../components/Search/FilterSearch";
 import "./Properties.css";
 
 export default function Properties() {
-  const [bookmarkedCount, setBookmarkedCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeFilters, setActiveFilters] = useState(EMPTY_FILTERS);
 
   const itemsPerPage = 16;
-  const totalPages = Math.ceil(allProperties.length / itemsPerPage);
 
-  // بداية العناصر في الصفحة الحالية
+  const dynamicOptions = useMemo(() => {
+    if (!hasAnyFilter(activeFilters)) {
+      return {
+        locations:  [...new Set(allProperties.map((p) => p.location.split(",")[0].trim()))].sort(),
+        types:      [...new Set(allProperties.map((p) => p.type))].sort(),
+        prices:     PRICE_BUCKETS.map((b) => b.label),
+        rooms:      [...new Set(allProperties.map((p) => String(p.rooms)))].sort((a, b) => a - b),
+        facilities: [...new Set(allProperties.flatMap((p) => p.amenities))].sort(),
+      };
+    }
+    const without = (key) => applyFilters(allProperties, { ...activeFilters, [key]: key === "facilities" ? [] : "" });
+    return {
+      locations:  [...new Set(without("location").map((p) => p.location.split(",")[0].trim()))].sort(),
+      types:      [...new Set(without("propertyType").map((p) => p.type))].sort(),
+      prices:     PRICE_BUCKETS.filter(({ min, max }) =>
+                    without("priceRange").some((p) => { const pr = parseInt(p.price); return pr >= min && pr <= max; })
+                  ).map((b) => b.label),
+      rooms:      [...new Set(without("rooms").map((p) => String(p.rooms)))].sort((a, b) => a - b),
+      facilities: [...new Set(without("facilities").flatMap((p) => p.amenities))].sort(),
+    };
+  }, [activeFilters]);
+
+  const filteredProperties = useMemo(() =>
+    applyFilters(allProperties, activeFilters),
+  [activeFilters]);
+
+  const totalPages = Math.ceil(filteredProperties.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentProperties = filteredProperties.slice(startIndex, startIndex + itemsPerPage);
 
-  // العناصر المعروضة
-  const currentProperties = allProperties.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
-
-  // ✅ رقم أول عنصر ظاهر (عشان يظهر 1 of 70)
-  const currentItemNumber = startIndex + 1;
-
-  const handleBookmarkChange = (isAdding) => {
-    setBookmarkedCount((prev) =>
-      isAdding ? prev + 1 : Math.max(0, prev - 1)
-    );
-  };
+  const handleFilterChange = useCallback((key, value) => {
+    setActiveFilters((prev) => ({ ...prev, [key]: value }));
+    setCurrentPage(1);
+  }, []);
 
   return (
     <div className="properties-page">
 
-      {/* Search + Filters */}
       <div className="properties-top search-wrapper">
-          <SearchBar />
-        <FiltersRow />
+        <SearchBar />
+        <FiltersRow
+          filters={activeFilters}
+          onFilterChange={handleFilterChange}
+          dynamicOptions={dynamicOptions}
+        />
       </div>
 
-      {/* Grid */}
       <div className="properties-grid">
-        <div className="row g-4">
+        <div className="d-flex flex-wrap gap-4">
           {currentProperties.map((property) => (
-            <div
-              key={property.id}
-              className="col-12 col-sm-6 col-lg-4 col-xl-3"
-            >
-              <PropertyCard
-                property={property}
-                onBookmarkChange={handleBookmarkChange}
-              />
+            <div key={property.id} style={{ width: "270px" }}>
+              <PropertyCard property={property} />
             </div>
           ))}
         </div>
       </div>
 
-      {/* Pagination */}
       <div className="properties-pagination-wrapper">
         <div className="properties-pagination">
           <PaginationControls
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={setCurrentPage}
-            label={`${currentItemNumber} of ${allProperties.length}`}
+            label={`${startIndex + 1} of ${filteredProperties.length}`}
           />
         </div>
       </div>
