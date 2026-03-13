@@ -36,7 +36,7 @@ export default function Properties() {
     <div className="properties-page">
 
       {/* Search + Filters */}
-<div className="properties-top search-wrapper">
+      <div className="properties-top search-wrapper">
           <SearchBar />
         <FiltersRow />
       </div>

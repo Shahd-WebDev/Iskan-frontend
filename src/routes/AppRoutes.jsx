@@ -1,4 +1,5 @@
-import {  Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+import SearchResult from "../pages/SearchResults/SearchResults";
 
 /* Layouts */
 import Layout from "../components/layout/Layout";
@@ -9,6 +10,7 @@ import Home from "../pages/Home/Home";
 import Properties from "../pages/properties/Properties";
 import PropertyDetails from "../pages/property-details/PropertyDetails";
 import FAQs from "../pages/FAQs/FAQs";
+import SavedProperties from "../pages/SavedProperties/SavedProperties";
 
 /* Auth Pages */
 import Login from "../pages/auth/Login";
@@ -18,10 +20,10 @@ import ChooseAccountType from "../pages/auth/ChooseAccountType";
 /* Error */
 import NotFound from "../pages/Error/NotFound";
 
-/*Notifications*/
+/* Notifications */
 import Notifications from "../pages/Notifications/Notifications";
 
-/*user-settings*/
+/* User Settings */
 import SettingsLayout from "../pages/user-settings/SettingsLayout";
 import Profile from "../pages/user-settings/Profile";
 import Security from "../pages/user-settings/Security";
@@ -43,22 +45,21 @@ export default function AppRoutes() {
         <Route path="/properties" element={<Properties />} />
         <Route path="/properties/:id" element={<PropertyDetails />} />
         <Route path="/faqs" element={<FAQs />} />
-        <Route path="/notifications" element={<Notifications />} />
-        <Route path="settings" element={<SettingsLayout />}>
-        <Route path="profile" element={<Profile />} />
-        <Route path="security" element={<Security />} />
-        <Route path="notifications" element={<Setting_Notifications />} />
 
+        <Route path="/saved" element={<SavedProperties />} />
+        <Route path="/search" element={<SearchResult />} />
+
+        <Route path="/notifications" element={<Notifications />} />
+
+        <Route path="settings" element={<SettingsLayout />}>
+          <Route path="profile" element={<Profile />} />
+          <Route path="security" element={<Security />} />
+          <Route path="notifications" element={<Setting_Notifications />} />
+        </Route>
       </Route>
 
       {/* ================= Not Found ================= */}
       <Route path="*" element={<NotFound />} />
-
-      {/* ================= Notifications ================= */}
-
-      <Route path="/notifications" element={<Notifications />} />
-     
-      </Route>
     </Routes>
   );
 }

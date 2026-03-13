@@ -29,7 +29,7 @@
    PROPERTY HEADER
    ══════════════════════════ */
 .pd-topbar {
-  margin-bottom: 30px;
+  margin-bottom: 60px;
 }
 .pd-topbar-left {
   gap: 10px;
@@ -40,15 +40,37 @@
   color: #000000;
   font-family: "Urbanist", sans-serif;
 }
-.pd-location-badge {
+.pd-location-badge{
+  display: flex;
+  align-items: center;
   gap: 6px;
-  border-radius: 4px;
-  padding: 9px;
-  font-size: 14px;
-  font-weight: 500;
-  width: fit-content;
+
+  border-radius: 8px;
+  padding: 10px;
+
   border: 1px solid #0088FF;
+  background: white;
   color: #0088FF;
+
+  transition: all 0.2s;
+}
+
+/* Hover */
+.pd-location-badge:hover{
+  background: #0088FF;
+  color: white;
+
+  box-shadow: 0 0 18px rgba(0,136,255,0.5);
+
+  transform: translateY(-1px);
+}
+
+
+
+.pd-location-badge.active{
+  background: #0088FF;
+  color: white;
+  box-shadow: 0 0 18px rgba(0, 136, 255, 0.84);
 }
 .pd-topbar-right {
   gap: 2px;
@@ -72,6 +94,7 @@
   background-color: #F5FAFF;
   padding: 35px;
   border-radius: 10px;
+    position: relative;
 }
 .pd-thumbnails {
   gap: 10px;
@@ -709,4 +732,30 @@
   background: #e9f9ef;
   color: #34c759;
   border: 1px solid #34c759;
+}
+
+/*======================map=========================*/
+.map-wrapper{
+  position: absolute;
+  inset: 20px;
+  z-index: 10;
+}
+
+
+.close-map{
+  position: absolute;
+  top: -60px;
+  right: -1px;
+
+  width: 34px;
+  height: 34px;
+
+  border-radius: 50%;
+  border: none;
+
+  background: white;
+  font-size: 18px;
+  cursor: pointer;
+
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }

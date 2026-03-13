@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useContext } from "react";
+import { SavedContext } from "../../context/SavedContext";
 import { useNavigate } from "react-router-dom";
 import {
   Bookmark, Wifi, Wind, UtensilsCrossed,
@@ -15,16 +16,9 @@ const amenityConfig = {
 };
 
 function PropertyCard({ property, onBookmarkChange }) {
-  const [isBookmarked, setIsBookmarked] = useState(false);
   const navigate = useNavigate();
 
-  const toggleBookmark = (e) => {
-    e.stopPropagation(); 
-    const newState = !isBookmarked;
-    setIsBookmarked(newState);
-    onBookmarkChange?.(newState);
-  };
-
+ 
   const handleViewDetails = () => {
 
     navigate(`/properties/${property.id}`);
@@ -32,14 +26,22 @@ function PropertyCard({ property, onBookmarkChange }) {
 
   const amenities = property.amenities || [];
 
+  const { savedProperties, toggleSave } = useContext(SavedContext);
+
+const isBookmarked = savedProperties.some(
+  (p) => p.id === property.id
+);
+
   return (
     <div className="property-card overflow-hidden  w-100 h-100 position-relative  d-flex  flex-column">
       <div className="property-image-wrapper position-relative overflow-hidden">
         <img src={property.image} alt={property.title} className="property-image w-100 h-100 object-fit-cover" />
         <button
           className={`bookmark-btn position-absolute bg-white border-0  rounded-circle d-flex align-items-center  justify-content-center  ${isBookmarked ? "bookmarked" : ""}`}
-          onClick={toggleBookmark}
-        >
+onClick={(e) => {
+  e.stopPropagation();
+  toggleSave(property);
+}}        >
           <Bookmark
             size={20}
             fill={isBookmarked ? "#0088FF" : "none"}

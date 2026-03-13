@@ -16,6 +16,8 @@ import "../property-details/PropertyDetails.css";
 import RequestBookingModal from "../../components/booking/RequestBookingModal";
 import { BOOKING_STATUS } from "../../components/booking/bookingStatus";
 
+import PropertyMap from "../../components/PropertiesDetails/PropertyMap";
+
 export default function PropertyDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -30,6 +32,7 @@ export default function PropertyDetails() {
 
   const property = allProperties.find((p) => p.id === Number(id));
 
+  const [showMap, setShowMap] = useState(false);
   // ======================
   // NOT FOUND
   // ======================
@@ -65,9 +68,20 @@ export default function PropertyDetails() {
   return (
     <>
       <div className="pd-page">
-        <PropertyHeader property={property} />
+<PropertyHeader
+  property={property}
+onLocationClick={() => setShowMap(prev => !prev)}
+  showMap={showMap}
+/>
+      
+<ImageGallery
+  images={galleryImages}
+  showMap={showMap}
+  setShowMap={setShowMap}
+  lat={property.lat}
+  lng={property.lng}
+/>
 
-        <ImageGallery images={galleryImages} />
 
         <div className="pd-mid-section align-items-start">
           <div className="pd-left-col">
