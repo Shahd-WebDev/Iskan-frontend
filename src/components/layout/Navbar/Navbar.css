@@ -65,16 +65,17 @@
 /* ================= Navbar ================= */
 .iskan-navbar {
   width: 100%;
-  background: #ffffff;
+  background: rgb(255, 255, 255,.5);
   box-shadow: 0 1px 0 rgba(0,0,0,0.04);
   border-bottom: 1px solid #EEEEEE;
+  
 }
 
 .iskan-nav-content {
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
-  padding: 20px 40px;
+  padding: .2% 24px;
 
   display: flex;
   align-items: center;
@@ -84,6 +85,7 @@
 /* ================= Logo ================= */
 .iskan-logo img {
   width: 120px;
+  margin-top: 20%;
   display: block;
 }
 

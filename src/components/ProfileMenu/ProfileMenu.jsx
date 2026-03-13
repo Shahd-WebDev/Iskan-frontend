@@ -110,7 +110,7 @@ export default function ProfileMenu() {
           </Link>
 
           {/* Profile */}
-          <Link to="/profile" className="pm-item">
+          <Link to="/settings/profile" className="pm-item"onClick={() => setOpenMenu(false)}>
             <Settings size={18} stroke="black" />
             Profile Settings
           </Link>

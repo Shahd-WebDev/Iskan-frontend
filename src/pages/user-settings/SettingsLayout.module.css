@@ -1,0 +1,58 @@
+.container{
+  max-width:800px;
+  margin:60px auto;
+  padding:20px;
+}
+
+.title{
+  text-align:center;
+  font-size:24px;
+  font-weight:600;
+}
+
+.subtitle{
+  text-align:center;
+  color:#6b7280;
+  margin-bottom:25px;
+}
+.tabs{
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  background:#F5FAFF;
+  padding:6px;
+  border-radius:20px;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  justify-content:center;
+  gap: 8px;
+  padding: 10px 20px;
+  text-decoration: none;
+  color: #666;
+  font-family: "Urbanist", sans-serif;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+.tabs a{
+  flex:1;
+  text-align:center;
+  padding:8px 22px;
+  border-radius:20px;
+  text-decoration:none;
+  color:#555;
+  font-size:14px;
+  transition:0.3s;
+}
+.tabs a.active{
+  background:white;
+  border:1px solid #2563eb;
+  color:#2563eb;
+  box-shadow:0 0 0 2px rgba(37,99,235,0.15);
+}
+
+.content{
+  margin-top:25px;
+}
