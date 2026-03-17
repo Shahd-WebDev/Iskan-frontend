@@ -5,11 +5,10 @@ import {
   Reply,
   Trash2,
   CheckCircle2,
-  Clock,
-  XCircle,
   Star,
 } from "lucide-react";
 import "./Messages.css";
+import Bookings from "./Bookings";
 
 const INITIAL_MESSAGES = [
   {
@@ -58,7 +57,6 @@ const INITIAL_MESSAGES = [
     date: "Dec 1, 2024, 11:00 AM",
     text: "The apartment is nice, but there were some issues with noise from nearby construction. Would have appreciated a heads up about this.",
     reply: null,
-    replyOpen: true,
   },
 ];
 
@@ -77,7 +75,7 @@ function StarRating({ rating }) {
   );
 }
 
-export default function MessagesBookings() {
+export default function Messages() {
   const [tab, setTab] = useState("messages");
   const [msgFilter, setMsgFilter] = useState("all");
   const [messages, setMessages] = useState(INITIAL_MESSAGES);
@@ -85,12 +83,16 @@ export default function MessagesBookings() {
   const [openReplyId, setOpenReplyId] = useState(null);
 
   const unreplied = messages.filter((m) => !m.reply);
-  const replied = messages.filter((m) => m.reply);
+  const replied   = messages.filter((m) => m.reply);
 
   const visibleMessages =
     msgFilter === "unreplied" ? unreplied :
-    msgFilter === "replied" ? replied :
+    msgFilter === "replied"   ? replied   :
     messages;
+
+  // عدد الـ pending bookings من localStorage
+  const pendingBookings = JSON.parse(localStorage.getItem("bookings") || "[]")
+    .filter((b) => b.status === "pending").length;
 
   function sendReply(id) {
     const text = replyDrafts[id]?.trim();
@@ -102,11 +104,8 @@ export default function MessagesBookings() {
               ...m,
               reply: {
                 date: new Date().toLocaleString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
+                  month: "short", day: "numeric", year: "numeric",
+                  hour: "2-digit", minute: "2-digit",
                 }),
                 text,
               },
@@ -150,17 +149,20 @@ export default function MessagesBookings() {
         >
           <CalendarDays size={15} />
           Bookings
+          {pendingBookings > 0 && (
+            <span className="mb-tab-dot mb-tab-dot--orange">{pendingBookings}</span>
+          )}
         </button>
       </div>
 
-      {/* ── Messages Tab ── */}
+      {/* Messages Tab */}
       {tab === "messages" && (
         <>
           <div className="mb-filter-pills">
             {[
-              { key: "all", label: `All (${messages.length})` },
+              { key: "all",       label: `All (${messages.length})` },
               { key: "unreplied", label: `Unreplied (${unreplied.length})` },
-              { key: "replied", label: `Replied (${replied.length})` },
+              { key: "replied",   label: `Replied (${replied.length})` },
             ].map(({ key, label }) => (
               <button
                 key={key}
@@ -179,12 +181,9 @@ export default function MessagesBookings() {
             {visibleMessages.map((msg) => (
               <div key={msg.id} className="mb-card">
                 <div className="mb-card-top">
-                  {/* Avatar */}
                   <div className="mb-card-avatar" style={{ background: msg.color }}>
                     {msg.initials}
                   </div>
-
-                  
                   <div className="mb-card-body">
                     <span className="mb-card-name">{msg.name}</span>
                     <span className="mb-card-property">{msg.property}</span>
@@ -192,11 +191,8 @@ export default function MessagesBookings() {
                       <StarRating rating={msg.rating} />
                       <span className="mb-card-date">{msg.date}</span>
                     </div>
-
-                    {/* Review text */}
                     <p className="mb-card-text">{msg.text}</p>
 
-                    {/* Existing reply */}
                     {msg.reply && (
                       <div className="mb-reply-box">
                         <div className="mb-reply-header">
@@ -215,7 +211,6 @@ export default function MessagesBookings() {
                       </div>
                     )}
 
-                    {/* Reply input */}
                     {!msg.reply && openReplyId === msg.id && (
                       <div className="mb-reply-input-wrap">
                         <textarea
@@ -245,7 +240,6 @@ export default function MessagesBookings() {
                       </div>
                     )}
 
-                    {/* Reply to Review button */}
                     {!msg.reply && openReplyId !== msg.id && (
                       <button
                         className="mb-btn mb-btn--primary mb-btn--reply"
@@ -263,7 +257,8 @@ export default function MessagesBookings() {
         </>
       )}
 
-     
+      {/* Bookings Tab */}
+      {tab === "bookings" && <Bookings />}
     </div>
   );
 }

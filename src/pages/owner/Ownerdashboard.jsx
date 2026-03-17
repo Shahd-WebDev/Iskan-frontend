@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { Home, Building2, MessageSquare, Settings } from "lucide-react";
+import { Home, Building2, MessageSquare, Settings} from "lucide-react";
 
 import Navbar from "../../components/layout/Navbar/Navbar";
 import Footer from "../../components/layout/Footer/Footer";

@@ -103,7 +103,10 @@
   background: #0088FF;
   color: #fff;
 }
-
+.mb-pill:hover{
+  background: #e0f0ff;
+  color: #0088FF;
+}
 .mb-pill-dot {
   position: absolute;
   top: -1px;
@@ -114,7 +117,9 @@
   background: #ef4444;
   flex-shrink: 0;
 }
-
+.mb-tab-dot--orange {
+  background: #f59e0b;
+}
 /* Message cards */
 .mb-messages {
   display: flex;
