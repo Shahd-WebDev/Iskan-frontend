@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route  } from "react-router-dom";
 import SearchResult from "../pages/SearchResults/SearchResults";
 
 /* Layouts */
@@ -29,6 +29,11 @@ import Profile from "../pages/user-settings/Profile";
 import Security from "../pages/user-settings/Security";
 import Setting_Notifications from "../pages/user-settings/Notifications";
 
+/* Owner Dashboard */
+import OwnerDashboard from "../pages/owner/Ownerdashboard";
+// import DashboardHome from "../components/owner/Dashboardhome";
+import MessagesBookings from "../components/owner/Messages";
+
 export default function AppRoutes() {
   return (
     <Routes>
@@ -55,7 +60,18 @@ export default function AppRoutes() {
           <Route path="profile" element={<Profile />} />
           <Route path="security" element={<Security />} />
           <Route path="notifications" element={<Setting_Notifications />} />
+          
+
         </Route>
+      </Route>
+
+     {/* ================= Owner Dashboard ================= */}  
+      <Route path="/owner-dashboard" element={<OwnerDashboard />}>
+        {/* <Route index element={<DashboardHome />} /> */}
+        <Route path="messages" element={<MessagesBookings />} />
+        <Route path="dashboard" element={<div>Dashboard</div>} />
+        <Route path="properties" element={<div>My Properties</div>} />
+        <Route path="settings" element={<div>Settings</div>} />
       </Route>
 
       {/* ================= Not Found ================= */}
