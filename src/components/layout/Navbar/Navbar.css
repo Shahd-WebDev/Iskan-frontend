@@ -169,6 +169,24 @@
   cursor: pointer;
 }
 
+/* Dashboard variant  */
+.iskan-back-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #364153;
+  text-decoration: none;
+  transition: color 0.15s;
+  flex: 1;                 
+  justify-content: flex-end; 
+  margin-right: 16px;
+}
+ 
+.iskan-back-link:hover {
+  color: #1565d8;
+}
 /* ================= Tablet ================= */
 @media (max-width: 992px) {
 
