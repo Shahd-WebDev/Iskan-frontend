@@ -31,8 +31,8 @@ import Setting_Notifications from "../pages/user-settings/Notifications";
 
 /* Owner Dashboard */
 import OwnerDashboard from "../pages/owner/Ownerdashboard";
-// import DashboardHome from "../components/owner/Dashboardhome";
-import MessagesBookings from "../components/owner/Messages";
+import Messages from "../components/owner/Messages";
+
 
 export default function AppRoutes() {
   return (
@@ -67,10 +67,9 @@ export default function AppRoutes() {
 
      {/* ================= Owner Dashboard ================= */}  
       <Route path="/owner-dashboard" element={<OwnerDashboard />}>
-        {/* <Route index element={<DashboardHome />} /> */}
-        <Route path="messages" element={<MessagesBookings />} />
         <Route path="dashboard" element={<div>Dashboard</div>} />
         <Route path="properties" element={<div>My Properties</div>} />
+        <Route path="messages" element={<Messages />} />
         <Route path="settings" element={<div>Settings</div>} />
       </Route>
 

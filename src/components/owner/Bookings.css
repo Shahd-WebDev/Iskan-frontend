@@ -1,0 +1,239 @@
+/* ═══════════════════════════════════════════
+   Bookings Component
+═══════════════════════════════════════════ */
+
+.bk-page {
+  max-width: 860px;
+}
+
+/* ── Filter pills ── */
+.bk-filter-pills {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.bk-pill {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 10px;
+  border: 0.8px solid #F5FAFF;
+  background: #F5FAFF;
+  font-size: 13px;
+  font-weight: 500;
+  color: #333333;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.bk-pill:hover {
+  background: #e0f0ff;
+  color: #0088FF;
+}
+
+.bk-pill--active {
+  background: #0088FF;
+  color: #fff;
+  border-color: #0088FF;
+}
+
+.bk-pill-count {
+  background: #e0ecff;
+  color: #0088FF;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 99px;
+  min-width: 20px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  transition: all 0.15s;
+}
+
+.bk-pill-count--active {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+.bk-pill-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #f59e0b;
+  flex-shrink: 0;
+}
+
+/* ── Cards list ── */
+.bk-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bk-card {
+  background: #F5FAFF;
+  border-radius: 14px;
+  padding: 22px 24px;
+  border: 0.8px solid #EBF4FF;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── Card header ── */
+.bk-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bk-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bk-card-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.bk-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: #000;
+}
+
+.bk-property {
+  font-size: 13px;
+  color: #666666;
+}
+
+/* ── Status badges ── */
+.bk-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 14px;
+  border-radius: 99px;
+  flex-shrink: 0;
+}
+
+.bk-badge--approved {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.bk-badge--rejected {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* ── Date grid ── */
+.bk-dates {
+  display: flex;
+  gap: 150px;
+}
+
+.bk-date-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.bk-date-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #7F7F80;
+  font-weight: 400;
+}
+
+.bk-date-label svg {
+  color: #aab4be;
+  flex-shrink: 0;
+}
+
+.bk-date-val {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
+}
+
+/* ── Requested row ── */
+.bk-requested {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  color: #7F7F80;
+}
+
+.bk-requested svg {
+  color: #aab4be;
+  flex-shrink: 0;
+}
+
+/* ── Action buttons ── */
+.bk-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.bk-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 20px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.bk-btn:active {
+  transform: scale(0.98);
+}
+
+.bk-btn--accept {
+  background: #22c55e;
+  color: #fff;
+}
+
+.bk-btn--accept:hover {
+  opacity: 0.88;
+}
+
+.bk-btn--reject {
+  background: #ef4444;
+  color: #fff;
+}
+
+.bk-btn--reject:hover {
+  opacity: 0.88;
+}
