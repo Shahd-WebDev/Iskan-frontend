@@ -1,12 +1,12 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { LayoutDashboard, Building2, MessageSquare, Settings } from "lucide-react";
+import { Home, Building2, MessageSquare, Settings } from "lucide-react";
 
 import Navbar from "../../components/layout/Navbar/Navbar";
 import Footer from "../../components/layout/Footer/Footer";
 import "./Ownerdashboard.css";
 
 const NAV_ITEMS = [
-  { to: "/owner-dashboard/dashboard",  label: "Dashboard",           icon: LayoutDashboard },
+  { to: "/owner-dashboard/dashboard",  label: "Dashboard",           icon: Home },
   { to: "/owner-dashboard/properties", label: "My Properties",       icon: Building2       },
   { to: "/owner-dashboard/messages",   label: "Messages & Bookings", icon: MessageSquare },
   { to: "/owner-dashboard/settings",   label: "Settings",            icon: Settings        },
