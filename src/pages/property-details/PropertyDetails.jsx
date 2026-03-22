@@ -119,6 +119,7 @@ onLocationClick={() => setShowMap(prev => !prev)}
           setBookingStatus(BOOKING_STATUS.PENDING);
           setShowBooking(false);
         }}
+        propertyTitle={property.title}
       />
     </>
   );
