@@ -1,0 +1,184 @@
+.dashboard{
+  flex:1;
+  padding:40px;
+}
+
+/* container */
+
+.dashboard-content{
+  max-width:1074px;
+  margin:0 auto;
+  background:#F0F8FF;
+  padding:32px;
+  border-radius:10px;
+}
+
+/* title */
+
+.dashboard-title{
+  font-size:22px;
+  font-weight:600;
+  text-align:center;
+}
+
+.dashboard-subtitle{
+  text-align:center;
+  color:#6B7280;
+  font-size:14px;
+  margin-bottom:24px;
+}
+
+/* stats */
+
+.stats-container{
+  display:flex;
+  gap:24px;
+  margin-bottom:24px;
+}
+
+.stat-card{
+  flex:1;
+  background:white;
+  border:0.7px solid #0088FF;
+  border-radius:10px;
+  padding:16px;
+  height: 177px;
+
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.stat-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.icon{
+  width:48px;
+  height:48px;
+  background:#EAF4FF;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.icon svg{
+  color:#0088FF;
+}
+
+/* percentage */
+
+.increase{
+  color:#22C55E;
+  font-size:14px;
+  font-weight:400;
+  height: 20px;
+  margin-top: -1.33px;
+}
+
+/* text */
+
+.stat-card p{
+  font-size:14px;
+  color: #000000;
+  font-weight: 400px;
+}
+
+.stat-card h3{
+  font-size:30px;
+  font-weight:400;
+  font-style:normal;
+  color: #000;
+}
+
+/* chart */
+
+.chart-box{
+  background:white;
+  border:0.7px solid #0088FF;
+  border-radius:10px;
+  padding:24px;
+  margin-bottom:24px;
+
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+.chart-title{
+  font-size:14px;
+  font-weight:400;
+  line-height:20px;
+  color:#A1A1A1;
+
+  margin-bottom:8px;
+}
+/* activity */
+
+.activity-box{
+  background:white;
+  border:0.7px solid #0088FF;
+  border-radius:10px;
+  padding:20px;
+}
+
+.activity-title{
+  color:#0088FF;
+  font-weight:600;
+  font-size:14px;
+}
+
+.activity-sub{
+  color:#6B7280;
+  font-size:12px;
+  margin-bottom:16px;
+}
+
+.activity-item{
+  display:flex;
+  gap:10px;
+  margin-bottom:14px;
+}
+
+.activity-icon{
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.activity-icon svg{
+  stroke-width:2;
+}
+
+/* colors */
+
+.blue{
+  background:#EAF4FF;
+  color:#0088FF;
+}
+
+.green{
+  background:#E8F8F0;
+  color:#22C55E;
+}
+
+.red{
+  background:#FEE2E2;
+  color:#EF4444;
+}
+
+.activity-text p{
+  margin:0;
+  font-size:14px;
+}
+
+.activity-text span{
+  font-size:12px;
+  color:#6B7280;
+}
