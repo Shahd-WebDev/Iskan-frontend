@@ -358,7 +358,32 @@ input:checked + .slider:before {
   font-weight: 500;
   margin-left: 10px;
 }
+.verifiedBox {
+  padding: 14px 16px;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  margin-top: 8px;
+}
 
+.verifiedIcon {
+  margin-right: 6px;
+}
+
+.verifiedTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #16a34a;
+  margin: 0 0 4px 0;
+  display: flex;
+  align-items: center;
+}
+
+.verifiedSubtitle {
+  font-size: 13px;
+  color: #16a34a;
+  margin: 0;
+}
 /* ================= Responsive ================= */
 @media (max-width: 768px) {
   .row {

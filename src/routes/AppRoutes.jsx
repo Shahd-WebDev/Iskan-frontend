@@ -1,4 +1,4 @@
-import { Routes, Route  } from "react-router-dom";
+import { Routes, Route, Navigate  } from "react-router-dom";
 import SearchResult from "../pages/SearchResults/SearchResults";
 
 /* Layouts */
@@ -50,27 +50,28 @@ export default function AppRoutes() {
         <Route path="/properties" element={<Properties />} />
         <Route path="/properties/:id" element={<PropertyDetails />} />
         <Route path="/faqs" element={<FAQs />} />
-
         <Route path="/saved" element={<SavedProperties />} />
         <Route path="/search" element={<SearchResult />} />
-
         <Route path="/notifications" element={<Notifications />} />
 
         <Route path="settings" element={<SettingsLayout />}>
           <Route path="profile" element={<Profile />} />
           <Route path="security" element={<Security />} />
           <Route path="notifications" element={<Setting_Notifications />} />
-          
-
         </Route>
       </Route>
 
-     {/* ================= Owner Dashboard ================= */}  
+      {/* ================= Owner Dashboard ================= */}
       <Route path="/owner-dashboard" element={<OwnerDashboard />}>
         <Route path="dashboard" element={<div>Dashboard</div>} />
         <Route path="properties" element={<div>My Properties</div>} />
         <Route path="messages" element={<Messages />} />
-        <Route path="settings" element={<div>Settings</div>} />
+        <Route path="settings" element={<SettingsLayout />}>
+          <Route index element={<Navigate to="profile" replace />} />
+          <Route path="profile" element={<Profile showSuccessMessage={true} />} />
+          <Route path="security" element={<Security />} />
+          <Route path="notifications" element={<Setting_Notifications />} />
+        </Route>
       </Route>
 
       {/* ================= Not Found ================= */}
