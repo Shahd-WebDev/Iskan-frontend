@@ -13,7 +13,8 @@
 /* grid wrapper */
 .properties-grid {
   width: 100%;
-  
+  max-width: 1200px;
+  margin: 0 auto; 
 }
 
 /* pagination */
@@ -142,4 +143,7 @@
   .saved-grid{
     grid-template-columns: 1fr;
   }
+}
+.verified-btn {
+  background-color: #22c55e; /* أخضر */
 }

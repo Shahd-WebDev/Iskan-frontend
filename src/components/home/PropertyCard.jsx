@@ -15,13 +15,20 @@ const amenityConfig = {
   TV:      { icon: Tv,              label: "TV" },
 };
 
-function PropertyCard({ property, onBookmarkChange }) {
-  const navigate = useNavigate();
+function PropertyCard({ property, onBookmarkChange, isAdmin = false ,isVerification = false  }) {
+    const navigate = useNavigate();
 
  
   const handleViewDetails = () => {
 
-    navigate(`/properties/${property.id}`);
+    if (isVerification) {
+    return;}
+    
+    navigate(
+  isAdmin
+    ? `/admin/property/${property.id}`
+    : `/properties/${property.id}`
+);
   };
 
   const amenities = property.amenities || [];
@@ -36,6 +43,8 @@ const isBookmarked = savedProperties.some(
     <div className="property-card overflow-hidden  w-100 h-100 position-relative  d-flex  flex-column">
       <div className="property-image-wrapper position-relative overflow-hidden">
         <img src={property.image} alt={property.title} className="property-image w-100 h-100 object-fit-cover" />
+        
+        {!isAdmin && (
         <button
           className={`bookmark-btn position-absolute bg-white border-0  rounded-circle d-flex align-items-center  justify-content-center  ${isBookmarked ? "bookmarked" : ""}`}
 onClick={(e) => {
@@ -49,6 +58,8 @@ onClick={(e) => {
             strokeWidth={2}
           />
         </button>
+        )}
+
       </div>
 
       <div className="property-content px-3 d-flex flex-column flex-grow-1">
@@ -89,8 +100,17 @@ onClick={(e) => {
           </div>
         </div>
 
-        <button className="view-details-btn w-100 text-white border-0  mt-auto " onClick={handleViewDetails}>
-          View Details
+        <button className={`view-details-btn w-100 text-white border-0 mt-auto ${
+  isVerification ? "verified-btn" : ""
+}`}
+ onClick={handleViewDetails}>
+{
+  isVerification
+    ? "Verified"
+    : isAdmin
+    ? "View AI Details"
+    : "View Details"
+}
         </button>
       </div>
     </div>

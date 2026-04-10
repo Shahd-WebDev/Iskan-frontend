@@ -5,6 +5,18 @@ import SearchResult from "../pages/SearchResults/SearchResults";
 import Layout from "../components/layout/Layout";
 import AuthLayout from "../components/AuthLayout/AuthLayout";
 
+/* Admin Layout */
+import AdminLayout from "../components/layout/AdminLayout/AdminLayout";
+
+/* Admin Pages */
+import Dashboard from "../pages/admin/Dashboard/Dashboard";
+import PropertyListings from "../pages/admin/PropertyListings/PropertyListings";
+import PropertyVerification from "../pages/admin/PropertyVerification/PropertyVerification";
+import PropertyAIDetails from "../pages/admin/PropertyAIDetails/PropertyAIDetails";
+import Users from "../pages/admin/Users/Users";
+import Reports from "../pages/admin/Reports/Reports";
+import AdminNotifications from "../pages/admin/AdminNotifications/AdminNotifications";
+
 /* Main Pages */
 import Home from "../pages/Home/Home";
 import Properties from "../pages/properties/Properties";
@@ -59,6 +71,16 @@ export default function AppRoutes() {
           <Route path="security" element={<Security />} />
           <Route path="notifications" element={<Setting_Notifications />} />
         </Route>
+        {/* ================= Admin Dashboard ================= */}
+<Route path="admin" element={<AdminLayout />}>
+  <Route path="dashboard" element={<Dashboard />} />
+  <Route path="properties" element={<PropertyListings />} />
+  <Route path="verification" element={<PropertyVerification />} />
+<Route path="property/:id" element={<PropertyAIDetails />} />
+  <Route path="users" element={<Users />} />
+  <Route path="reports" element={<Reports />} />
+  <Route path="notifications" element={<AdminNotifications />} />
+</Route>
       </Route>
 
       {/* ================= Owner Dashboard ================= */}

@@ -1,6 +1,6 @@
 import SearchBar from "../../components/home/SearchBar";
 import FiltersRow from "../../components/home/FiltersRow";
-import PropertyCard from "../../components/home/propertyCard";
+import PropertyCard from "../../components/home/PropertyCard";
 import { allProperties } from "../../components/data/PropertiesData";
 import PaginationControls from "../../components/Pagination/Pagination";
 import { useState, useMemo, useCallback } from "react";
@@ -61,8 +61,8 @@ export default function Properties() {
       </div>
 
       <div className="properties-grid">
-        <div className="d-flex flex-wrap gap-4">
-          {currentProperties.map((property) => (
+<div className="d-flex flex-wrap justify-content-center gap-4">
+            {currentProperties.map((property) => (
             <div key={property.id} style={{ width: "270px" }}>
               <PropertyCard property={property} />
             </div>

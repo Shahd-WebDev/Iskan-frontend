@@ -1,0 +1,39 @@
+.property-verification {
+  padding: 20px;
+}
+
+/* search */
+.top-bar {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+/* match grid width */
+.top-bar form {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* keep override consistent */
+.property-verification .search-bar {
+  width: 100% !important;
+  padding: 0 20px !important;
+  box-sizing: border-box;
+}
+
+.property-verification .search-btn {
+  right: 30px !important;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* grid */
+.verification-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+
+  max-width: 1200px;
+  margin: 0 auto;
+}

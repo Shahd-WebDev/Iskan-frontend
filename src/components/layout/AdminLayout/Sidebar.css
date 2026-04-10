@@ -1,0 +1,89 @@
+.admin-sidebar{
+  width:300px;
+  min-height:100vh;
+
+  background:#F0F8FF;
+  border-right:1px solid #F5FAFF;
+
+  display:flex;
+  flex-direction:column;
+
+  border-radius:16px; /* الحواف المدورة */
+}
+
+/* navigation container */
+
+.sidebar-container{
+  padding:24px;
+}
+
+/* navigation */
+
+.sidebar-navigation{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+/* navigation items */
+
+.sidebar-item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+
+  height:40px;
+  padding:8px 12px;
+
+  font-family:Arial;
+  font-size:16px;
+  font-weight:400;
+  line-height:24px;
+
+  color:#000000;
+  text-decoration:none;
+
+  border-radius:10px;
+}
+
+/* active item */
+
+.sidebar-item.active{
+  background:#0088FF;
+  color:white;
+}
+
+.sidebar-item.active svg{
+  stroke:white;
+}
+
+/* admin section */
+
+.sidebar-admin{
+  border-top:1px solid #0088FF;
+
+  padding:24px;
+
+  display:flex;
+  align-items:center;
+  gap:12px;
+
+  margin-top:60px;
+}
+
+.sidebar-admin p{
+  margin:0;
+
+  font-family:Arial;
+  font-size:16px;
+  font-weight:400;
+  line-height:24px;
+
+  color:#000000;
+}
+
+.sidebar-admin span{
+  font-family:Arial;
+  font-size:12px;
+  color:#000000;
+}
