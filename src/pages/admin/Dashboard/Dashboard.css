@@ -71,12 +71,17 @@
 
 /* percentage */
 
-.increase{
-  color:#22C55E;
-  font-size:14px;
-  font-weight:400;
-  height: 20px;
-  margin-top: -1.33px;
+.increase {
+  display: flex;
+  align-items: center;
+  gap: 4px;                    /* مسافة بين السهم والنسبة */
+  color: #22C55E;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.increase svg {
+  color: #22C55E;
 }
 
 /* text */
@@ -96,89 +101,122 @@
 
 /* chart */
 
-.chart-box{
-  background:white;
-  border:0.7px solid #0088FF;
-  border-radius:10px;
-  padding:24px;
-  margin-bottom:24px;
-
-  display:flex;
-  flex-direction:column;
-  gap:16px;
+.chart-box {
+  background: white;
+  border: 0.7px solid #0088FF;
+  border-radius: 12px;
+  padding: 28px 32px;
+  box-shadow: 0 4px 15px rgba(0, 136, 255, 0.06);
+  margin-bottom: 32px;
 }
 
-.chart-title{
-  font-size:14px;
-  font-weight:400;
-  line-height:20px;
-  color:#A1A1A1;
-
-  margin-bottom:8px;
+.chart-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: #64748B;
+  margin-bottom: 20px;
 }
 /* activity */
 
-.activity-box{
-  background:white;
-  border:0.7px solid #0088FF;
-  border-radius:10px;
-  padding:20px;
+/* ==================== ACTIVITY BOX ==================== */
+.activity-box {
+  background: white;
+  border: 0.67px solid #0088FF;
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin-top: 8px;
 }
 
-.activity-title{
-  color:#0088FF;
-  font-weight:600;
-  font-size:14px;
+.activity-title {
+  color: #0088FF;           /* أزرق غامق زي الصورة */
+  font-weight: 600;
+  font-size: 15.5px;
+  margin-bottom: 4px;
 }
 
-.activity-sub{
-  color:#6B7280;
-  font-size:12px;
-  margin-bottom:16px;
+.activity-sub {
+  color: #000000;
+  font-size: 14px;
+  margin-bottom: 20px;
+  font-weight: 400;
 }
 
-.activity-item{
-  display:flex;
-  gap:10px;
-  margin-bottom:14px;
+/* Activity Item */
+.activity-item {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 18px;
+  align-items: flex-start;
 }
 
-.activity-icon{
-  width:28px;
-  height:28px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+.activity-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
 }
 
-.activity-icon svg{
-  stroke-width:2;
+.activity-icon svg {
+  stroke-width: 2.2;
 }
 
-/* colors */
-
-.blue{
-  background:#EAF4FF;
-  color:#0088FF;
+/* Colors for icons */
+.blue {
+  background: #EAF4FF;
+  color: #0088FF;
+}
+.green {
+  background: #E8F8F0;
+  color: #22C55E;
+}
+.red {
+  background: #FEE2E2;
+  color: #EF4444;
 }
 
-.green{
-  background:#E8F8F0;
-  color:#22C55E;
+/* Text Content */
+.activity-text {
+  flex: 1;
+  line-height: 1.4;
 }
 
-.red{
-  background:#FEE2E2;
-  color:#EF4444;
+.activity-text .title {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: #0088FF;           
 }
 
-.activity-text p{
-  margin:0;
-  font-size:14px;
+.activity-text .description {
+  margin: 2px 0 0 0;
+  font-size: 13.5px;
+  color: #374151;
 }
 
-.activity-text span{
-  font-size:12px;
-  color:#6B7280;
+.activity-text .time {
+  font-size: 12.5px;
+  color: #EF4444;           /* أحمر زي الصورة */
+  margin-top: 4px;
+  display: block;
+}
+
+/* View All */
+.view-all-activity {
+  text-align: center;
+  margin-top: 16px;
+}
+
+.view-all-link {
+  color: #0088FF;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.view-all-link:hover {
+  text-decoration: underline;
 }

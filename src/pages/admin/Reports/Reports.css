@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap');
+
+.reports-page {
+  padding: 32px 40px;
+  background-color: #F0F8FF;
+  font-family: 'Urbanist', sans-serif;
+}
+
+.reports-page h2 {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: #333333;
+  margin: 0 0 6px 0;
+}
+
+.reports-page .subtitle {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+  color: #888888;
+  margin: 0 0 24px 0;
+}
+
+.reports-card {
+  background: #ffffff;
+  border: 0.67px solid #0088FF;
+  border-radius: 12px;
+  padding: 0px;
+}
+
+.reports-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333333;
+  margin: 0 0 8px 0;
+  font-family: 'Urbanist', sans-serif;
+  padding: 16px 24px 8px;}
+
+.reports-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.report-item {
+  display: flex;
+  align-items: center;
+  padding: 14px 24px;
+  border-top: 0.67px solid rgba(0, 136, 255, 0.2);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.report-item:hover {
+  background: rgba(0, 136, 255, 0.04);
+  border-radius: 0px;
+}
+
+.report-info {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex: 1;
+}
+
+.report-info img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.report-info h5 {
+  margin: 0 0 2px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333333;
+  font-family: 'Urbanist', sans-serif;
+}
+
+.report-info p {
+  margin: 0 0 4px 0;
+  font-size: 12px;
+  color: #888888;
+  font-family: 'Urbanist', sans-serif;
+}
+
+.time {
+  font-size: 12px;
+  color: #999999;
+  font-family: 'Urbanist', sans-serif;
+  flex-shrink: 0;
+    margin-right: 400px;
+}
+
+.priority {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-family: 'Urbanist', sans-serif;
+}
+
+.high   { background: rgba(251, 44, 54, 0.10); color: #FB2C36; }
+.medium { background: rgba(255, 152, 0, 0.10);  color: #FF9800; }
+.low    { background: rgba(0, 136, 255, 0.10);  color: #0088FF; }

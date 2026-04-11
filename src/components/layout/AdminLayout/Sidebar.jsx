@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   Home,
@@ -12,6 +12,8 @@ import {
 import "./Sidebar.css";
 
 export default function Sidebar() {
+  const { pathname } = useLocation(); // 👈 مهم
+
   return (
     <div className="admin-sidebar">
 
@@ -21,7 +23,7 @@ export default function Sidebar() {
 
           <NavLink 
             to="/admin/dashboard"
-            className={({isActive}) => 
+            className={({ isActive }) => 
               isActive ? "sidebar-item active" : "sidebar-item"
             }
           >
@@ -29,10 +31,14 @@ export default function Sidebar() {
             <span>Dashboard</span>
           </NavLink>
 
+          {/* ✅ التعديل هنا */}
           <NavLink 
             to="/admin/properties"
-            className={({isActive}) => 
-              isActive ? "sidebar-item active" : "sidebar-item"
+            className={() =>
+              pathname.startsWith("/admin/properties") ||
+              pathname.startsWith("/admin/property")
+                ? "sidebar-item active"
+                : "sidebar-item"
             }
           >
             <Home size={20}/>
@@ -41,7 +47,7 @@ export default function Sidebar() {
 
           <NavLink 
             to="/admin/verification"
-            className={({isActive}) => 
+            className={({ isActive }) => 
               isActive ? "sidebar-item active" : "sidebar-item"
             }
           >
@@ -51,7 +57,7 @@ export default function Sidebar() {
 
           <NavLink 
             to="/admin/users"
-            className={({isActive}) => 
+            className={({ isActive }) => 
               isActive ? "sidebar-item active" : "sidebar-item"
             }
           >
@@ -61,7 +67,7 @@ export default function Sidebar() {
 
           <NavLink 
             to="/admin/reports"
-            className={({isActive}) => 
+            className={({ isActive }) => 
               isActive ? "sidebar-item active" : "sidebar-item"
             }
           >
@@ -71,7 +77,7 @@ export default function Sidebar() {
 
           <NavLink 
             to="/admin/notifications"
-            className={({isActive}) => 
+            className={({ isActive }) => 
               isActive ? "sidebar-item active" : "sidebar-item"
             }
           >
@@ -85,7 +91,6 @@ export default function Sidebar() {
 
       <div className="sidebar-admin">
         <User size={20}/>
-
         <div>
           <p>Admin</p>
           <span>admin@iskan.com</span>

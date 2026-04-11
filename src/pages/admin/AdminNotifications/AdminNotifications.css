@@ -1,0 +1,223 @@
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap');
+
+.page-wrapper {
+  background-color: #F0F8FF;
+  font-family: 'Urbanist', sans-serif;
+  padding: 40px 16px;
+}
+
+.notifications-inner {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  background-color: #F0F8FF;
+  border-radius: 10px;
+  padding: 32px 40px;
+  box-sizing: border-box;
+}
+
+/* Header */
+.notif-header {
+  text-align: center;
+  margin-bottom: 32px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.notif-header h5 {
+  margin: 0;
+  font-weight: 700;
+  font-size: 18px;
+  color: #333333;
+  font-family: 'Urbanist', sans-serif;
+}
+
+.notif-header p {
+  margin: 4px 0 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333333;
+  line-height: 24px;
+  font-family: 'Urbanist', sans-serif;
+}
+
+/* Mark all as read - كل الحواف ملونة */
+.mark-all-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 132.67px;
+  height: 41.32px;
+  border-radius: 10px;
+  border: 0.67px solid #0088FF;
+  font-size: 13px;
+  padding: 8px 16px;
+  background: #FFFFFF;
+  cursor: pointer;
+  color: #333333;
+  font-family: 'Urbanist', sans-serif;
+  font-weight: 500;
+  box-sizing: border-box;
+}
+
+.mark-all-btn:hover {
+  background: #f0f7ff;
+}
+
+/* Section */
+.section-block {
+  margin-bottom: 10px;
+}
+
+p.section-title {
+  font-size: 14px ;
+  font-weight: 600;
+  color: #333333;
+  margin: 0px;
+    font-family: 'Urbanist', sans-serif;
+  line-height: 20px;
+}
+.section-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: -20px;
+}
+
+/* Card container */
+.notification-container {
+  position: relative;
+  width: 100%;
+  height: 100px;
+  border-radius: 10px;
+  border: 0.67px solid #0088FF;
+  background: #FFFFFF;
+  box-sizing: border-box;
+    margin-top: 0;
+}
+
+/* النقطة الزرقاء على الكونتينر نفسه - يسار في المنتصف */
+.notification-container.unread::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #0088FF;
+  z-index: 1;
+}
+
+/* Card */
+.notification-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: 0 24px;
+  box-sizing: border-box;
+}
+
+.card-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  overflow: hidden;
+}
+
+/* Icon box - دائري */
+.icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon-box.critical     { background: rgba(251, 44, 54, 0.20);  color: #FB2C36; }
+.icon-box.property     { background: rgba(0, 136, 255, 0.20);  color: #0088FF; }
+.icon-box.warning      { background: rgba(251, 44, 54, 0.20);  color: #FB2C36; }
+.icon-box.registration { background: rgba(40, 167, 69, 0.20);  color: #28a745; }
+.icon-box.system       { background: rgba(255, 193, 7, 0.20);  color: #ffc107; }
+
+/* Text content */
+.text-content {
+  overflow: hidden;
+}
+
+.text-content .title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 800px;
+  font-family: 'Urbanist', sans-serif;
+  line-height: 20px;
+}
+
+.text-content .subtitle {
+  margin: 2px 0 3px;
+  font-size: 13px;
+  font-weight: 400;
+  color: #666666;
+  font-family: 'Urbanist', sans-serif;
+}
+
+.text-content .time {
+  font-size: 12px;
+  font-weight: 400;
+  color: #999999;
+  font-family: 'Urbanist', sans-serif;
+}
+
+/* Menu button */
+.menu-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #cccccc;
+  padding: 4px;
+  flex-shrink: 0;
+}
+
+.menu-btn:hover {
+  color: #999999;
+}
+
+
+.menu-wrapper {
+  position: relative;
+}
+
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: 30px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  width: 140px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+.dropdown p {
+  margin: 0;
+  padding: 10px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.dropdown p:hover {
+  background: #f5f7fb;
+}
