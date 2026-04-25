@@ -140,9 +140,11 @@ import ProfileMenu from "../../ProfileMenu/ProfileMenu";
 import { Menu, X, ChevronLeft } from "lucide-react";
 import { useState, useEffect } from "react";
 
+import { useSignIn } from "../../../context/SignInContext";
 import "./Navbar.css";
 
 export default function Navbar({ variant }) {
+  const { role } = useSignIn();
   const [openMobile, setOpenMobile] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showTopBar, setShowTopBar] = useState(true);
@@ -197,32 +199,31 @@ export default function Navbar({ variant }) {
             /* ── Normal variant: الـ links العادية ── */
             <ul className="iskan-links">
               <li>
-                <NavLink
-                  to="/"
-                  className={({ isActive }) =>
-                    isActive ? "nav-item-link active-link" : "nav-item-link"
-                  }
-                >
+                <NavLink to="/" className={({ isActive }) => isActive ? "nav-item-link active-link" : "nav-item-link"}>
                   Home
                 </NavLink>
               </li>
               <li>
-                <NavLink
-                  to="/properties"
-                  className={({ isActive }) =>
-                    isActive ? "nav-item-link active-link" : "nav-item-link"
-                  }
-                >
+                <NavLink to="/properties" className={({ isActive }) => isActive ? "nav-item-link active-link" : "nav-item-link"}>
                   Properties
                 </NavLink>
               </li>
+              {role === "student" && (
+                <li>
+                  <NavLink to="/bookings" className={({ isActive }) => isActive ? "nav-item-link active-link" : "nav-item-link"}>
+                    My Bookings
+                  </NavLink>
+                </li>
+              )}
+              {role === "owner" && (
+                <li>
+                  <NavLink to="/owner-dashboard/dashboard" className={({ isActive }) => isActive ? "nav-item-link active-link" : "nav-item-link"}>
+                    Dashboard
+                  </NavLink>
+                </li>
+              )}
               <li>
-                <NavLink
-                  to="/faqs"
-                  className={({ isActive }) =>
-                    isActive ? "nav-item-link active-link" : "nav-item-link"
-                  }
-                >
+                <NavLink to="/faqs" className={({ isActive }) => isActive ? "nav-item-link active-link" : "nav-item-link"}>
                   FAQ's
                 </NavLink>
               </li>
@@ -248,15 +249,11 @@ export default function Navbar({ variant }) {
         {/* Mobile Dropdown — بس في الـ normal variant */}
         {!isDashboard && openMobile && (
           <div className="mobile-dropdown">
-            <NavLink to="/" className="mobile-link" onClick={() => setOpenMobile(false)}>
-              Home
-            </NavLink>
-            <NavLink to="/properties" className="mobile-link" onClick={() => setOpenMobile(false)}>
-              Properties
-            </NavLink>
-            <NavLink to="/faqs" className="mobile-link" onClick={() => setOpenMobile(false)}>
-              FAQ's
-            </NavLink>
+            <NavLink to="/" className="mobile-link" onClick={() => setOpenMobile(false)}>Home</NavLink>
+            <NavLink to="/properties" className="mobile-link" onClick={() => setOpenMobile(false)}>Properties</NavLink>
+            {role === "student" && <NavLink to="/bookings" className="mobile-link" onClick={() => setOpenMobile(false)}>My Bookings</NavLink>}
+            {role === "owner" && <NavLink to="/owner-dashboard/dashboard" className="mobile-link" onClick={() => setOpenMobile(false)}>Dashboard</NavLink>}
+            <NavLink to="/faqs" className="mobile-link" onClick={() => setOpenMobile(false)}>FAQ's</NavLink>
           </div>
         )}
       </nav>

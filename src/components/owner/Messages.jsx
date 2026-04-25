@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import {
   MessageSquare,
   CalendarDays,
@@ -76,7 +77,8 @@ function StarRating({ rating }) {
 }
 
 export default function Messages() {
-  const [tab, setTab] = useState("messages");
+  const location = useLocation();
+  const [tab, setTab] = useState(location.state?.tab || "messages");
   const [msgFilter, setMsgFilter] = useState("all");
   const [messages, setMessages] = useState(INITIAL_MESSAGES);
   const [replyDrafts, setReplyDrafts] = useState({});
