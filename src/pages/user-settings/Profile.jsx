@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import styles from "./settings.module.css";
-import { Camera } from "lucide-react";
+import { Camera, CheckCircle } from "lucide-react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { useValidation } from "../../components/context/ValidationContext";
 
-function Profile() {
+function Profile({ role = "student" }) {
   const { errors, validateField } = useValidation();
 
   const [formData, setFormData] = useState({
@@ -13,7 +13,10 @@ function Profile() {
     email: "",
     phone: "",
     department: "",
-    university: ""
+    university: "",
+    bio: "",
+    address: "",
+    city: ""
   });
 
   const [image, setImage] = useState(null);
@@ -146,39 +149,107 @@ function Profile() {
           {errors.phone && <span className={styles.error}>{errors.phone}</span>}
         </div>
 
-        {/* Department & University */}
-        <div className={styles.row}>
-          <div className={styles.formGroup}>
-            <label>Department</label>
-            <select
-              name="department"
-              value={formData.department}
-              onChange={handleChange}
-            >
-              <option value="">Select Department</option>
-              {departments.map((dep, index) => (
-                <option key={index} value={dep}>{dep}</option>
-              ))}
-            </select>
-            {errors.department && <span className={styles.error}>{errors.department}</span>}
-          </div>
+        {/* Role-Specific Fields */}
+        {role === "student" ? (
+          <div className={styles.row}>
+            <div className={styles.formGroup}>
+              <label>Department</label>
+              <select
+                name="department"
+                value={formData.department}
+                onChange={handleChange}
+              >
+                <option value="">Select Department</option>
+                {departments.map((dep, index) => (
+                  <option key={index} value={dep}>{dep}</option>
+                ))}
+              </select>
+              {errors.department && <span className={styles.error}>{errors.department}</span>}
+            </div>
 
-          <div className={styles.formGroup}>
-            <label>University</label>
-            <select
-              name="university"
-              value={formData.university}
-              onChange={handleChange}
-            >
-              <option value="">Select University</option>
-              {universities.map((uni, index) => (
-                <option key={index} value={uni}>{uni}</option>
-              ))}
-            </select>
-            {errors.university && <span className={styles.error}>{errors.university}</span>}
+            <div className={styles.formGroup}>
+              <label>University</label>
+              <select
+                name="university"
+                value={formData.university}
+                onChange={handleChange}
+              >
+                <option value="">Select University</option>
+                {universities.map((uni, index) => (
+                  <option key={index} value={uni}>{uni}</option>
+                ))}
+              </select>
+              {errors.university && <span className={styles.error}>{errors.university}</span>}
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Bio */}
+            <div className={styles.formGroup}>
+              <label>Bio</label>
+              <textarea
+                name="bio"
+                value={formData.bio}
+                onChange={handleChange}
+                placeholder="Write a short bio about yourself..."
+                style={{
+                  minHeight: "100px",
+                  background: "#F5FAFF",
+                  border: "1px solid #E2E8F0",
+                  borderRadius: "12px",
+                  padding: "16px 20px",
+                  fontSize: "14px",
+                  fontFamily: '"Urbanist", sans-serif',
+                  color: "#414141",
+                  outline: "none",
+                  resize: "vertical"
+                }}
+              />
+            </div>
+
+            {/* Address & City */}
+            <div className={styles.row}>
+              <div className={styles.formGroup}>
+                <label>Address</label>
+                <input
+                  type="text"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  placeholder="Enter your address"
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>City</label>
+                <input
+                  type="text"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleChange}
+                  placeholder="Enter your city"
+                />
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Owner Verification Section */}
+      {role === "owner" && (
+        <div className={styles.verificationSection}>
+          <h4>Owner Verification</h4>
+          <p>Upload your government ID for account verification (one-time)</p>
+          
+          <div className={styles.verifiedBox}>
+            <div className={styles.verifiedHeader}>
+              <CheckCircle size={18} />
+              Account Verified
+            </div>
+            <p className={styles.verifiedText}>Your identity has been verified on Nov 15, 2024</p>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Buttons */}
       <div className={styles.actions}>

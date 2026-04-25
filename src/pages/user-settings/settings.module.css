@@ -370,3 +370,52 @@ input:checked + .slider:before {
     padding: 20px;
   }
 }
+
+/* ================= Owner Verification ================= */
+.verificationSection {
+  margin-top: 40px;
+  padding-top: 25px;
+  border-top: 1px solid #F0F8FF;
+}
+
+.verificationSection h4 {
+  font-family: "Urbanist", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1A202C;
+  margin: 0 0 8px 0;
+}
+
+.verificationSection p {
+  font-family: "Urbanist", sans-serif;
+  font-size: 14px;
+  color: #718096;
+  margin: 0 0 20px 0;
+}
+
+.verifiedBox {
+  background-color: #F0FFF4;
+  border: 1px solid #C6F6D5;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.verifiedHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #38A169;
+  font-weight: 600;
+  font-family: "Urbanist", sans-serif;
+  font-size: 15px;
+}
+
+.verifiedText {
+  color: #38A169;
+  font-size: 13px;
+  margin: 0;
+  padding-left: 28px;
+}

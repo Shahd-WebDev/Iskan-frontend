@@ -6,9 +6,12 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 import App from "./App.jsx";
 import "./index.css";
+import { SignInProvider } from "./context/SignInContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
-    <App />
+    <SignInProvider>
+      <App />
+    </SignInProvider>
   </BrowserRouter>
 );
