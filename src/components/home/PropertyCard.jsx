@@ -46,6 +46,7 @@ const isBookmarked = savedProperties.some(
         
         {!isAdmin && (
         <button
+        type="button"
           className={`bookmark-btn position-absolute bg-white border-0  rounded-circle d-flex align-items-center  justify-content-center  ${isBookmarked ? "bookmarked" : ""}`}
 onClick={(e) => {
   e.stopPropagation();
@@ -100,17 +101,19 @@ onClick={(e) => {
           </div>
         </div>
 
-        <button className={`view-details-btn w-100 text-white border-0 mt-auto ${
-  isVerification ? "verified-btn" : ""
-}`}
- onClick={handleViewDetails}>
-{
-  isVerification
-    ? "Verified"
-    : isAdmin
-    ? "View AI Details"
-    : "View Details"
-}
+        <button className={`view-details-btn w-100 text-white border-0 mt-auto 
+        type="button"
+        ${
+          isVerification ? "verified-btn" : ""
+        }`}
+        onClick={handleViewDetails}>
+        {
+          isVerification
+            ? "Verified"
+            : isAdmin
+            ? "View AI Details"
+            : "View Details"
+        }
         </button>
       </div>
     </div>
@@ -118,3 +121,4 @@ onClick={(e) => {
 }
 
 export default PropertyCard;
+
