@@ -320,9 +320,10 @@ margin-bottom: 32px;
   margin-bottom: 0.6rem;
 }
 .property-type-badge {
-  padding: 2px 9px;
-  border-radius: 11px;
+  padding: 3px 10px;
+  border-radius: 999px;
   font-size: 0.75rem;
+  background: transparent;
 }
 .badge-room {
   color: #34C759;

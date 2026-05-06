@@ -1,26 +1,90 @@
+import SkeletonCard from "../../../components/common/SkeletonCard";
+import { useEffect, useState, useMemo } from "react";
+import { 
+  getDashboardStats,
+  getBookingTrends,
+  getRecentActivity
+} from "../../../services/adminDashboard";
 import "./dashboard.css";
 import StatsCard from "../../../components/admin/StatsCard";
 import ActivityItem from "../../../components/admin/ActivityItem";
 import BookingTrendsChart from "../../../components/admin/BookingTrendsChart";
 import { Users, Home, DollarSign, CheckCircle, AlertCircle, UserPlus } from "lucide-react";
-
 function Dashboard() {
-  // بيانات الـ Chart (هتتغير لما تربط بالباك إند)
-  const chartData = [
-    { month: "Jan", bookings: 45 },
-    { month: "Feb", bookings: 52 },
-    { month: "Mar", bookings: 48 },
-    { month: "Apr", bookings: 67 },
-    { month: "May", bookings: 72 },
-    { month: "Jun", bookings: 80 },
-    { month: "Jul", bookings: 95 },
-    { month: "Aug", bookings: 90 },
-    { month: "Sep", bookings: 78 },
-    { month: "Oct", bookings: 85 },
-    { month: "Nov", bookings: 93 },
-    { month: "Dec", bookings: 100 },
-  ];
+   const [error, setError] = useState(null);
+  const [stats, setStats] = useState(null);
+  const [chartData, setChartData] = useState([]);
+  const [activities, setActivities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const sortedActivities = useMemo(
+  () => [...activities].reverse(),
+  [activities]
+);
+const [showAll, setShowAll] = useState(false);
+const displayedActivities = showAll 
+  ? sortedActivities 
+  : sortedActivities.slice(0, 6);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [statsData, trendsData, activityData] = await Promise.all([
+  getDashboardStats(),
+  getBookingTrends(),
+  getRecentActivity()
+]);
 
+        const formattedTrends = (trendsData || []).map(item => ({
+  month: item.month,
+  bookings: item.count
+}));
+        setStats(statsData);
+        setChartData(formattedTrends);
+setActivities(activityData || []);
+      } catch (error) {
+console.log("Dashboard error:", error);
+setError("Failed to load dashboard");      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  // 🔥 دي اللي بترجع الشكل الحلو (icons + colors)
+  const getActivityStyle = (type) => {
+  const t = type?.toLowerCase();
+
+  if (t?.includes("user")) {
+    return { icon: <UserPlus size={18} />, color: "blue" };
+  }
+
+  if (t?.includes("property") && t?.includes("pending")) {
+    return { icon: <AlertCircle size={18} />, color: "red" };
+  }
+
+  if (t?.includes("property")) {
+    return { icon: <Home size={18} />, color: "blue" };
+  }
+
+  if (t?.includes("booking")) {
+    return { icon: <CheckCircle size={18} />, color: "green" };
+  }
+
+  return { icon: <UserPlus size={18} />, color: "blue" };
+};
+
+if (loading) {
+  return (
+    <div className="listings-grid">
+      {Array(6)
+        .fill(0)
+        .map((_, i) => (
+          <SkeletonCard key={i} />
+        ))}
+    </div>
+  );
+}
+if (error) return <p>{error}</p>;
   return (
     <div className="dashboard">
       <div className="dashboard-content">
@@ -35,24 +99,24 @@ function Dashboard() {
           <StatsCard
             icon={<Users size={24} />}
             title="Total Users"
-            value="2,847"
-            increase="+12.5%"
+            value={stats?.totalUsers || 0}
+            increase={`+${stats?.totalUsersGrowth || 0}%`}
           />
           <StatsCard
             icon={<Home size={24} />}
             title="Pending Properties"
-            value="47"
-            increase="+8.2%"
+            value={stats?.pendingProperties || 0}
+            increase={`+${stats?.pendingPropertiesGrowth || 0}%`}
           />
           <StatsCard
             icon={<DollarSign size={24} />}
             title="Revenue"
-            value="£124,580"
-            increase="+23.1%"
+            value={stats?.revenue || 0}
+            increase={`+${stats?.revenueGrowth || 0}%`}
           />
         </div>
 
-        {/* Booking Trends Chart - استخدام الكومبوننت المنفصل */}
+        {/* Chart */}
         <BookingTrendsChart 
           data={chartData} 
           title="Booking trends over the past 12 months" 
@@ -63,51 +127,28 @@ function Dashboard() {
           <p className="activity-title">Recent Activity</p>
           <p className="activity-sub">Latest updates from your platform</p>
 
-          <ActivityItem
-            icon={<UserPlus size={18} />}
-            title="New user registered"
-            description="Sarah Johnson signed up"
-            time="2 min ago"
-            color="blue"
-          />
-          <ActivityItem
-            icon={<Home size={18} />}
-            title="New property listed"
-            description="3-bed apartment in Manchester"
-            time="15 min ago"
-            color="blue"
-          />
-          <ActivityItem
-            icon={<CheckCircle size={18} />}
-            title="Booking confirmed"
-            description="Edinburgh Student Flat"
-            time="1 hour ago"
-            color="green"
-          />
-          <ActivityItem
-            icon={<AlertCircle size={18} />}
-            title="Property pending review"
-            description="Birmingham Studio needs approval"
-            time="2 hours ago"
-            color="red"
-          />
-          <ActivityItem
-            icon={<UserPlus size={18} />}
-            title="New user registered"
-            description="Michael Chen signed up"
-            time="3 hours ago"
-            color="blue"
-          />
-          <ActivityItem
-            icon={<CheckCircle size={18} />}
-            title="Booking confirmed"
-            description="London Shared Room"
-            time="4 hours ago"
-            color="green"
-          />
+          {displayedActivities.map((item, index) => {
+  const style = getActivityStyle(item.type);
+
+  return (
+    <ActivityItem
+      key={index}
+      icon={style.icon}
+      title={item.title}
+      description={item.description}
+      time={item.timeAgo}
+      color={style.color}
+    />
+  );
+})}
 
           <div className="view-all-activity">
-            <a href="#" className="view-all-link">View All Activity</a>
+            <button 
+  className="view-all-link"
+  onClick={() => setShowAll(!showAll)}
+>
+  {showAll ? "Show Less" : "View All Activity"}
+</button>
           </div>
         </div>
 

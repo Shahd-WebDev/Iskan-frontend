@@ -1,10 +1,17 @@
+import { jwtDecode } from "jwt-decode";
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 const SignInContext = createContext();
 
 export const SignInProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [role, setRole] = useState("student"); // Default role
+ const [user, setUser] = useState(() => {
+  const storedUser = localStorage.getItem("user");
+  return storedUser ? JSON.parse(storedUser) : null;
+});
+
+const [role, setRole] = useState(() => {
+  return localStorage.getItem("userRole") || "Student";
+});
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
