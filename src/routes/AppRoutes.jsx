@@ -80,16 +80,19 @@ export default function AppRoutes() {
         </Route>
 
         {/* ================= Admin Dashboard ================= */}
-        <Route path="admin" element={<AdminLayout />}>
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="properties" element={<PropertyListings />} />
-          <Route path="verification" element={<PropertyVerification />} />
-          <Route path="property/:id" element={<PropertyAIDetails />} />
-          <Route path="users" element={<Users />} />
-          <Route path="reports" element={<Reports />} />
-          <Route path="notifications" element={<AdminNotifications />} />
-        </Route>
-      </Route>
+        <Route element={<SignInVerifyRole allowedRole="Admin" />}>
+  <Route path="admin" element={<AdminLayout />}>
+    <Route path="dashboard" element={<Dashboard />} />
+    <Route path="properties" element={<PropertyListings />} />
+    <Route path="verification" element={<PropertyVerification />} />
+    <Route path="property/:id" element={<PropertyAIDetails />} />
+    <Route path="users" element={<Users />} />
+    <Route path="reports" element={<Reports />} />
+    <Route path="notifications" element={<AdminNotifications />} />
+  </Route>
+</Route>
+
+</Route>
 
      {/* ================= Owner Dashboard ================= */}  
       <Route element={<SignInVerifyRole allowedRole="owner" />}>
@@ -112,4 +115,4 @@ export default function AppRoutes() {
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
-}
+}

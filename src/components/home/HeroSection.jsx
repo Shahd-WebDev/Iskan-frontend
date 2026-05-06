@@ -43,8 +43,8 @@ function HeroSection() {
   };
 
   return (
-    <section className="hero-section">
-      <div className="page-container">
+<section id="hero" className="hero-section">
+        <div className="page-container">
         <div className="hero-content">
           <h1 className="hero-title">Find Your Dream Property</h1>
           <p className="hero-description">
