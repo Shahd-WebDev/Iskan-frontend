@@ -1,25 +1,41 @@
+import SkeletonCard from "../../../components/common/SkeletonCard";
 import "./propertyListings.css";
 
-import PropertyCard from "../../../components/home/PropertyCard";
+import { useEffect, useState } from "react";
+import { getPendingProperties } from "../../../services/adminProperties";
+
+import AdminPropertyCard from "../../../components/admin/PropertyCard/AdminPropertyCard";
 import SearchBar from "../../../components/home/SearchBar";
 import PaginationControls from "../../../components/Pagination/Pagination";
-import { allProperties } from "../../../components/data/PropertiesData";
-
-import { useState } from "react";
 
 export default function PropertyListings() {
 
+  const [properties, setProperties] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const itemsPerPage = 9; // 👈 3 rows × 3 columns
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
 
-  const totalPages = Math.ceil(allProperties.length / itemsPerPage);
+        const data = await getPendingProperties(currentPage, 9);
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentData = allProperties.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
+        console.log("DATA:", data);
+
+        setProperties(data.data || []);
+        setTotalPages(Math.ceil(data.count / data.pageSize));
+
+      } catch (error) {
+        console.log("Error:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [currentPage]); // 👈 ده المهم
 
   return (
     <div className="property-listings">
@@ -31,9 +47,11 @@ export default function PropertyListings() {
 
       {/* grid */}
       <div className="listings-grid">
-        {currentData.map((item) => (
-<PropertyCard key={item.id} property={item} isAdmin={true} />
-        ))}
+        {loading
+          ? Array(9).fill(0).map((_, i) => <SkeletonCard key={i} />)
+          : properties.map((item) => (
+<AdminPropertyCard key={item.id} property={item} />
+            ))}
       </div>
 
       {/* pagination */}
@@ -41,9 +59,7 @@ export default function PropertyListings() {
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={setCurrentPage}
-        label={`${startIndex + 1} - ${
-          Math.min(startIndex + itemsPerPage, allProperties.length)
-        } of ${allProperties.length}`}
+        label={`Page ${currentPage}`}
       />
 
     </div>

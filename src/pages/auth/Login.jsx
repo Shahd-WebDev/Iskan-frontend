@@ -1,3 +1,6 @@
+import { jwtDecode } from "jwt-decode";
+import { login } from "../../services/auth";
+import { useSignIn } from "../../context/SignInContext";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
@@ -6,6 +9,9 @@ import "../../styles/auth.css";
 
 export default function Login() {
   const navigate = useNavigate();
+const { login: loginContext } = useSignIn();
+
+
   const [showPassword, setShowPassword] = useState(false);
 
   // Form Data
@@ -45,29 +51,70 @@ export default function Login() {
     return Object.keys(newErrors).length === 0;
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
+  
+     // admin api
+async function handleSubmit(e) {
+  e.preventDefault();
 
-    if (validate()) {
-      // ✅ Generate clean name from email
-      const rawName = formData.email.split("@")[0];
-      const cleanName = rawName.replace(/[^a-zA-Z]/g, "");
+  if (!validate()) return;
 
-      const finalName =
-        cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
+  try {
+    const res = await login(formData.email, formData.password);
 
-      // ✅ Save user
-      const userData = {
-        name: finalName || "User",
-        email: formData.email,
-        avatar: null, // ❌ no image now
-      };
+    console.log("Login response:", res.data);
 
-      localStorage.setItem("user", JSON.stringify(userData));
+    const token = res.data.token;
 
-      navigate("/");
-    }
-  }
+if (!token) {
+  alert("No token received ❌");
+  return;
+}
+
+localStorage.setItem("token", token);
+
+
+// 🔥 فك التوكن
+const decoded = jwtDecode(token);
+console.log("Decoded token:", decoded);
+
+// 🔥 هات role من التوكن
+const role =
+  decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] ||
+  "Student";
+
+// بيانات المستخدم
+const userData = {
+  email: res.data?.email || formData.email,
+  name: res.data?.name || "User",
+  role: role,
+};
+
+// حفظ في الكونتكست
+loginContext(userData, role);
+
+localStorage.setItem("user", JSON.stringify(userData));
+localStorage.setItem("userRole", role);
+
+// تحديد لو أدمن
+if (role === "Admin") {
+  navigate("/admin/dashboard");
+} else if (role === "Owner") {
+  navigate("/owner-dashboard/dashboard");
+} else {
+  navigate("/");
+}
+
+
+  } catch (error) {
+  console.log("FULL ERROR:", error);
+  console.log("RESPONSE:", error.response);
+  console.log("DATA:", error.response?.data);
+
+console.log("ERROR:", error);
+
+alert("Login failed ❌");}
+}
+   
 
   return (
     <div className="auth-container">

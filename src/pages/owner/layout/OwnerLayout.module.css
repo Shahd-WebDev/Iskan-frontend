@@ -1,0 +1,187 @@
+/* ═══════════════════════════════════════════
+   Owner Dashboard – Layout
+   (Converted to CSS Module)
+   ═══════════════════════════════════════════ */
+.od-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #fff;
+  font-family: "Poppins", sans-serif;
+}
+/* ══════════════════════════════
+   BODY = Sidebar + Main
+   ══════════════════════════════ */
+.od-body {
+  display: flex;
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 40px auto;
+  padding: 0 24px;
+  gap: 44px;
+}
+
+/* ── Sidebar ── */
+.od-sidebar {
+  width: 280px;
+  background: #F0F8FF;
+  border-right: .67px solid #F5FAFF;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  flex-shrink: 0;
+  padding-right: .67px;
+  
+}
+
+.od-nav {
+  padding: 20px 15px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.od-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 5px 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: #364153;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.18s, color 0.18s;
+}
+
+.od-nav-item:hover {
+  background: #e0f0ff;
+  color: #0088FF;
+}
+
+.od-nav-item--active {
+  background: #0088FF;
+  color: #fff !important;
+}
+
+.od-nav-item--active svg {
+  color: #fff;
+}
+.od-nav-item--active:hover {
+  background: #006ecc;
+}
+.od-nav-badge {
+  margin-left: auto;
+  background: #ef4444;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 99px;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+}
+
+/* Sidebar profile */
+.od-sidebar-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+  border-top: .9px solid #00000033;
+}
+
+
+.od-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #0d6efd;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.od-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.od-sidebar-user {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.od-profile-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #000000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.od-profile-email {
+  font-size: 11px;
+  color: #9ba8b5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Main content ── */
+.od-main {
+  flex: 1;
+  min-width: 0;
+  /* background: #f0f4f8; */
+  border: .9px solid #F5FAFF;
+  border-radius: 18px;
+}
+
+.od-content {
+  padding: 32px 48px;
+}
+
+/* ══════════════════════════════
+   Responsive
+   ══════════════════════════════ */
+@media (max-width: 768px) {
+  .od-sidebar {
+    width: 60px;
+  }
+
+  .od-nav-item span,
+  .od-sidebar-user {
+    display: none;
+  }
+
+  .od-nav-item {
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .od-sidebar-profile {
+    justify-content: center;
+  }
+
+  .od-content {
+    padding: 20px 16px;
+  }
+}
