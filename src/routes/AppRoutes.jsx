@@ -70,11 +70,11 @@ export default function AppRoutes() {
 
         <Route path="/saved" element={<SavedProperties />} />
         <Route path="/search" element={<SearchResult />} />
-
         <Route path="/notifications" element={<Notifications />} />
 
         <Route path="settings" element={<SettingsLayout />}>
           <Route path="profile" element={<Profile role="student" />} />
+            
           <Route path="security" element={<Security />} />
           <Route path="notifications" element={<Setting_Notifications />} />
         </Route>
@@ -103,8 +103,15 @@ export default function AppRoutes() {
           <Route path="messages" element={<Messages />} />
           <Route path="settings" element={<SettingsLayout />}>
             <Route index element={<Navigate to="profile" replace />} />
-            <Route path="profile" element={<Profile role="owner" />} />
-            <Route path="security" element={<Security />} />
+<Route
+  path="profile"
+  element={
+    <Profile
+      role="owner"
+      showSuccessMessage={true}
+    />
+  }
+/>            <Route path="security" element={<Security />} />
             <Route path="notifications" element={<Setting_Notifications />} />
           </Route>
           <Route path="verification" element={<div>Verification Process...</div>} />

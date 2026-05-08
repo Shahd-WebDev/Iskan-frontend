@@ -52,12 +52,13 @@ const amenities = property.amenities || [];
 
         {/* Bookmark */}
         <button
-          className={`bookmark-btn position-absolute bg-white border-0 rounded-circle d-flex align-items-center justify-content-center ${isBookmarked ? "bookmarked" : ""}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleSave(property);
-          }}
-        >
+  type="button"
+  className={`bookmark-btn position-absolute bg-white border-0 rounded-circle d-flex align-items-center justify-content-center ${isBookmarked ? "bookmarked" : ""}`}
+  onClick={(e) => {
+    e.stopPropagation();
+    toggleSave(property);
+  }}
+>
           <Bookmark
             size={20}
             fill={isBookmarked ? "#0088FF" : "none"}

@@ -23,6 +23,7 @@ export default function Home() {
       <PropertiesSection />
       <FAQSection />
       <CTASection />
+      
     </>
   );
 }
