@@ -70,26 +70,29 @@ export default function AppRoutes() {
 
         <Route path="/saved" element={<SavedProperties />} />
         <Route path="/search" element={<SearchResult />} />
-
         <Route path="/notifications" element={<Notifications />} />
 
         <Route path="settings" element={<SettingsLayout />}>
           <Route path="profile" element={<Profile role="student" />} />
+            
           <Route path="security" element={<Security />} />
           <Route path="notifications" element={<Setting_Notifications />} />
         </Route>
 
         {/* ================= Admin Dashboard ================= */}
-        <Route path="admin" element={<AdminLayout />}>
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="properties" element={<PropertyListings />} />
-          <Route path="verification" element={<PropertyVerification />} />
-          <Route path="property/:id" element={<PropertyAIDetails />} />
-          <Route path="users" element={<Users />} />
-          <Route path="reports" element={<Reports />} />
-          <Route path="notifications" element={<AdminNotifications />} />
-        </Route>
-      </Route>
+        <Route element={<SignInVerifyRole allowedRole="Admin" />}>
+  <Route path="admin" element={<AdminLayout />}>
+    <Route path="dashboard" element={<Dashboard />} />
+    <Route path="properties" element={<PropertyListings />} />
+    <Route path="verification" element={<PropertyVerification />} />
+    <Route path="property/:id" element={<PropertyAIDetails />} />
+    <Route path="users" element={<Users />} />
+    <Route path="reports" element={<Reports />} />
+    <Route path="notifications" element={<AdminNotifications />} />
+  </Route>
+</Route>
+
+</Route>
 
      {/* ================= Owner Dashboard ================= */}  
       <Route element={<SignInVerifyRole allowedRole="owner" />}>
@@ -100,8 +103,15 @@ export default function AppRoutes() {
           <Route path="messages" element={<Messages />} />
           <Route path="settings" element={<SettingsLayout />}>
             <Route index element={<Navigate to="profile" replace />} />
-            <Route path="profile" element={<Profile role="owner" />} />
-            <Route path="security" element={<Security />} />
+<Route
+  path="profile"
+  element={
+    <Profile
+      role="owner"
+      showSuccessMessage={true}
+    />
+  }
+/>            <Route path="security" element={<Security />} />
             <Route path="notifications" element={<Setting_Notifications />} />
           </Route>
           <Route path="verification" element={<div>Verification Process...</div>} />
@@ -112,4 +122,4 @@ export default function AppRoutes() {
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
-}
+}

@@ -1,15 +1,11 @@
 import { Link } from "react-router-dom";
 import "./Footer.css";
 
-/* Social Icons */
-import facebook from "../../../assets/facebook.png";
-import linkedin from "../../../assets/linkedin.png";
-import twitter from "../../../assets/Twitter.png";
-import youtube from "../../../assets/youtube.png";
+/* Lucide (UI icons بس) */
+import { Mail, Send } from "lucide-react";
 
-/* Newsletter Icons */
-import emailIcon from "../../../assets/email.png";
-import sendIcon from "../../../assets/send.png";
+/* Social Media Icons (real logos) */
+import { FaFacebookF, FaLinkedinIn, FaTwitter, FaYoutube } from "react-icons/fa";
 
 export default function Footer() {
   return (
@@ -27,10 +23,15 @@ export default function Footer() {
               />
 
               <div className="newsletter-box">
-                <img src={emailIcon} alt="email" width="17" />
-                <input type="email" placeholder="Enter Your Email" />
-                <button className="newsletter-btn">
-                  <img src={sendIcon} alt="send" width="17" />
+                <Mail size={18} />
+<input
+  type="email"
+  name="email"
+  id="email"
+  placeholder="Enter Your Email"
+    autoComplete="email"
+/>                <button className="newsletter-btn">
+                  <Send size={18} />
                 </button>
               </div>
             </div>
@@ -41,7 +42,7 @@ export default function Footer() {
                 <FooterColumn
                   title="Home"
                   links={[
-                    { name: "Hero Section", path: "/" },
+                    { name: "Hero Section", path: "/#hero" },
                     { name: "Properties", path: "/properties" },
                     { name: "FAQs", path: "/faqs" },
                   ]}
@@ -71,7 +72,7 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* ================= Bottom Wave Section ================= */}
+      {/* ================= Bottom Section ================= */}
       <div className="footer-bottom">
         <div className="container footer-bottom-inner">
           <div className="footer-bottom-left">
@@ -85,11 +86,10 @@ export default function Footer() {
           </div>
 
           <div className="footer-social">
-            {[facebook, linkedin, twitter, youtube].map((icon, index) => (
-              <a key={index} href="#">
-                <img src={icon} alt="social" />
-              </a>
-            ))}
+            <a href="#"><FaFacebookF /></a>
+            <a href="#"><FaLinkedinIn /></a>
+            <a href="#"><FaTwitter /></a>
+            <a href="#"><FaYoutube /></a>
           </div>
         </div>
       </div>

@@ -211,12 +211,18 @@
 }
 
 .view-all-link {
+  background: none;
+  border: none;
   color: #0088FF;
   font-size: 14px;
   font-weight: 500;
-  text-decoration: none;
+  cursor: pointer;
+  padding: 0;
 }
 
 .view-all-link:hover {
   text-decoration: underline;
+}
+.view-all-link:focus {
+  outline: none;
 }

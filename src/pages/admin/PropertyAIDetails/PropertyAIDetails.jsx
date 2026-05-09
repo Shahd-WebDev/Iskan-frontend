@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getPropertyById } from "../../../services/adminProperties";
 import { useParams } from "react-router-dom";
-import { allProperties } from "../../../components/data/PropertiesData";
 import "./PropertyAIDetails.css";
 import {
   Sparkles,
@@ -34,21 +34,49 @@ const ThumbBadge = ({ status }) => {
 
 export default function PropertyAIDetails() {
   const { id } = useParams();
-  const property = allProperties.find((item) => item.id.toString() === id);
-  const [mainImage, setMainImage] = useState(property?.image);
+const [mainImage, setMainImage] = useState(null);
   const [activeThumb, setActiveThumb] = useState(0);
 
-  if (!property) return <div>Not Found</div>;
+const [property, setProperty] = useState(null);
+const [loading, setLoading] = useState(true);
+const main = property?.images?.find(img => img.isMain);
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const data = await getPropertyById(id);
+      console.log("DETAILS:", data);
+      setProperty(data);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const thumbnails = [
-    { src: property.image, label: "Kitchen",     status: "verified" },
-    { src: property.image, label: "Living Area", status: "verified" },
-    { src: property.image, label: "Bathroom",    status: "warning"  },
-    { src: property.image, label: "Balcony",     status: "verified" },
-  ];
+  fetchData();
+}, [id]);
+
+useEffect(() => {
+  if (property?.images?.length > 0) {
+    setMainImage(
+      "https://isskan-1.runasp.net" + property.images[0].imageUrl
+    );
+  }
+}, [property]);
+
+if (loading) return <div>Loading...</div>;
+if (!property) return <div>Not Found</div>;
+  const thumbnails = property.images?.map((img, i) => ({
+  src: "https://isskan-1.runasp.net" + img.imageUrl,
+  label: `Image ${i + 1}`,
+  status: img.isMain ? "verified" : "verified"
+})) || [];
 
   return (
     <>
+    <h2>{property.title}</h2>
+<p>{property.pricePerMonth} EGP / month</p>
+<p>{property.roomsNumber} rooms • {property.bathroomsNumber} baths</p>
       {/* CARD 1 — PROPERTY IMAGES */}
       <div className="ai-card">
 
@@ -63,8 +91,11 @@ export default function PropertyAIDetails() {
 
         {/* Main image */}
         <div className="main-image-wrapper">
-          <img src={mainImage} className="main-image" alt="Main Property" />
-          <div className="ai-badge">
+<img
+  src={mainImage || "/no-image.png"}
+  className="main-image"
+  alt="Main Property"
+/>          <div className="ai-badge">
             <CheckCircle size={12} />
             <span className="ai-badge__title">High Quality</span>
             <span className="ai-badge__confidence">98% Confidence</span>
@@ -131,15 +162,15 @@ export default function PropertyAIDetails() {
               <Shield size={10} strokeWidth={2.5} />
             </span>
             <img
-              src="https://i.pravatar.cc/100?img=12"
-              alt="Ahmed Mohamed"
-              className="owner-avatar"
-            />
+  src={property.ownerImage || "/user-avatar.jpg"}
+  alt={property.ownerName}
+  className="owner-avatar"
+/>
           </div>
 
           <div className="owner-info">
             <div className="owner-name-row">
-              <h4 className="owner-name">Ahmed Mohamed</h4>
+<h4 className="owner-name">{property.ownerName}</h4>
               <span className="verified-badge">Verified</span>
             </div>
             <p className="owner-meta">
@@ -167,7 +198,7 @@ export default function PropertyAIDetails() {
             <span className="contact-icon"><Mail size={15} /></span>
             <div>
               <p className="contact-card__label">Email Address</p>
-              <p className="contact-card__value">ahmed.mohamed@email.com</p>
+<p className="contact-card__value">{property.ownerEmail}</p>
             </div>
           </div>
 
@@ -183,7 +214,7 @@ export default function PropertyAIDetails() {
             <span className="contact-icon"><MapPin size={15} /></span>
             <div>
               <p className="contact-card__label">Location</p>
-              <p className="contact-card__value">Cairo, Egypt</p>
+<p className="contact-card__value">{property.address}</p>
             </div>
           </div>
 

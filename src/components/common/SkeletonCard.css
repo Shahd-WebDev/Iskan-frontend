@@ -1,0 +1,55 @@
+.skeleton-card {
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+/* الصورة */
+.skeleton-img {
+  height: 200px;
+  background: linear-gradient(90deg, #eee 25%, #ddd 50%, #eee 75%);
+  animation: shimmer 1.5s infinite;
+}
+
+/* المحتوى */
+.skeleton-content {
+  padding: 16px;
+}
+
+/* الخطوط */
+.skeleton-line {
+  height: 12px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #eee 25%, #ddd 50%, #eee 75%);
+  animation: shimmer 1.5s infinite;
+}
+
+.skeleton-line.title {
+  width: 70%;
+  height: 16px;
+}
+
+.skeleton-line.short {
+  width: 40%;
+}
+
+/* الزرار */
+.skeleton-btn {
+  height: 35px;
+  border-radius: 8px;
+  margin-top: 15px;
+  background: linear-gradient(90deg, #eee 25%, #ddd 50%, #eee 75%);
+  animation: shimmer 1.5s infinite;
+}
+
+/* animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: 200px 0;
+  }
+}

@@ -1,26 +1,45 @@
 import "./propertyVerification.css";
 
-import PropertyCard from "../../../components/home/PropertyCard";
+import AdminPropertyCard from "../../../components/admin/PropertyCard/AdminPropertyCard";
 import SearchBar from "../../../components/home/SearchBar";
 import PaginationControls from "../../../components/Pagination/Pagination";
-import { allProperties } from "../../../components/data/PropertiesData";
+import { useEffect, useState } from "react";
+import { getPendingProperties } from "../../../services/adminProperties";
 
-import { useState } from "react";
 
 export default function PropertyVerification() {
+   const [properties, setProperties] = useState([]);
+const [currentPage, setCurrentPage] = useState(1);
+const [totalPages, setTotalPages] = useState(1);
+const [loading, setLoading] = useState(true);
 
-  const [currentPage, setCurrentPage] = useState(1);
 
   const itemsPerPage = 9; // 3 × 3
 
-  const totalPages = Math.ceil(allProperties.length / itemsPerPage);
+  useEffect(() => {
+  async function fetchData() {
+    try {
+      setLoading(true);
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentData = allProperties.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
+      const data = await getPendingProperties(currentPage, itemsPerPage);
 
+      console.log("DATA:", data);
+       
+      setProperties(data.data || []);
+      setTotalPages(Math.ceil(data.count / data.pageSize));
+
+    } catch (error) {
+      console.log("Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  fetchData();
+}, [currentPage]);
+
+
+  
   return (
     <div className="property-verification">
 
@@ -31,13 +50,15 @@ export default function PropertyVerification() {
 
       {/* grid */}
       <div className="verification-grid">
-        {currentData.map((item) => (
-          <PropertyCard
-            key={item.id}
-            property={item}
-            isAdmin={true}
-            isVerification={true}
-          />
+{loading
+  ? "Loading..."
+  : properties.map((item) => (
+             <AdminPropertyCard
+  key={item.id}
+  property={item}
+  isVerification={true}
+/>
+
         ))}
       </div>
 
@@ -46,9 +67,7 @@ export default function PropertyVerification() {
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={setCurrentPage}
-        label={`${startIndex + 1} - ${
-          Math.min(startIndex + itemsPerPage, allProperties.length)
-        } of ${allProperties.length}`}
+        label={`Page ${currentPage}`}
       />
 
     </div>

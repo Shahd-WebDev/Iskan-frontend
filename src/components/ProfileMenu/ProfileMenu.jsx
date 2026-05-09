@@ -31,6 +31,11 @@ export default function ProfileMenu() {
     if (storedUser) setUser(JSON.parse(storedUser));
   }, []);
 
+
+  const displayName = user?.name || user?.email || "User";
+
+
+
   // ✅ Close Menu When Clicking Outside
   useEffect(() => {
     function handleOutsideClick(e) {
@@ -74,7 +79,7 @@ export default function ProfileMenu() {
           {user.avatar ? (
             <img src={user.avatar} alt="avatar" />
           ) : (
-            <span>{user.name.charAt(0).toUpperCase()}</span>
+<span>{displayName.charAt(0).toUpperCase()}</span>
           )}
         </div>
 
@@ -94,13 +99,13 @@ export default function ProfileMenu() {
               {user.avatar ? (
                 <img src={user.avatar} alt="avatar" />
               ) : (
-                <span>{user.name.charAt(0).toUpperCase()}</span>
+<span>{displayName.charAt(0).toUpperCase()}</span>
               )}
             </div>
 
             <div>
               {/* ✅ Show Only First 2 Words */}
-              <h4>{user.name.split(" ").slice(0, 2).join(" ")}</h4>
+<h4>{displayName.split(" ").slice(0, 2).join(" ")}</h4>
               <p>{user.email}</p>
             </div>
           </div>

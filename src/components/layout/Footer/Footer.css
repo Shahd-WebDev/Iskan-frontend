@@ -160,15 +160,19 @@
   transition: 0.3s;
 }
 
+.footer-social svg {
+  font-size: 16px;
+  color: #333;
+  transition: 0.3s;
+}
+
 .footer-social a:hover {
-  transform: translateY(-3px);
+  transform: translateY(-3px) scale(1.05);
 }
 
-.footer-social img {
-  width: 18px;
-  opacity: 0.8;
+.footer-social a:hover svg {
+  color: #0088FF;
 }
-
 /* ================= Responsive ================= */
 @media (max-width: 768px) {
 
