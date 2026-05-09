@@ -1,8 +1,9 @@
-// Security.jsx
 import React, { useState } from "react";
 import { Monitor, Smartphone, Eye, EyeOff } from "lucide-react";
 import styles from "./settings.module.css";
-import { usePasswordValidation } from "../../components/context/PasswordValidationContext";
+
+
+import { validatePassword } from "../../utils/validation";
 
 function Security() {
   // ------------------ Show/Hide Password ------------------
@@ -48,21 +49,24 @@ function Security() {
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
 
-  const { validatePassword } = usePasswordValidation();
-
   // ------------------ Handlers ------------------
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
+
     setErrors({
       ...errors,
-      [e.target.name]: "",
+      [name]: "",
     });
+
     setMessage("");
   };
 
+  // ------------------ VALIDATION ------------------
   const validateForm = () => {
     const newErrors = {};
 
@@ -80,16 +84,18 @@ function Security() {
     }
 
     setErrors(newErrors);
+
     return Object.keys(newErrors).length === 0;
   };
 
+  // ------------------ SUBMIT ------------------
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (!validateForm()) return;
 
-    // مؤقتًا رسالة نجاح
     setMessage("Password changed successfully!");
+
     setFormData({
       currentPassword: "",
       newPassword: "",
@@ -97,6 +103,7 @@ function Security() {
     });
   };
 
+  // ------------------ SESSION LOGOUT ------------------
   const handleLogoutSession = (id) => {
     setSessions((prev) => prev.filter((s) => s.id !== id));
   };
@@ -117,14 +124,15 @@ function Security() {
           {/* Current Password */}
           <div className={styles.formGroup}>
             <label>Current Password</label>
+
             <div className={styles.inputWrapper}>
               <input
                 type={showCurrent ? "text" : "password"}
                 name="currentPassword"
-              
                 value={formData.currentPassword}
                 onChange={handleChange}
               />
+
               <span
                 className={styles.showHideBtn}
                 onClick={() => setShowCurrent(!showCurrent)}
@@ -132,6 +140,7 @@ function Security() {
                 {showCurrent ? <EyeOff size={18} /> : <Eye size={18} />}
               </span>
             </div>
+
             {errors.currentPassword && (
               <p className={styles.error}>{errors.currentPassword}</p>
             )}
@@ -140,14 +149,15 @@ function Security() {
           {/* New Password */}
           <div className={styles.formGroup}>
             <label>New Password</label>
+
             <div className={styles.inputWrapper}>
               <input
                 type={showNew ? "text" : "password"}
                 name="newPassword"
-               
                 value={formData.newPassword}
                 onChange={handleChange}
               />
+
               <span
                 className={styles.showHideBtn}
                 onClick={() => setShowNew(!showNew)}
@@ -155,14 +165,16 @@ function Security() {
                 {showNew ? <EyeOff size={18} /> : <Eye size={18} />}
               </span>
             </div>
+
             {errors.newPassword && (
               <p className={styles.error}>{errors.newPassword}</p>
             )}
           </div>
 
-          {/* Confirm New Password */}
+          {/* Confirm Password */}
           <div className={styles.formGroup}>
             <label>Confirm New Password</label>
+
             <div className={styles.inputWrapper}>
               <input
                 type={showConfirm ? "text" : "password"}
@@ -170,6 +182,7 @@ function Security() {
                 value={formData.confirmPassword}
                 onChange={handleChange}
               />
+
               <span
                 className={styles.showHideBtn}
                 onClick={() => setShowConfirm(!showConfirm)}
@@ -177,6 +190,7 @@ function Security() {
                 {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
               </span>
             </div>
+
             {errors.confirmPassword && (
               <p className={styles.error}>{errors.confirmPassword}</p>
             )}
@@ -185,10 +199,7 @@ function Security() {
           {message && <p className={styles.success}>{message}</p>}
 
           <div className={styles.actions}>
-            <button
-              className={styles.btnPrimary}
-              type="submit"
-            >
+            <button className={styles.btnPrimary} type="submit">
               Change Password
             </button>
           </div>
@@ -199,7 +210,9 @@ function Security() {
       <div className={styles.card}>
         <div className={styles.header}>
           <h3 className={styles.title}>Active Sessions</h3>
-          <p className={styles.subtitle}>Manage currently logged in devices</p>
+          <p className={styles.subtitle}>
+            Manage currently logged in devices
+          </p>
         </div>
 
         <div className={styles.sessionsList}>
@@ -207,18 +220,23 @@ function Security() {
             <div key={session.id} className={styles.sessionItem}>
               <div className={styles.sessionLeft}>
                 <div className={styles.deviceIcon}>{session.icon}</div>
+
                 <div className={styles.deviceInfo}>
                   <p className={styles.deviceName}>
                     {session.device}
                     {session.isCurrent && (
-                      <span className={styles.currentBadge}>Current Device</span>
+                      <span className={styles.currentBadge}>
+                        Current Device
+                      </span>
                     )}
                   </p>
+
                   <p className={styles.deviceMeta}>
                     {session.location} • {session.time}
                   </p>
                 </div>
               </div>
+
               {!session.isCurrent && (
                 <button
                   className={styles.btnOutline}

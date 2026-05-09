@@ -3,10 +3,11 @@ import styles from "./settings.module.css";
 import { Camera, CheckCircle } from "lucide-react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { useValidation } from "../../components/context/ValidationContext";
+
+import { validateField } from "../../utils/validation";
 
 function Profile({ role = "student" }) {
-  const { errors, validateField } = useValidation();
+  const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
     name: "",
@@ -16,7 +17,8 @@ function Profile({ role = "student" }) {
     university: "",
     bio: "",
     address: "",
-    city: ""
+    city: "",
+    countryCode: "" // optional لو هتستخدميه
   });
 
   const [image, setImage] = useState(null);
@@ -36,49 +38,88 @@ function Profile({ role = "student" }) {
     "Artificial Intelligence"
   ];
 
-  // handle change لكل الحقول
- const handleChange = (e) => {
-  const { name, value } = e.target;
-  setFormData({ ...formData, [name]: value });
-  validateField(name, value); // ده هيتحقق لأي select أو input
-};
+  // ---------------- HANDLE CHANGE ----------------
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-  // اختيار الصورة والتحقق من الحجم
+    setFormData({ ...formData, [name]: value });
+
+    const error = validateField(name, value);
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: error
+    }));
+  };
+
+  // ---------------- IMAGE ----------------
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+
     if (file) {
       if (file.size > 2000000) {
         alert("Image must be less than 2MB");
         return;
       }
+
       const imageUrl = URL.createObjectURL(file);
       setImage(imageUrl);
     }
   };
 
- const handleSubmit = (e) => {
-  e.preventDefault();
-  let allValid = true;
+  // ---------------- PHONE ----------------
+  const handlePhoneChange = (phone, country) => {
+    setFormData({
+      ...formData,
+      phone,
+      countryCode: country.dialCode
+    });
 
-  Object.keys(formData).forEach((key) => {
-    const isValid = validateField(key, formData[key], formData.countryCode || "");
-    if (!isValid) allValid = false;
-  });
+    const error = validateField("phone", phone, country.dialCode);
 
-  if (allValid) {
-    console.log(formData);
-    alert("Profile saved successfully!");
-  }
-};
+    setErrors((prev) => ({
+      ...prev,
+      phone: error
+    }));
+  };
+
+  // ---------------- SUBMIT ----------------
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const newErrors = {};
+
+    Object.keys(formData).forEach((key) => {
+      const error = validateField(
+        key,
+        formData[key],
+        formData.countryCode
+      );
+
+      if (error) {
+        newErrors[key] = error;
+      }
+    });
+
+    setErrors(newErrors);
+
+    const allValid = Object.values(newErrors).every((err) => !err);
+
+    if (allValid) {
+      console.log(formData);
+      alert("Profile saved successfully!");
+    }
+  };
+
   return (
     <form className={styles.card} onSubmit={handleSubmit}>
-      {/* Header */}
+      {/* HEADER */}
       <div className={styles.header}>
         <h3 className={styles.title}>Profile Information</h3>
         <p className={styles.subtitle}>Manage your personal information</p>
       </div>
 
-      {/* Profile Image */}
+      {/* IMAGE */}
       <div className={styles.avatarSection}>
         <div className={styles.avatarCircle}>
           {image ? (
@@ -86,6 +127,7 @@ function Profile({ role = "student" }) {
           ) : (
             "JS"
           )}
+
           <label className={styles.cameraBtn}>
             <Camera size={14} color="#fff" />
             <input
@@ -103,9 +145,9 @@ function Profile({ role = "student" }) {
         </div>
       </div>
 
-      {/* Form Fields */}
+      {/* FORM */}
       <div className={styles.formContent}>
-        {/* Name */}
+        {/* NAME */}
         <div className={styles.formGroup}>
           <label>Name</label>
           <input
@@ -118,7 +160,7 @@ function Profile({ role = "student" }) {
           {errors.name && <span className={styles.error}>{errors.name}</span>}
         </div>
 
-        {/* Email */}
+        {/* EMAIL */}
         <div className={styles.formGroup}>
           <label>Email</label>
           <input
@@ -131,25 +173,20 @@ function Profile({ role = "student" }) {
           {errors.email && <span className={styles.error}>{errors.email}</span>}
         </div>
 
-        {/* Phone */}
+        {/* PHONE */}
         <div className={styles.formGroup}>
           <label>Phone Number</label>
+
           <PhoneInput
-  country={"eg"}
-  value={formData.phone}
-  onChange={(phone, country) => {
-    setFormData({
-      ...formData,
-      phone: phone,
-      countryCode: country.dialCode
-    });
-    validateField("phone", phone, country.dialCode);
-  }}
-/>
+            country={"eg"}
+            value={formData.phone}
+            onChange={handlePhoneChange}
+          />
+
           {errors.phone && <span className={styles.error}>{errors.phone}</span>}
         </div>
 
-        {/* Role-Specific Fields */}
+        {/* ROLE FIELDS */}
         {role === "student" ? (
           <div className={styles.row}>
             <div className={styles.formGroup}>
@@ -160,11 +197,16 @@ function Profile({ role = "student" }) {
                 onChange={handleChange}
               >
                 <option value="">Select Department</option>
-                {departments.map((dep, index) => (
-                  <option key={index} value={dep}>{dep}</option>
+                {departments.map((dep, i) => (
+                  <option key={i} value={dep}>
+                    {dep}
+                  </option>
                 ))}
               </select>
-              {errors.department && <span className={styles.error}>{errors.department}</span>}
+
+              {errors.department && (
+                <span className={styles.error}>{errors.department}</span>
+              )}
             </div>
 
             <div className={styles.formGroup}>
@@ -175,39 +217,31 @@ function Profile({ role = "student" }) {
                 onChange={handleChange}
               >
                 <option value="">Select University</option>
-                {universities.map((uni, index) => (
-                  <option key={index} value={uni}>{uni}</option>
+                {universities.map((uni, i) => (
+                  <option key={i} value={uni}>
+                    {uni}
+                  </option>
                 ))}
               </select>
-              {errors.university && <span className={styles.error}>{errors.university}</span>}
+
+              {errors.university && (
+                <span className={styles.error}>{errors.university}</span>
+              )}
             </div>
           </div>
         ) : (
           <>
-            {/* Bio */}
+            {/* BIO */}
             <div className={styles.formGroup}>
               <label>Bio</label>
               <textarea
                 name="bio"
                 value={formData.bio}
                 onChange={handleChange}
-                placeholder="Write a short bio about yourself..."
-                style={{
-                  minHeight: "100px",
-                  background: "#F5FAFF",
-                  border: "1px solid #E2E8F0",
-                  borderRadius: "12px",
-                  padding: "16px 20px",
-                  fontSize: "14px",
-                  fontFamily: '"Urbanist", sans-serif',
-                  color: "#414141",
-                  outline: "none",
-                  resize: "vertical"
-                }}
               />
             </div>
 
-            {/* Address & City */}
+            {/* ADDRESS */}
             <div className={styles.row}>
               <div className={styles.formGroup}>
                 <label>Address</label>
@@ -216,7 +250,6 @@ function Profile({ role = "student" }) {
                   name="address"
                   value={formData.address}
                   onChange={handleChange}
-                  placeholder="Enter your address"
                 />
               </div>
 
@@ -227,7 +260,6 @@ function Profile({ role = "student" }) {
                   name="city"
                   value={formData.city}
                   onChange={handleChange}
-                  placeholder="Enter your city"
                 />
               </div>
             </div>
@@ -235,26 +267,28 @@ function Profile({ role = "student" }) {
         )}
       </div>
 
-      {/* Owner Verification Section */}
+      {/* OWNER SECTION */}
       {role === "owner" && (
         <div className={styles.verificationSection}>
           <h4>Owner Verification</h4>
-          <p>Upload your government ID for account verification (one-time)</p>
-          
+
           <div className={styles.verifiedBox}>
             <div className={styles.verifiedHeader}>
               <CheckCircle size={18} />
               Account Verified
             </div>
-            <p className={styles.verifiedText}>Your identity has been verified on Nov 15, 2024</p>
           </div>
         </div>
       )}
 
-      {/* Buttons */}
+      {/* BUTTONS */}
       <div className={styles.actions}>
-        <button type="button" className={styles.btnOutline}>Cancel</button>
-        <button type="submit" className={styles.btnPrimary}>Save Changes</button>
+        <button type="button" className={styles.btnOutline}>
+          Cancel
+        </button>
+        <button type="submit" className={styles.btnPrimary}>
+          Save Changes
+        </button>
       </div>
     </form>
   );

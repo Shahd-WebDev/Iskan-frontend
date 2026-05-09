@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
 import { Plus, Edit2, Trash2, Wifi, Utensils, Car, Wind, Waves, Dumbbell, Tv, Droplet } from "lucide-react";
-import AddPropertyModal from "../AddPropertyModal/AddPropertyModal";
+import { useNavigate } from "react-router-dom";
 import { PropertyContext } from "../../../../context/PropertyContext";
 import "./OwnerProperties.css";
 
@@ -16,8 +16,10 @@ const amenityIcons = {
 };
 
 export default function OwnerProperties() {
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { properties } = useContext(PropertyContext);
+  
 
   return (
     <div className="owner-properties-wrapper">
@@ -26,7 +28,8 @@ export default function OwnerProperties() {
           <h1 className="op-title">My Properties</h1>
           <p className="op-subtitle">Manage your property listings</p>
         </div>
-        <button className="btn-add-property" onClick={() => setIsModalOpen(true)}>
+        <button 
+  className="btn-add-property" onClick={() => navigate("/owner-dashboard/add-property")}>
           <Plus size={18} />
           <span>Add Property</span>
         </button>
@@ -37,7 +40,16 @@ export default function OwnerProperties() {
           <div key={property.id} className="op-card">
             <div className="op-card-image" style={{ backgroundColor: property.color || '#D1D5DB' }}>
               <div className="op-card-actions">
-                <button className="op-action-btn blue"><Edit2 size={14} /></button>
+                <button 
+  className="op-action-btn blue"
+  onClick={() => navigate("/owner-dashboard/add-property", {
+    state: { 
+      propertyToEdit: property
+    }
+  })}
+>
+  <Edit2 size={14} />
+</button>
                 <button className="op-action-btn red"><Trash2 size={14} /></button>
               </div>
               <span className={`op-badge ${property.status}`}>{property.status.charAt(0).toUpperCase() + property.status.slice(1)}</span>
