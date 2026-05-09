@@ -30,7 +30,7 @@ export default function UsersTable({
             </span>
           </div>
 
-          <span className="col-university">{user.universityId}</span>
+          <span className="col-university">{user.id.slice(0, 8)}</span>
           <span className="col-email">{user.email}</span>
 
           <span className={`status ${user.status === "Active" ? "active" : "banned"}`}>
