@@ -1,7 +1,8 @@
 import "./Users.css";
 import { useState, useEffect } from "react";
 import UsersTable from "../../../components/admin/UsersTable";
-import axios from "axios";
+import api from "../../../services/api";
+import SkeletonCard from "../../../components/common/SkeletonCard";
 
 const avatarColors = [
   "#4A90D9", "#5BA85B", "#E07B54", "#9B6BB5",
@@ -15,15 +16,14 @@ export default function Users() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const token = localStorage.getItem("token");
 
   // ✅ GET USERS
   const getUsers = async () => {
     try {
       setLoading(true);
 
-      const response = await axios.get(
-        "/api/AdminUser/GetAll",
+      const response = await api.get(
+  "/AdminUser/GetAll",
         {
           params: {
             PageIndex: 1,
@@ -31,9 +31,7 @@ export default function Users() {
             search: search,
           },
 
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          
         }
       );
 
@@ -81,15 +79,7 @@ export default function Users() {
  const handleBlock = async (id) => {
   try {
 
-    await axios.patch(
-      `/api/AdminUser/Block/${id}/block`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    await api.patch(`/AdminUser/Block/${id}/block`);
 
     // ✅ update ui after success
     setUsers((prev) =>
@@ -111,14 +101,7 @@ export default function Users() {
 const handleDelete = async (id) => {
   try {
 
-    await axios.delete(
-      `/api/AdminUser/Delete/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+   await api.delete(`/AdminUser/Delete/${id}`);
 
     // ✅ remove from ui after success
     setUsers((prev) =>
@@ -185,8 +168,12 @@ const handleDelete = async (id) => {
         </div>
 
         {loading ? (
-          <p>Loading...</p>
-        ) : (
+  <div className="skeleton-wrapper">
+    {Array.from({ length: 6 }).map((_, index) => (
+      <SkeletonCard key={index} />
+    ))}
+  </div>
+) : (
           <UsersTable
             users={users}
             openMenuId={openMenuId}
