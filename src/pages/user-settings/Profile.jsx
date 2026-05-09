@@ -4,10 +4,9 @@ import styles from "./settings.module.css";
 import { Camera, CheckCircle } from "lucide-react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { useValidation } from "../../components/context/ValidationContext";
 
+import { validateField } from "../../utils/Validation";
 function Profile({ role = "student", showSuccessMessage = false }) {
-  const { errors, validateField } = useValidation();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -17,11 +16,14 @@ function Profile({ role = "student", showSuccessMessage = false }) {
     university: "",
     bio: "",
     address: "",
-    city: ""
+    city: "",
+    countryCode: "" // optional لو هتستخدميه
   });
 
   const [image, setImage] = useState(null);
   const [message, setMessage] = useState("");
+    const [errors, setErrors] = useState({});
+
 
   const universities = [
     "Tanta University",
@@ -39,16 +41,20 @@ function Profile({ role = "student", showSuccessMessage = false }) {
   ];
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+  const { name, value } = e.target;
 
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+  setFormData({
+    ...formData,
+    [name]: value
+  });
 
-    validateField(name, value);
-  };
+  const error = validateField(name, value);
 
+  setErrors((prev) => ({
+    ...prev,
+    [name]: error
+  }));
+};
   const handleImageChange = (e) => {
     const file = e.target.files[0];
 
@@ -189,11 +195,16 @@ function Profile({ role = "student", showSuccessMessage = false }) {
                   countryCode: country.dialCode
                 });
 
-                validateField(
-                  "phone",
-                  phone,
-                  country.dialCode
-                );
+               const error = validateField(
+  "phone",
+  phone,
+  country.dialCode
+);
+
+setErrors((prev) => ({
+  ...prev,
+  phone: error
+}));
               }}
             />
 
@@ -342,8 +353,10 @@ function Profile({ role = "student", showSuccessMessage = false }) {
             </div>
           </div>
         )}
+     
 
-        {/* Buttons */}
+      {/* OWNER SECTION */}
+             {/* Buttons */}
         <div className={styles.actions}>
           <button
             type="button"

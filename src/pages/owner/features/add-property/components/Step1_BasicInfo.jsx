@@ -102,7 +102,7 @@ const Step1_BasicInfo = ({ formData, errors, touched, handleChange, handleBlur, 
           onBlur={handleBlur}
           error={errors.zipCode}
           touched={touched.zipCode}
-          required
+          
         />
       </div>
 

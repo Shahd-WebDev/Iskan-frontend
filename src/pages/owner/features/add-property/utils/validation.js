@@ -22,9 +22,6 @@ export const validateField = (name, value, formData = {}) => {
       else if (!formData.isLocationSelected) error = "Please select a location from the map";
       else if (valueStr.trim().length < 10) error = "Address must be at least 10 characters";
       break;
-    case "zipCode":
-      if (!valueStr.trim()) error = "Zip code is required";
-      break;
     case "country":
       if (!valueStr.trim()) error = "Required";
       break;

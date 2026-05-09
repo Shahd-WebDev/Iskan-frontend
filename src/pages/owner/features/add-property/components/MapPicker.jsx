@@ -18,8 +18,10 @@ const DEFAULT_CENTER = [30.0444, 31.2357]; // Cairo, Egypt
 function ChangeView({ center, zoom }) {
   const map = useMap();
   useEffect(() => {
-    map.setView(center, zoom);
-  }, [center, zoom, map]);
+    if (center && center[0] && center[1]) {
+      map.flyTo(center, zoom, { duration: 1.5 });
+    }
+  }, [center[0], center[1], zoom, map]);
   return null;
 }
 
@@ -39,7 +41,7 @@ const MapPicker = ({ location, isLocationSelected, onLocationSelect }) => {
       setIsSearching(true);
       searchTimeout.current = setTimeout(async () => {
         try {
-          const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=5`);
+          const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=5&accept-language=en`);
           const data = await response.json();
           setSearchResults(data);
         } catch (err) {
@@ -69,6 +71,15 @@ const MapPicker = ({ location, isLocationSelected, onLocationSelect }) => {
     setMapSearch("");
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (searchResults.length > 0) {
+        handleResultSelect(searchResults[0]);
+      }
+    }
+  };
+
   const LocationMarker = () => {
     useMapEvents({
       click(e) {
@@ -79,7 +90,7 @@ const MapPicker = ({ location, isLocationSelected, onLocationSelect }) => {
 
     const reverseGeocode = async (lat, lng) => {
       try {
-        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`);
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1&accept-language=en`);
         const result = await response.json();
         if (result && result.display_name) {
           const addressComp = result.address || {};
@@ -112,7 +123,7 @@ const MapPicker = ({ location, isLocationSelected, onLocationSelect }) => {
 
   return (
     <div className={styles["map-container-wrapper"]}>
-      <div className={styles["map-search-wrapper"]}>
+      <div className={styles["map-search-wrapper"]} style={{ zIndex: 1000, position: 'relative' }}>
         <div className={styles["relative"]}>
           <Search className={styles["search-icon-map"]} size={16} />
           <input
@@ -121,6 +132,7 @@ const MapPicker = ({ location, isLocationSelected, onLocationSelect }) => {
             placeholder="Search for your property location..."
             value={mapSearch}
             onChange={handleSearchChange}
+            onKeyDown={handleKeyDown}
           />
           {isSearching && <div className="absolute right-3 top-1/2 -translate-y-1/2"><Loader2 className={styles["spinner"]} /></div>}
         </div>
@@ -148,8 +160,8 @@ const MapPicker = ({ location, isLocationSelected, onLocationSelect }) => {
         scrollWheelZoom={false}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
+          url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
         />
         <ChangeView 
           center={location.lat ? [location.lat, location.lng] : DEFAULT_CENTER} 
