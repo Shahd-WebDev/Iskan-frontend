@@ -4,6 +4,7 @@ import styles from "./settings.module.css";
 import { Camera, CheckCircle } from "lucide-react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+
 import { useValidation } from "../../components/context/ValidationContext";
 
 function Profile({ role = "student", showSuccessMessage = false }) {
@@ -17,7 +18,8 @@ function Profile({ role = "student", showSuccessMessage = false }) {
     university: "",
     bio: "",
     address: "",
-    city: ""
+    city: "",
+    countryCode: "" // optional لو هتستخدميه
   });
 
   const [image, setImage] = useState(null);
@@ -342,8 +344,10 @@ function Profile({ role = "student", showSuccessMessage = false }) {
             </div>
           </div>
         )}
+     
 
-        {/* Buttons */}
+      {/* OWNER SECTION */}
+             {/* Buttons */}
         <div className={styles.actions}>
           <button
             type="button"
