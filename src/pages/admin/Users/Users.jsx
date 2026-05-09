@@ -23,7 +23,7 @@ export default function Users() {
       setLoading(true);
 
       const response = await axios.get(
-        "https://isskan-1.runasp.net/api/AdminUser/GetAll",
+        "/api/AdminUser/GetAll",
         {
           params: {
             PageIndex: 1,
@@ -82,7 +82,7 @@ export default function Users() {
   try {
 
     await axios.patch(
-      `https://isskan-1.runasp.net/api/AdminUser/Block/${id}/block`,
+      `/api/AdminUser/Block/${id}/block`,
       {},
       {
         headers: {
@@ -112,7 +112,7 @@ const handleDelete = async (id) => {
   try {
 
     await axios.delete(
-      `https://isskan-1.runasp.net/api/AdminUser/Delete/${id}`,
+      `/api/AdminUser/Delete/${id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
