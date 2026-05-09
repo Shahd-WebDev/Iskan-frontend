@@ -20,20 +20,7 @@ const amenityConfig = {
 function UserPropertyCard({ property }) {
   const navigate = useNavigate();
 
-  const handleViewDetails = () => {
-<<<<<<< HEAD
-    navigate(`/properties/${property.id}`);
-=======
-
-    if (isVerification) {
-    return;}
-    
-    navigate(
-      isAdmin
-        ? `/admin/property/${property.id}`
-        : `/properties/${property.id}`
-    );
->>>>>>> 84e9eeb (faq with api)
+  const handleViewDetails = () => {    navigate(`/properties/${property.id}`);
   };
 
 const amenities = property.amenities || [];
@@ -50,12 +37,7 @@ const amenities = property.amenities || [];
   const isBookmarked = savedProperties.some(
     (p) => p.id === property.id
   );
-<<<<<<< HEAD
-
-  const imageUrl = property.image || "/img.webp";
-=======
->>>>>>> 84e9eeb (faq with api)
-
+const imageUrl = property.image || "/img.webp";
   return (
     <div className="property-card overflow-hidden w-100 h-100 d-flex flex-column">
 
@@ -68,23 +50,14 @@ const amenities = property.amenities || [];
 
         {/* Bookmark */}
         <button
-<<<<<<< HEAD
-  type="button"
-  className={`bookmark-btn position-absolute bg-white border-0 rounded-circle d-flex align-items-center justify-content-center ${isBookmarked ? "bookmarked" : ""}`}
-  onClick={(e) => {
-    e.stopPropagation();
-    toggleSave(property);
-  }}
+type="button"
+className={`bookmark-btn position-absolute bg-white border-0 rounded-circle d-flex align-items-center justify-content-center ${isBookmarked ? "bookmarked" : ""}`}
+onClick={(e) => {
+  e.stopPropagation();
+  toggleSave(property);
+}}
 >
-=======
-        type="button"
-          className={`bookmark-btn position-absolute bg-white border-0  rounded-circle d-flex align-items-center  justify-content-center  ${isBookmarked ? "bookmarked" : ""}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleSave(property);
-          }}        
-        >
->>>>>>> 84e9eeb (faq with api)
+        
           <Bookmark
             size={20}
             fill={isBookmarked ? "#0088FF" : "none"}
@@ -147,21 +120,12 @@ const amenities = property.amenities || [];
 
        
 
-        <button className={`view-details-btn w-100 text-white border-0 mt-auto ${
-            isVerification ? "verified-btn" : ""
-          }`}
-          onClick={handleViewDetails}
-        >
-            {
-              isVerification
-                ? "Verified"
-                : isAdmin
-                ? "View AI Details"
-                : "View Details"
-            }
-
-
-        </button>
+        <button
+  className="view-details-btn w-100 text-white border-0 mt-auto"
+  onClick={handleViewDetails}
+>
+  View Details
+</button>
 
       </div>
     </div>
