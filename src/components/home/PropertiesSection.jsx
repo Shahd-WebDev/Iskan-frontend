@@ -42,7 +42,10 @@ function PropertiesSection() {
           <button className="view-all-btn  border-0 mt-auto text-white" onClick={() => navigate("/properties")}>View All Properties</button>
         </div>
 
-        <div className="d-flex flex-wrap gap-2 mb-4 w-100">
+
+
+        <div className="row g-1 mb-4 w-100">
+
           {currentProperties.map((property) => (
             <div key={property.id} style={{ flex: "0 0 calc(25% - 12px)" }}>
               <PropertyCard property={property} onBookmarkChange={handleBookmarkChange} />
