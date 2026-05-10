@@ -17,6 +17,7 @@ import { useSignIn } from "../../context/SignInContext";
 import "./ProfileMenu.css";
 
 export default function ProfileMenu() {
+  
   const navigate = useNavigate();
   const { role, switchRole } = useSignIn();
 
@@ -34,7 +35,7 @@ export default function ProfileMenu() {
 
   const displayName = user?.name || user?.email || "User";
 
-
+const isAdmin = user?.role === "Admin";
 
   // ✅ Close Menu When Clicking Outside
   useEffect(() => {
@@ -90,10 +91,20 @@ export default function ProfileMenu() {
       </button>
 
       {/* ================= Dropdown Menu ================= */}
-      {openMenu && (
-        <div className="pm-menu">
-          {/* User Info */}
-          <div className="pm-user">
+    {openMenu && (
+  <div className="pm-menu">
+
+    {/* User Info */}
+              {/* User Info */}
+          <div
+  className={`pm-user ${isAdmin ? "admin-clickable" : ""}`}
+  onClick={() => {
+    if (isAdmin) {
+      navigate("/admin/dashboard");
+      setOpenMenu(false);
+    }
+  }}
+>
             {/* ✅ Avatar Letter */}
             <div className="pm-avatar">
               {user.avatar ? (
@@ -113,10 +124,12 @@ export default function ProfileMenu() {
           <hr />
 
           {/* Saved */}
-          <Link to="/saved" className="pm-item">
-            <Bookmark size={18} stroke="black" fill="black" />
-            Saved Property
-          </Link>
+{!isAdmin && (
+  <Link to="/saved" className="pm-item">
+    <Bookmark size={18} stroke="black" fill="black" />
+    Saved Property
+  </Link>
+)}
 
           {/* Profile */}
           <Link 
@@ -129,39 +142,64 @@ export default function ProfileMenu() {
           </Link>
 
           {/* Notifications */}
-          <Link to="/notifications" className="pm-item">
-            <Bell size={18} stroke="black" fill="black" />
-            Notifications
-          </Link>
+          <Link
+  to={
+    isAdmin
+      ? "/admin/notifications"
+      : "/notifications"
+  }
+  className="pm-item"
+  onClick={() => setOpenMenu(false)}
+>
+  <Bell size={18} stroke="black" fill="black" />
+  Notifications
+</Link>
 
           <hr />
+{!isAdmin && (
+  <>
+    {/* Help */}
+    <Link to="/help" className="pm-item">
+      <LifeBuoy size={18} stroke="black" />
+      Help
+      <ChevronRight className="pm-arrow" size={18} />
+    </Link>
 
-          {/* Help */}
-          <Link to="/help" className="pm-item">
-            <LifeBuoy size={18} stroke="black" />
-            Help
-            <ChevronRight className="pm-arrow" size={18} />
-          </Link>
-
-          <hr />
+    <hr />
+  </>
+)}
 
           {/* Switch Role */}
-          <button 
-            className="pm-item" 
-            onClick={() => {
-              const newRole = role === "student" ? "owner" : "student";
-              switchRole(newRole);
-              setOpenMenu(false);
-              if (newRole === "owner") {
-                navigate("/owner-dashboard/dashboard");
-              } else {
-                navigate("/");
-              }
-            }}
-          >
-            <ArrowLeftRight size={18} stroke="black" />
-            Switch to {role === "student" ? "Owner" : "Student"}
-          </button>
+          {!isAdmin && (
+  <button 
+    className="pm-item" 
+    onClick={() => {
+      const newRole = role === "student" ? "owner" : "student";
+      switchRole(newRole);
+      setOpenMenu(false);
+
+      if (newRole === "owner") {
+        navigate("/owner-dashboard/dashboard");
+      } else {
+        navigate("/");
+      }
+    }}
+  >
+    <ArrowLeftRight size={18} stroke="black" />
+    Switch to {role === "student" ? "Owner" : "Student"}
+  </button>
+)}
+
+{isAdmin && (
+  <Link
+    to="/admin/dashboard"
+    className="pm-item"
+    onClick={() => setOpenMenu(false)}
+  >
+    <UserPlus size={18} stroke="black" />
+    Dashboard
+  </Link>
+)}
 
           {/* Logout */}
           <button onClick={handleLogout} className="pm-item pm-logout">

@@ -7,8 +7,8 @@ function AdminPropertyCard({ property, isVerification = false }) {
     const navigate = useNavigate();
 
   const handleViewDetails = () => {
-    navigate(`/admin/property/${property.id}`);
-  };
+  navigate(`/admin/property/${property.id}`);
+};
 const status =
   property.verificationStatus?.trim().toLowerCase() || "pending";
 const propertyTypeMap = {
@@ -21,6 +21,11 @@ const type =
   propertyTypeMap[Number(property.propertyType)] || "Room";
     const imagePath = property.images?.[0]?.imageUrl;
 
+
+    const handlePropertyDetails = () => {
+  navigate(`/admin/property-details/${property.id}`);
+};
+
 const imageUrl = imagePath
   ? imagePath.startsWith("http")
     ? imagePath
@@ -29,8 +34,11 @@ const imageUrl = imagePath
   return (
     <div className="property-card admin-card overflow-hidden w-100 h-100 d-flex flex-column">
 
-      <div className="property-image-wrapper overflow-hidden">
-        <img
+<div
+  className="property-image-wrapper overflow-hidden"
+  onClick={handlePropertyDetails}
+  style={{ cursor: "pointer" }}
+>        <img
           src={imageUrl}
           onError={(e) => {
             e.target.onerror = null;

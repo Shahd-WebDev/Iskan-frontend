@@ -14,6 +14,9 @@ import Dashboard from "../pages/admin/Dashboard/Dashboard";
 import PropertyListings from "../pages/admin/PropertyListings/PropertyListings";
 import PropertyVerification from "../pages/admin/PropertyVerification/PropertyVerification";
 import PropertyAIDetails from "../pages/admin/PropertyAIDetails/PropertyAIDetails";
+
+import AdminPropertyDetails from "../pages/admin/AdminPropertyDetails/AdminPropertyDetails";
+
 import Users from "../pages/admin/Users/Users";
 import Reports from "../pages/admin/Reports/Reports";
 import AdminNotifications from "../pages/admin/AdminNotifications/AdminNotifications";
@@ -85,6 +88,11 @@ export default function AppRoutes() {
     <Route path="dashboard" element={<Dashboard />} />
     <Route path="properties" element={<PropertyListings />} />
     <Route path="verification" element={<PropertyVerification />} />
+
+  <Route
+  path="property-details/:id"
+  element={<AdminPropertyDetails />}
+/>
     <Route path="property/:id" element={<PropertyAIDetails />} />
     <Route path="users" element={<Users />} />
     <Route path="reports" element={<Reports />} />

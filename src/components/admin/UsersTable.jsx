@@ -57,7 +57,11 @@ export default function UsersTable({
                   onClick={() => onBlock(user.id)}
                 >
                   <Ban size={20} />
-                  <span>Block Owner</span>
+<span>
+  {user.status === "Banned"
+    ? "Unblock Owner"
+    : "Block Owner"}
+</span>
                 </button>
 
                 {/* 🔥 DELETE */}

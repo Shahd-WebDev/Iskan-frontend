@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import UsersTable from "../../../components/admin/UsersTable";
 import api from "../../../services/api";
 import SkeletonCard from "../../../components/common/SkeletonCard";
+import PaginationControls from "../../../components/Pagination/Pagination";
 
 const avatarColors = [
   "#4A90D9", "#5BA85B", "#E07B54", "#9B6BB5",
@@ -15,6 +16,8 @@ export default function Users() {
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
 
   // ✅ GET USERS
@@ -26,14 +29,16 @@ export default function Users() {
   "/AdminUser/GetAll",
         {
           params: {
-            PageIndex: 1,
-            PageSize: 20,
+            PageIndex: currentPage,
+            
+            PageSize: 7,
             search: search,
           },
 
           
         }
       );
+      console.log(response.data);
 
       // ✅ Transform API data
       const formattedUsers = response.data.data.map((user) => ({
@@ -54,6 +59,9 @@ export default function Users() {
       }));
 
       setUsers(formattedUsers);
+setTotalPages(
+  Math.ceil(response.data.count / 7)
+);
     } catch (error) {
       console.error("Error fetching users:", error);
     } finally {
@@ -64,7 +72,7 @@ export default function Users() {
   // ✅ first load + search
   useEffect(() => {
     getUsers();
-  }, [search]);
+  }, [search, currentPage]);
 
   useEffect(() => {
     const closeMenu = () => setOpenMenuId(null);
@@ -85,7 +93,12 @@ export default function Users() {
     setUsers((prev) =>
       prev.map((user) =>
         user.id === id
-          ? { ...user, status: "Banned" }
+          ? { ...user, 
+            status:
+  user.status === "Banned"
+    ? "Active"
+    : "Banned"
+           }
           : user
       )
     );
@@ -154,16 +167,17 @@ const handleDelete = async (id) => {
               placeholder="Search for a name"
               className="users-search-input"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+  setSearch(e.target.value);
+  setCurrentPage(1);
+}}
             />
           </div>
 
-          <div className="header-cols">
-            <span>ID</span>
-            <span>Email</span>
-            <span>Status</span>
-            <span>Actions</span>
-          </div>
+          <span>ID</span>
+<span>Email</span>
+<span>Status</span>
+<span>Actions</span>
 
         </div>
 
@@ -183,8 +197,16 @@ const handleDelete = async (id) => {
             onDelete={handleDelete}
           />
         )}
-
+        
       </div>
+      <div className="users-pagination">
+  <PaginationControls
+    currentPage={currentPage}
+totalPages={totalPages}
+    onPageChange={setCurrentPage}
+    label={`Page ${currentPage}`}
+  />
+</div>
     </div>
   );
 }

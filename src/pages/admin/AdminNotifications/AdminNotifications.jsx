@@ -1,40 +1,199 @@
-import { useState } from "react";
-import { Home, UserPlus, RefreshCw, TriangleAlert } from "lucide-react";
+import PaginationControls from "../../../components/Pagination/Pagination";
+import { useEffect, useState } from "react";
+import api from "../../../services/api";
+import SkeletonCard from "../../../components/common/SkeletonCard";
+import {
+  Home,
+  UserPlus,
+  TriangleAlert,
+  CircleCheckBig
+} from "lucide-react";
+//import {Home,UserPlus,ShieldAlert,CircleCheckBig} from "lucide-react";
+//import { Home, UserPlus, RefreshCw, TriangleAlert } from "lucide-react";
 import NotificationItem from "../../../components/admin/NotificationItem";
 import "./AdminNotifications.css";
 
-const notificationsData = [
-  { id: 1, section: "Today", icon: TriangleAlert , title: "Critical Alert: AI detected high probability of fake images", subtitle: "in Listing #452", time: "1 hour ago", type: "critical", unread: true },
-  { id: 2, section: "Today", icon: Home, title: "Property Verified", subtitle: '"Spacious 2BR Apartment" by Michael Chen has been verified', time: "3 hours ago", type: "property", unread: true },
-  { id: 3, section: "Today", icon: TriangleAlert, title: "Suspicious Activity Detected", subtitle: "Multiple failed login attempts for user @john_smith", time: "5 hours ago", type: "warning", unread: true },
-  { id: 4, section: "Today", icon: Home, title: "Suspicious Activity Detected", subtitle: "Spacious 2BR apartment by Michael Chen has been verified", time: "5 hours ago", type: "property", unread: false },
-  { id: 5, section: "Yesterday", icon: UserPlus, title: "New Landlord Registration", subtitle: "Emma Wilson joined as a Landlord", time: "Yesterday", type: "registration", unread: false },
-  { id: 6, section: "Yesterday", icon: RefreshCw, title: "System Update Completed", subtitle: "Platform updated to version 2.4.1", time: "Yesterday", type: "system", unread: false },
-  { id: 7, section: "Earlier", icon: Home, title: "Property Listing Expired", subtitle: '"Downtown Loft" by Robert Williams has expired', time: "2 days ago", type: "property", unread: false },
-];
+
 
 const sections = ["Today", "Yesterday", "Earlier"];
 
 export default function NotificationsPage() {
-  const [notifications, setNotifications] = useState(notificationsData);
 
-  const unreadCount = notifications.filter(n => n.unread).length;
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [pageIndex, setPageIndex] =
+  useState(1);
+
+const [totalPages, setTotalPages] =
+  useState(1);
+
+  const [unreadCount, setUnreadCount] =
+  useState(0);
+
+const pageSize = 7;
+
+ const getSection = (date) => {
+
+  const now = new Date();
+
+  const notificationDate =
+    new Date(date);
+
+  const diffHours =
+    (now - notificationDate) /
+    (1000 * 60 * 60);
+
+  if (diffHours <= 24)
+    return "Today";
+
+  if (diffHours <= 48)
+    return "Yesterday";
+
+  return "Earlier";
+};
+
+  useEffect(() => {
+
+  async function fetchNotifications() {
+
+    try {
+
+      setLoading(true);
+
+      const response = await api.get(
+  "/Notification/Get",
+  {
+    params: {
+      PageIndex: pageIndex,
+      PageSize: pageSize,
+    },
+  }
+);
+
+const unreadResponse =
+  await api.get(
+    "/Notification/UnreadCount/unread-count"
+  );
+
+setUnreadCount(
+  unreadResponse.data
+);
+
+      console.log(response.data);
+      setTotalPages(
+  Math.ceil(
+    response.data.count / pageSize
+  )
+);
+
+      const formattedNotifications =
+  response.data.data.map((item) => {
+
+    const uiType =
+      item.type === "Reminders"
+        ? "warning"
+        : item.type === "Property"
+        ? "property"
+        : item.type === "Registration"
+        ? "registration"
+        : "system";
+
+    const icon =
+  uiType === "property"
+    ? Home
+    : uiType === "registration"
+    ? UserPlus
+    : uiType === "system"
+    ? CircleCheckBig
+    : TriangleAlert;
+
+    return {
+      id: item.id,
+
+      title: item.title,
+
+      subtitle: item.content,
+
+      time: item.createdAt,
+
+      unread: !item.isRead,
+
+      type: uiType,
+
+      icon: icon,
+
+      section: getSection(item.createdAt),
+    };
+});
+      setNotifications(
+        formattedNotifications
+      );
+
+    } catch (error) {
+
+      console.log(error);
+
+    } finally {
+
+      setLoading(false);
+    }
+  }
+
+  fetchNotifications();
+
+}, [pageIndex]);
+
 
   // ✅ mark all
-  const markAllRead = () => {
-    setNotifications(prev =>
-      prev.map(n => ({ ...n, unread: false }))
+  const markAllRead = async () => {
+
+  try {
+
+    await api.put(
+      "/Notification/MarkAllRead/read-all"
     );
-  };
+
+    setNotifications(prev =>
+      prev.map(n => ({
+        ...n,
+        unread: false,
+      }))
+    );
+
+    setUnreadCount(0);
+
+  } catch (error) {
+
+    console.log(error);
+  }
+};
 
   // ✅ mark one
-  const markAsRead = (id) => {
+  const markAsRead = async (id) => {
+
+  try {
+
+    await api.put(
+      `/Notification/MarkRead/${id}/read`
+    );
+
     setNotifications(prev =>
       prev.map(n =>
-        n.id === id ? { ...n, unread: false } : n
+        n.id === id
+          ? { ...n, unread: false }
+          : n
       )
     );
-  };
+
+    setUnreadCount(prev =>
+      prev > 0 ? prev - 1 : 0
+    );
+
+  } catch (error) {
+
+    console.log(error);
+  }
+};
 
   // ✅ delete
   const deleteNotification = (id) => {
@@ -42,6 +201,16 @@ export default function NotificationsPage() {
       prev.filter(n => n.id !== id)
     );
   };
+
+  if (loading) {
+  return (
+    <div className="skeleton-wrapper">
+      {Array.from({ length: 5 }).map((_, index) => (
+        <SkeletonCard key={index} />
+      ))}
+    </div>
+  );
+}
 
   return (
     <div className="page-wrapper">
@@ -79,6 +248,13 @@ export default function NotificationsPage() {
             </div>
           );
         })}
+
+        <PaginationControls
+  currentPage={pageIndex}
+  totalPages={totalPages}
+  onPageChange={setPageIndex}
+  label={`Page ${pageIndex} of ${totalPages}`}
+/>
 
       </div>
     </div>

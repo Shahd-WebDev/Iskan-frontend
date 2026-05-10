@@ -15,3 +15,22 @@ export const getPropertyById = async (id) => {
 
   return response.data;
 };
+
+export const approveProperty = async (id) => {
+  const response = await api.put(
+    `/AdminProperties/Approve/${id}/approve`
+  );
+
+  return response.data;
+};
+
+export const rejectProperty = async (id, reason) => {
+  const response = await api.put(
+    `/AdminProperties/Reject/${id}/reject`,
+    {
+      reason,
+    }
+  );
+
+  return response.data;
+};
