@@ -1,3 +1,4 @@
+import SkeletonCard from "../../../components/common/SkeletonCard";
 import "./propertyVerification.css";
 
 import AdminPropertyCard from "../../../components/admin/PropertyCard/AdminPropertyCard";
@@ -51,7 +52,9 @@ const [loading, setLoading] = useState(true);
       {/* grid */}
       <div className="verification-grid">
 {loading
-  ? "Loading..."
+  ? Array.from({ length: 6 }).map((_, index) => (
+      <SkeletonCard key={index} />
+    ))
   : properties.map((item) => (
              <AdminPropertyCard
   key={item.id}
