@@ -1,11 +1,18 @@
 import FeedbackSection from "./FeedbackSection";
 import ReviewDisplay from "./ReviewDisplay";
 
-export default function ReviewSection() {
+export default function ReviewSection({
+  propertyId,
+}) {
   return (
     <div className="pd-review-section">
-      <FeedbackSection />
+
+      <FeedbackSection
+        propertyId={propertyId}
+      />
+
       <ReviewDisplay />
+
     </div>
   );
 }

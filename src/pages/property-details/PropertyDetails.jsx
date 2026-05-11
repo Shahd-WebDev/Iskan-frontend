@@ -103,8 +103,7 @@ onLocationClick={() => setShowMap(prev => !prev)}
           onBookingClick={() => setShowBooking(true)}
         />
 
-        <ReviewSection />
-
+<ReviewSection propertyId={property.id} />
         <RecommendedProperties currentPropertyId={property.id} />
       </div>
 
