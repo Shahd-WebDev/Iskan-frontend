@@ -5,7 +5,6 @@ import FAQCard from "../home/FAQCard";
 import PaginationControls from "../../components/Pagination/Pagination";
 
 const ITEMS_PER_PAGE = 3;
-const TOTAL_PAGES = 10;
 
 function FAQSection() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -17,7 +16,7 @@ function FAQSection() {
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          setFaqs(data.data.slice(0, 10));
+          setFaqs(data.data);
         }
       })
       .catch((err) => console.error("Failed to fetch FAQs:", err));
@@ -55,9 +54,9 @@ function FAQSection() {
 
       <PaginationControls
         currentPage={currentPage}
-        totalPages={TOTAL_PAGES}
+        totalPages={Math.ceil(faqs.length / ITEMS_PER_PAGE)}
         onPageChange={setCurrentPage}
-        label={`${Math.min(currentPage * ITEMS_PER_PAGE, faqs.length)} of ${faqs.length}`}
+        label={`${currentPage} of ${Math.ceil(faqs.length / ITEMS_PER_PAGE)}`}
       />
     </section>
   );
