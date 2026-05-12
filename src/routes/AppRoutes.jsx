@@ -27,6 +27,7 @@ import Properties from "../pages/properties/Properties";
 import PropertyDetails from "../pages/property-details/PropertyDetails";
 import FAQs from "../pages/FAQs/FAQs";
 import SavedProperties from "../pages/SavedProperties/SavedProperties";
+import Terms from "../pages/Terms/Terms";
 
 /* Auth Pages */
 import Login from "../pages/auth/Login";
@@ -53,6 +54,7 @@ import PropertiesPage from "../pages/owner/pages/Properties/PropertiesPage";
 import AddPropertyPage from "../pages/owner/pages/AddProperty/AddPropertyPage";
 
 
+
 export default function AppRoutes() {
   return (
     <Routes>
@@ -69,6 +71,7 @@ export default function AppRoutes() {
         <Route path="/properties" element={<Properties />} />
         <Route path="/properties/:id" element={<PropertyDetails />} />
         <Route path="/faqs" element={<FAQs />} />
+        <Route path="/terms" element={<Terms />} />
         <Route path="/bookings" element={<div>My Bookings Page (Student Only)</div>} />
 
         <Route path="/saved" element={<SavedProperties />} />

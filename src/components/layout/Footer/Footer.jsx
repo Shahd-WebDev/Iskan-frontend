@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import "./Footer.css";
-
+import { FaXTwitter } from "react-icons/fa6";
 /* Lucide (UI icons بس) */
 import { Mail, Send } from "lucide-react";
 
@@ -49,11 +49,11 @@ export default function Footer() {
                 />
 
                 <FooterColumn
-                  title="Properties"
-                  links={[
-                    { name: "Portfolio", path: "/portfolio" },
-                    { name: "Categories", path: "/categories" },
-                    { name: "Our Offices", path: "/offices" },
+                  title="Account"
+  links={[
+    { name: "Login", path: "/login" },
+    { name: "Register", path: "/signup" },
+    
                   ]}
                 />
 
@@ -61,7 +61,7 @@ export default function Footer() {
                   title="Contact Us"
                   links={[
                     { name: "Contact Form", path: "/contact" },
-                    { name: "Our Offices", path: "/offices" },
+                    
                   ]}
                 />
               </div>
@@ -86,11 +86,38 @@ export default function Footer() {
           </div>
 
           <div className="footer-social">
-            <a href="#"><FaFacebookF /></a>
-            <a href="#"><FaLinkedinIn /></a>
-            <a href="#"><FaTwitter /></a>
-            <a href="#"><FaYoutube /></a>
-          </div>
+  <a
+    href="https://www.facebook.com/login"
+    target="_blank"
+    rel="noreferrer"
+  >
+    <FaFacebookF />
+  </a>
+
+  <a
+    href="https://www.linkedin.com/login"
+    target="_blank"
+    rel="noreferrer"
+  >
+    <FaLinkedinIn />
+  </a>
+
+  <a
+    href="https://twitter.com/login"
+    target="_blank"
+    rel="noreferrer"
+  >
+    <FaXTwitter  />
+  </a>
+
+  <a
+    href="https://www.youtube.com"
+    target="_blank"
+    rel="noreferrer"
+  >
+    <FaYoutube />
+  </a>
+</div>
         </div>
       </div>
     </footer>
