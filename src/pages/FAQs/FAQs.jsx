@@ -1,69 +1,40 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./FAQs.css";
 
 export default function FAQs() {
-  const sections = [
-    {
-      title: "Upload & Share",
-      questions: [
-        {
-          q: "Lorem ipsum dolor sit ame",
-          a: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-        },
-        {
-          q: "Lorem ipsum dolor sit ame",
-          a: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        },
-        {
-          q: "Lorem ipsum dolor sit ame",
-          a: "Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
-        },
-        {
-          q: "Lorem ipsum dolor sit ame",
-          a: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-        },
-      ],
-    },
-    {
-      title: "Subscription & Payment",
-      questions: [
-        {
-          q: "Lorem ipsum dolor sit ame",
-          a: "Payment options are available monthly and yearly.",
-        },
-        {
-          q: "Lorem ipsum dolor sit ame",
-          a: "You can cancel anytime from your profile settings.",
-        },
-        {
-          q: "Lorem ipsum dolor sit ame",
-          a: "Your subscription renews automatically unless cancelled.",
-        },
-      ],
-    },
-    {
-      title: "Integrations",
-      questions: [
-        {
-          q: "Lorem ipsum dolor sit ame",
-          a: "We integrate with Google Maps and property listing services.",
-        },
-        {
-          q: "Lorem ipsum dolor sit ame",
-          a: "More integrations will be added soon in future updates.",
-        },
-      ],
-    },
-  ];
+  const [sections, setSections] = useState([]);
+
+  useEffect(() => {
+    fetch("/api/FAQ/GetFAQs/items")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          const grouped = data.data.reduce((acc, faq) => {
+            const category = faq.categoryName || "General";
+            if (!acc[category]) acc[category] = [];
+            acc[category].push({ q: faq.question, a: faq.answer });
+            return acc;
+          }, {});
+
+          setSections(
+            Object.entries(grouped).map(([title, questions]) => ({
+              title,
+              questions,
+            }))
+          );
+        }
+      })
+      .catch((err) => console.error("Failed to fetch FAQs:", err));
+  }, []);
 
   return (
     <div className="faq-wrapper">
       <div className="faq-page">
-       <div className="faq-header">
-  <h1 className="faq-title">
-    Frequently Asked <br /> Questions
-  </h1>
-</div>
+        <div className="faq-header">
+          <h1 className="faq-title">
+            Frequently Asked <br /> Questions
+          </h1>
+        </div>
 
         {sections.map((sec, index) => (
           <FAQSection key={index} section={sec} />
@@ -78,7 +49,6 @@ function FAQSection({ section }) {
   return (
     <div className="faq-section">
       <h2>{section.title}</h2>
-
       {section.questions.map((item, i) => (
         <FAQItem key={i} q={item.q} a={item.a} />
       ))}
@@ -86,7 +56,7 @@ function FAQSection({ section }) {
   );
 }
 
-/* ================= Accordion Item ================= */
+ /* ================= Accordion Item ================= */
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false);
 
@@ -96,7 +66,6 @@ function FAQItem({ q, a }) {
         <span className="faq-q-text">{q}</span>
         <span className="faq-icon">{open ? "−" : "+"}</span>
       </button>
-
       {open && <p className="faq-answer">{a}</p>}
     </div>
   );
