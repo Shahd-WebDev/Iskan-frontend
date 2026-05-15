@@ -45,7 +45,125 @@
   font-size: 30px;
   font-weight: 700;
   color: #0088FF;
+}
+/* ================= Add FAQ Form ================= */
+
+.add-faq-form {
+  margin-top: 22px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  padding: 24px;
+
+  background: #f8fbff;
+
+  border: 1px solid #dbeafe;
+  border-radius: 18px;
+}
+
+/* Input + Textarea */
+
+.add-faq-form input,
+.add-faq-form textarea {
+  width: 100%;
+
+  padding: 14px 16px;
+
+  border: 1px solid #d6d6d6;
+  border-radius: 12px;
+
+  font-family: "Urbanist", sans-serif;
+  font-size: 15px;
+
+  outline: none;
+
+  transition: 0.2s ease;
+}
+
+/* Focus */
+
+.add-faq-form input:focus,
+.add-faq-form textarea:focus {
+  border-color: #0088ff;
+
+  box-shadow: 0 0 0 3px rgba(0, 136, 255, 0.1);
+}
+
+/* Textarea */
+
+.add-faq-form textarea {
+  min-height: 130px;
+
+  resize: vertical;
+}
+
+/* Save Button */
+
+.add-faq-form button {
+  width: fit-content;
+
+  padding: 12px 22px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: #0088ff;
+  color: white;
+
+  font-family: "Urbanist", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+/* Hover */
+
+.add-faq-form button:hover {
+  background: #0074db;
+}
+
+/* ================= Section Header ================= */
+
+.faq-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 35px;
+  gap: 20px;
+}
+
+/* ================= Admin Actions ================= */
+
+.category-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.category-actions button {
+  border: none;
+  outline: none;
+  background: #0088FF;
+  color: white;
+
+  padding: 10px 18px;
+  border-radius: 10px;
+
+  font-family: "Urbanist", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.category-actions button:hover {
+  background: #0070d1;
+  transform: translateY(-2px);
 }
 
 /* ================= Accordion Item ================= */
@@ -89,6 +207,38 @@
   max-width: 720px;
 }
 
+
+/* ================= FAQ Admin Actions ================= */
+
+.faq-admin-actions {
+  margin-top: 16px;
+
+  display: flex;
+  gap: 10px;
+}
+
+.faq-admin-actions button {
+  border: none;
+
+  padding: 8px 14px;
+
+  border-radius: 10px;
+
+  background: #f1f5f9;
+  color: #333;
+
+  font-family: "Urbanist", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.faq-admin-actions button:hover {
+  background: #dbeafe;
+}
 /* ================= Responsive ================= */
 @media (max-width: 992px) {
   .faq-title {
@@ -111,5 +261,15 @@
 
   .faq-section h2 {
     font-size: 22px;
+  }
+}
+@media (max-width: 768px) {
+  .faq-section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .category-actions {
+    flex-wrap: wrap;
   }
 }

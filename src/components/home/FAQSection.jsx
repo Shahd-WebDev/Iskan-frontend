@@ -14,11 +14,18 @@ function FAQSection() {
   useEffect(() => {
     fetch("/api/FAQ/GetFAQs/items")
       .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setFaqs(data.data);
-        }
-      })
+     .then((data) => {
+  console.log("FULL RESPONSE:", data);
+  console.log("TYPE:", typeof data);
+  console.log("IS ARRAY:", Array.isArray(data));
+
+  if (data.success) {
+    console.log("FAQS:", data.data);
+    console.log("COUNT:", data.data.length);
+
+    setFaqs(data.data);
+  }
+})
       .catch((err) => console.error("Failed to fetch FAQs:", err));
   }, []);
 
