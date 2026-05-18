@@ -7,17 +7,35 @@ import {
   MessageSquare,
   CheckCircle2,
   AlertTriangle,
-  CalendarCheck
+  CalendarCheck,
+  Clock
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import styles from "./DashboardPage.module.css";
+import { useSignIn } from "../../../../context/SignInContext";
+import "../../../../styles/verification.css";
 
 export default function DashboardPage() {
   const location = useLocation();
+  const { user, isPending } = useSignIn();
+
+  const displayName = user?.name || "Owner";
+
   return (
     <div className={styles["dashboard-content-wrapper"]}>
+      {/* ── Pending Account Banner ── */}
+      {isPending && (
+        <div className="pending-banner">
+          <Clock size={18} />
+          <span>
+            <strong>Your account is under review.</strong> You can browse your
+            dashboard, but owner actions are disabled until your account is approved.
+          </span>
+        </div>
+      )}
+
       <div className={styles["dc-header"]}>
-        <h1 className={styles["dc-title"]}>Welcome Back, John Smith!</h1>
+        <h1 className={styles["dc-title"]}>Welcome Back, {displayName}!</h1>
         <p className={styles["dc-subtitle"]}>Here's what's happening with your properties today</p>
       </div>
 
