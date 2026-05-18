@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import SignInVerifyRole from "./SignInVerifyRole";
+import ProtectedRoute from "./ProtectedRoute";
 import SearchResult from "../pages/SearchResults/SearchResults";
 
 /* Layouts */
@@ -27,8 +27,12 @@ import SavedProperties from "../pages/SavedProperties/SavedProperties";
 
 /* Auth Pages */
 import Login from "../pages/auth/Login";
-import Signup from "../pages/auth/Signup";
+// import Signup from "../pages/auth/Signup";
+import Register from "../pages/auth/Registeration/Register";
 import ChooseAccountType from "../pages/auth/ChooseAccountType";
+import ForgotPassword from "../pages/auth/forgot-password/ForgotPassword";
+import CheckEmail from "../pages/auth/forgot-password/CheckEmail";
+import ResetPassword from "../pages/auth/forgot-password/ResetPassword";
 
 /* Error */
 import NotFound from "../pages/Error/NotFound";
@@ -56,8 +60,12 @@ export default function AppRoutes() {
       {/* ================= Authentication ================= */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        {/* <Route path="/signup" element={<Signup />} /> */}
+        <Route path="/register" element={<Register />} />
         <Route path="/choose-account" element={<ChooseAccountType />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/check-email" element={<CheckEmail />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Route>
 
       {/* ================= Main Website ================= */}
@@ -80,7 +88,7 @@ export default function AppRoutes() {
         </Route>
 
         {/* ================= Admin Dashboard ================= */}
-        <Route element={<SignInVerifyRole allowedRole="Admin" />}>
+        <Route element={<ProtectedRoute allowedRoles={["Admin", "admin"]} />}>
   <Route path="admin" element={<AdminLayout />}>
     <Route path="dashboard" element={<Dashboard />} />
     <Route path="properties" element={<PropertyListings />} />
@@ -95,7 +103,7 @@ export default function AppRoutes() {
 </Route>
 
      {/* ================= Owner Dashboard ================= */}  
-      <Route element={<SignInVerifyRole allowedRole="owner" />}>
+      <Route element={<ProtectedRoute allowedRoles={["Owner", "owner"]} />}>
         <Route path="/owner-dashboard" element={<OwnerLayout />}>
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="properties" element={<PropertiesPage />} />
