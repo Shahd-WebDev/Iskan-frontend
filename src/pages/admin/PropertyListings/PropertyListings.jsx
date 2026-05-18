@@ -14,6 +14,7 @@ export default function PropertyListings() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     async function fetchData() {
@@ -37,19 +38,30 @@ export default function PropertyListings() {
     fetchData();
   }, [currentPage]); // 👈 ده المهم
 
+  const filteredProperties = properties.filter((property) =>
+  property.title
+  ?.toLowerCase()
+  .includes(searchTerm.trim().toLowerCase())
+);
+
   return (
     <div className="property-listings">
 
       {/* search */}
       <div className="top-bar">
-        <SearchBar />
+        <SearchBar
+  value={searchTerm}
+  onChange={(e) => setSearchTerm(e.target.value)}
+/>
+
       </div>
 
       {/* grid */}
       <div className="listings-grid">
         {loading
           ? Array(9).fill(0).map((_, i) => <SkeletonCard key={i} />)
-          : properties.map((item) => (
+          : filteredProperties.map((item) => (
+
 <AdminPropertyCard key={item.id} property={item} />
             ))}
       </div>

@@ -13,6 +13,7 @@ export default function PropertyVerification() {
 const [currentPage, setCurrentPage] = useState(1);
 const [totalPages, setTotalPages] = useState(1);
 const [loading, setLoading] = useState(true);
+const [searchTerm, setSearchTerm] = useState("");
 
 
   const itemsPerPage = 9; // 3 × 3
@@ -40,13 +41,22 @@ const [loading, setLoading] = useState(true);
 }, [currentPage]);
 
 
+const filteredProperties = properties.filter((property) =>
+  property.title
+    ?.toLowerCase()
+    .includes(searchTerm.trim().toLowerCase())
+);
+
   
   return (
     <div className="property-verification">
 
       {/* search */}
       <div className="top-bar">
-        <SearchBar />
+        <SearchBar
+  value={searchTerm}
+  onChange={(e) => setSearchTerm(e.target.value)}
+/>
       </div>
 
       {/* grid */}
@@ -55,7 +65,7 @@ const [loading, setLoading] = useState(true);
   ? Array.from({ length: 6 }).map((_, index) => (
       <SkeletonCard key={index} />
     ))
-  : properties.map((item) => (
+  : filteredProperties.map((item) => (
              <AdminPropertyCard
   key={item.id}
   property={item}

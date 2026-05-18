@@ -167,9 +167,12 @@ export default function Navbar({ variant }) {
         <div className="iskan-topbar-wrapper">
           <div className="iskan-topbar">
             ✨ Discover Your Dream Property with Iskan{" "}
-            <a href="#" className="iskan-learn">
-              Learn More
-            </a>
+            <Link
+  to="/properties"
+  className="iskan-learn"
+>
+  Learn More
+</Link>
             <button
               className="iskan-close"
               onClick={() => setShowTopBar(false)}
