@@ -266,7 +266,11 @@ margin-bottom: 32px;
   padding: 10px;
   box-shadow: 0 0 9px 0 rgb(0, 0, 0, .3);
 }
-
+.property-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
 .property-image-wrapper {
   height: 240px;
   border-radius: 16px;
@@ -305,13 +309,9 @@ margin-bottom: 32px;
   margin: 0;
   font-family: "Urbanist", sans-serif;
 }
-.property-title {
-  font-size: 16px;
-  font-weight: 600;
-  height: 15px;
-  line-height: 15px;
-  margin-bottom: 0.4rem;
-  text-overflow: ellipsis;
+ .badge-studio {
+  color: #9B59B6;
+  border: 1px solid #9B59B6;
 }
 .property-location {
   gap: 2px;
