@@ -1,4 +1,5 @@
 import toast from "react-hot-toast";
+import SkeletonCard from "../../../components/common/SkeletonCard";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import PropertyHeader from "../../../components/PropertiesDetails/PropertyHeader";
@@ -124,7 +125,17 @@ toast.error("Failed to reject property");
   // NOT FOUND
   // ======================
   if (loading) {
-  return <p>Loading...</p>;
+  return (
+    <div className="pd-page">
+      <div className="listings-grid">
+        {Array(4)
+          .fill(0)
+          .map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+      </div>
+    </div>
+  );
 }
 
   if (!property) {
@@ -150,17 +161,19 @@ toast.error("Failed to reject property");
       </div>
     );
   }
+console.log(property.facilities);
+console.log(property);
 
 const galleryImages =
   property?.images?.length > 0
     ? property.images.map(
         (img) =>
-          img.imageUrl
-            ? `https://isskan-1.runasp.net${img.imageUrl}`
-            : "/img.webp"
+          `https://isskan-1.runasp.net${img.imageUrl}`
       )
-    : ["/img.webp"];
+    : [];
 
+    console.log("IMAGES", property.images);
+console.log("COUNT", property.images?.length);
   
   
   // ======================
@@ -177,30 +190,124 @@ onLocationClick={() => setShowMap(prev => !prev)}
 
 
       
-<ImageGallery
-  images={galleryImages}
-  showMap={showMap}
-  setShowMap={setShowMap}
-  lat={property.latitude}
-lng={property.longitude}
-/>
+{galleryImages.length > 0 ? (
+  <ImageGallery
+    images={galleryImages}
+    showMap={showMap}
+    setShowMap={setShowMap}
+    lat={property.latitude}
+    lng={property.longitude}
+  />
+) : (
+  <div className="no-images-card">
+    <img
+      src="/no-image.png"
+      alt="No Images"
+      className="no-images-img"
+    />
 
+    <p>No property images uploaded</p>
+  </div>
+)}
+<div className="verification-summary">
+  <h3>Verification Information</h3>
+
+<div className="verification-info-grid">
+    <div className="verification-item">
+      <span>Owner Name</span>
+      <p>{property.ownerName}</p>
+    </div>
+
+    <div className="verification-item">
+      <span>Owner Email</span>
+      <p>{property.ownerEmail}</p>
+    </div>
+
+    <div className="verification-item">
+      <span>Property Type</span>
+      <p>{property.propertyType}</p>
+    </div>
+
+    <div className="verification-item">
+      <span>Status</span>
+     <span
+  className={`status-badge ${property.verificationStatus.toLowerCase()}`}
+>
+  {property.verificationStatus}
+</span>
+    </div>
+
+    <div className="verification-item">
+      <span>Rooms</span>
+      <p>{property.roomsNumber}</p>
+    </div>
+
+    <div className="verification-item">
+      <span>Bathrooms</span>
+      <p>{property.bathroomsNumber}</p>
+    </div>
+
+    <div className="verification-item">
+      <span>Monthly Price</span>
+      <p>{property.pricePerMonth} EGP</p>
+    </div>
+
+    <div className="verification-item">
+      <span>Created At</span>
+      <p>
+        {new Date(
+          property.createdAt
+        ).toLocaleDateString()}
+      </p>
+    </div>
+
+  </div>
+</div>
 
         <div className="pd-mid-section align-items-start">
-          <div className="pd-left-col">
-            
-
-            <PropertyDescription property={property} />
-          </div>
+          
 
           <div className="pd-right-col">
-<KeyFeatures
-  features={
-    property.facilities?.map(
-      (item) => item.facilityName
-    ) || []
-  }
-/>      </div>
+
+{property.documents?.length === 0 && (
+  <div className="verification-warning">
+    <h4>No Documents Uploaded</h4>
+    <p>
+      The owner did not upload any verification
+      documents for this property.
+    </p>
+  </div>
+)}
+
+{property.documents?.length > 0 && (
+  <div className="documents-section">
+
+    <h3>Uploaded Documents</h3>
+
+    {property.documents.map((doc) => (
+      <div
+        key={doc.id}
+        className="document-card"
+      >
+        <div>
+          <h4>{doc.fileName}</h4>
+
+          <p>{doc.documentType}</p>
+        </div>
+
+        <a
+          href={`https://isskan-1.runasp.net${doc.documentUrl}`}
+          target="_blank"
+          rel="noreferrer"
+          className="view-document-btn"
+        >
+          View
+        </a>
+      </div>
+    ))}
+  </div>
+)}
+     </div>
         </div>
 {property.verificationStatus === "Pending" && (
   <div className="admin-actions">

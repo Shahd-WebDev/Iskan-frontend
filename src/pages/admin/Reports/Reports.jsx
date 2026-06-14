@@ -41,18 +41,36 @@ setTotalPages(
 );
         
 
-        const formattedReports =
-          response.data.data.map((report) => ({
-            id: report.id,
-            name: report.studentName,
-            issue: report.reason,
-            time: report.timeAgo,
-            priority: report.priority,
-            status: report.status,
-            propertyTitle: report.propertyTitle,
-            image: report.studentImageUrl,
-          }));
+       const avatarColors = [
+  "#4A90D9",
+  "#5BA85B",
+  "#E07B54",
+  "#9B6BB5",
+  "#D4A843",
+  "#4AADAD",
+  "#D9547A",
+  "#6B8FD9",
+];
 
+const formattedReports =
+  response.data.data.map((report, index) => ({
+    id: report.id,
+    name: report.studentName,
+    issue: report.reason,
+    time: report.timeAgo,
+    priority: report.priority,
+    status: report.status,
+    propertyTitle: report.propertyTitle,
+
+    avatar: report.studentName
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase(),
+
+    avatarColor:
+      avatarColors[index % avatarColors.length],
+  }));
         setReports(formattedReports);
 
       } catch (error) {

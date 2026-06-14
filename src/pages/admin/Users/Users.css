@@ -32,7 +32,7 @@
 /* ── HEADER BAR ── */
 .table-header-bar {
  display: grid;
-  grid-template-columns: 240px 160px 1fr 110px 60px;
+  grid-template-columns:  230px 120px 1fr 80px 50px;
   align-items: center;
   padding: 14px 20px;
   border-bottom: 2px solid #5aacff55;
@@ -87,7 +87,7 @@ border-radius: 9999px;
 
 .user-row {
   display: grid;
-  grid-template-columns: 240px 160px 1fr 110px 60px;
+  grid-template-columns:  200px 120px 1fr 90px 50px;
   align-items: center;
   padding: 13px 20px;
   border-bottom: 1px solid #e5e7eb;

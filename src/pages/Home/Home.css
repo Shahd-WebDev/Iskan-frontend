@@ -394,6 +394,61 @@ margin-bottom: 32px;
   background-color: #0088FF;
   color: #F5FAFF !important;
 }
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pagination-input {
+  width: 75px;
+  height: 40px;
+
+  border: 1px solid #dbeafe;
+  border-radius: 10px;
+
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+
+  outline: none;
+  transition: 0.2s;
+}
+
+.pagination-input:focus {
+  border-color: #0088ff;
+  box-shadow: 0 0 0 3px rgba(0, 136, 255, 0.15);
+}
+
+.pagination-input::-webkit-inner-spin-button,
+.pagination-input::-webkit-outer-spin-button {
+  opacity: 1;
+}
+
+.pagination-go-btn {
+  height: 40px;
+  padding: 0 16px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #0088ff;
+  color: white;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.pagination-go-btn:hover {
+  background: #0070d4;
+}
+
+.pagination-go-btn:active {
+  transform: scale(0.97);
+}
 
 /* ========== FAQ SECTION ========== */
 

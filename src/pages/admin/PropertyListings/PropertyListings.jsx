@@ -71,7 +71,7 @@ export default function PropertyListings() {
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={setCurrentPage}
-        label={`Page ${currentPage}`}
+label={`Page ${currentPage} of ${totalPages}`}
       />
 
     </div>
