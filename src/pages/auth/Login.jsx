@@ -70,13 +70,23 @@ export default function Login() {
       // ======================
       const decoded = decodeToken(token);
 
+      console.log(decoded);
+console.log("decoded.role =", decoded.role);
+console.log(
+  "claim role =",
+  decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
+);
+
       if (!decoded) {
         toast.error("Invalid or expired token");
         return;
       }
 
-      const role = decoded.role || "Student";
-
+const role =
+  decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] ||
+  decoded.role ||
+  "Student";
+  
       const userData = {
         email: res.data?.email || formData.email,
         name: res.data?.name || "User",
