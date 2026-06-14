@@ -1,0 +1,244 @@
+/* Container */
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f5fc2, #1e88e5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Card */
+.card {
+  width: 380px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Logo */
+.logo {
+  width: 40px;
+  margin-bottom: 10px;
+}
+
+/* Title */
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* Form */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Row (First + Last name) */
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+/* Input group */
+.formGroup {
+  text-align: left;
+  width: 100%;
+}
+
+.label {
+  font-size: 12px;
+  margin-bottom: 5px;
+  display: block;
+  color: #444;
+}
+
+/* Input */
+.input {
+  width: 100%;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  padding: 0 12px;
+  font-size: 14px;
+  outline: none;
+  transition: 0.2s;
+}
+
+.input:focus {
+  border-color: #1e88e5;
+}
+
+/* Error */
+.error {
+  border-color: red;
+}
+
+.errorText {
+  color: red;
+  font-size: 11px;
+  margin-top: 3px;
+}
+
+/* Password wrapper */
+.inputWrapper {
+  position: relative;
+}
+
+.eyeIcon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+/* Button */
+.submitBtn {
+  height: 42px;
+  border: none;
+  border-radius: 8px;
+  background: #1e88e5;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.submitBtn:hover {
+  background: #1565c0;
+}
+
+.submitBtn:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
+/* Footer */
+.footer {
+  margin-top: 12px;
+  font-size: 12px;
+}
+
+.link {
+  color: #1e88e5;
+  cursor: pointer;
+}
+
+/* Role Step */
+.roleContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.logoIcon {
+  color: #1e88e5;
+  margin-bottom: 8px;
+}
+
+.mainTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 4px 0;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
+}
+
+.stepTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 16px;
+}
+
+.roleCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1.5px solid #1e88e5;
+  cursor: pointer;
+  background: #fff;
+  transition: all 0.2s ease;
+  margin-bottom: 12px;
+}
+
+.roleCard h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e88e5;
+  margin: 10px 0 4px 0;
+}
+
+.roleCard p {
+  font-size: 12px;
+  color: #1e88e5;
+  margin: 0;
+}
+
+.iconWrapper {
+  color: #1e88e5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #e3f2fd;
+}
+
+/* Active State */
+.activeCard {
+  background: #1e88e5;
+  border-color: #1e88e5;
+}
+
+.activeCard h3,
+.activeCard p,
+.activeCard .iconWrapper {
+  color: #fff;
+}
+
+.activeCard .iconWrapper {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.loginText {
+  font-size: 13px;
+  color: #666;
+  margin-top: 16px;
+}
+
+.loginLink {
+  color: #1e88e5;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.loginLink:hover {
+  text-decoration: underline;
+}
+
+select.input {
+  appearance: none;
+  background-color: white;
+  cursor: pointer;
+}

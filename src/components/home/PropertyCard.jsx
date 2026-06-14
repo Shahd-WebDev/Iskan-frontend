@@ -30,33 +30,35 @@ const amenities = property.amenities || [];
     2: "Studio"
   };
 
-  const type = propertyTypeMap[property.propertyType] || "Room";
+  const type = typeof property.propertyType === "number"
+  ? (propertyTypeMap[property.propertyType] ?? "Room")
+  : (property.propertyType || "Room");
 
   const { savedProperties, toggleSave } = useContext(SavedContext);
 
   const isBookmarked = savedProperties.some(
     (p) => p.id === property.id
   );
-const imageUrl = property.image || "/img.webp";
+  const imageUrl = property.image || property.imageUrl || property.images?.[0] || "/img.webp";;
   return (
     <div className="property-card overflow-hidden w-100 h-100 d-flex flex-column">
 
       <div className="property-image-wrapper position-relative overflow-hidden">
         <img
-  src={imageUrl}
-  alt={property.title}
-  className="property-image w-100 h-100 object-fit-cover"
-/>
+          src={imageUrl}
+          alt={property.title}
+          className="property-image w-100 h-100 object-fit-cover"
+        />
 
         {/* Bookmark */}
         <button
-type="button"
-className={`bookmark-btn position-absolute bg-white border-0 rounded-circle d-flex align-items-center justify-content-center ${isBookmarked ? "bookmarked" : ""}`}
-onClick={(e) => {
-  e.stopPropagation();
-  toggleSave(property);
-}}
->
+          type="button"
+          className={`bookmark-btn position-absolute bg-white border-0 rounded-circle d-flex align-items-center justify-content-center ${isBookmarked ? "bookmarked" : ""}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleSave(property);
+          }}
+        >
         
           <Bookmark
             size={20}
@@ -78,7 +80,7 @@ onClick={(e) => {
           </span>
         </div>
 
-        <p className="property-title text-black text-nowrap overflow-hidden">
+        <p className="property-title text-black">
           {property.title}
         </p>
 
@@ -121,11 +123,11 @@ onClick={(e) => {
        
 
         <button
-  className="view-details-btn w-100 text-white border-0 mt-auto"
-  onClick={handleViewDetails}
->
-  View Details
-</button>
+          className="view-details-btn w-100 text-white border-0 mt-auto"
+          onClick={handleViewDetails}
+        >
+          View Details
+        </button>
 
       </div>
     </div>
@@ -133,3 +135,4 @@ onClick={(e) => {
 }
 
 export default UserPropertyCard;
+

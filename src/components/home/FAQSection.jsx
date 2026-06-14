@@ -42,7 +42,7 @@ function FAQSection() {
             <img src={abstractDesign} alt="Abstract Design" />
           </div>
           <h2 className="section-title text-black">Frequently Asked Questions</h2>
-          <p className="section-description">
+          <p className="section-descripntion">
             Find answers to common questions about Iskan's services, property
             listings, and the real estate process. We're here to provide clarity
             and assist you every step of the way.
