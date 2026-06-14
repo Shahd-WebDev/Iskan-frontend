@@ -98,6 +98,11 @@
   color: white;
 }
 
+.op-badge.rejected {
+  background-color: #DC2626;
+  color: white;
+}
+
 /* Card Actions */
 .op-card-actions {
   position: absolute;

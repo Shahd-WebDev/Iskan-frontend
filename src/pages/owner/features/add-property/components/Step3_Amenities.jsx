@@ -15,7 +15,8 @@ const Step3_Amenities = ({
   handlePhotoUpload, 
   removePhoto, 
   photos, 
-  touched 
+  touched,
+  facilitiesLoading
 }) => {
   return (
     <>
@@ -29,33 +30,41 @@ const Step3_Amenities = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search for more Amenities..." 
+            disabled={facilitiesLoading}
           />
         </div>
 
-        <div className={stepStyles["amenities-grid"]}>
-          {filteredAmenities.map((amenity) => (
-            <button 
-              key={amenity.name}
-              type="button"
-              className={`${stepStyles["amenity-btn"]} ${selectedAmenities.includes(amenity.name) ? stepStyles["selected"] : ''}`}
-              onClick={() => toggleAmenity(amenity.name)}
-            >
-              {amenity.icon}
-              <span>{amenity.name}</span>
-            </button>
-          ))}
-          
-          {searchQuery.trim() !== "" && !exactMatchExists && (
-            <button 
-              type="button"
-              className={`${stepStyles["amenity-btn"]} ${stepStyles["custom-add-btn"]}`}
-              onClick={handleAddCustomAmenity}
-            >
-              <Plus size={18} />
-              <span>Add "{searchQuery}"</span>
-            </button>
-          )}
-        </div>
+        {facilitiesLoading ? (
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "16px", color: "#6B7280", fontSize: "14px" }}>
+            <div style={{ width: "16px", height: "16px", borderRadius: "50%", border: "2px solid #E5E7EB", borderTopColor: "#0088FF", animation: "spin 1s linear infinite" }}></div>
+            <span>Loading amenities...</span>
+          </div>
+        ) : (
+          <div className={stepStyles["amenities-grid"]}>
+            {filteredAmenities.map((amenity) => (
+              <button 
+                key={amenity.name}
+                type="button"
+                className={`${stepStyles["amenity-btn"]} ${selectedAmenities.includes(amenity.name) ? stepStyles["selected"] : ''}`}
+                onClick={() => toggleAmenity(amenity.name)}
+              >
+                {amenity.icon}
+                <span>{amenity.name}</span>
+              </button>
+            ))}
+            
+            {searchQuery.trim() !== "" && !exactMatchExists && (
+              <button 
+                type="button"
+                className={`${stepStyles["amenity-btn"]} ${stepStyles["custom-add-btn"]}`}
+                onClick={handleAddCustomAmenity}
+              >
+                <Plus size={18} />
+                <span>Add "{searchQuery}"</span>
+              </button>
+            )}
+          </div>
+        )}
         {errors.amenities && <span className={compStyles["error-text"]}>{errors.amenities}</span>}
       </div>
 

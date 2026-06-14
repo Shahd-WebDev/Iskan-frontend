@@ -12,30 +12,22 @@ import {
   UserPlus,
   ArrowLeftRight
 } from "lucide-react";
-import { useSignIn } from "../../context/SignInContext";
+import { useAuth } from "../../context/AuthContext";
 
 import "./ProfileMenu.css";
 
 export default function ProfileMenu() {
   
   const navigate = useNavigate();
-  const { role, switchRole } = useSignIn();
-
-  const [user, setUser] = useState(null);
+  const { user, logout } = useAuth();
+  const role = user?.role?.toLowerCase();
   const [openMenu, setOpenMenu] = useState(false);
 
   const menuRef = useRef(null);
 
-  // ✅ Load User From LocalStorage
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) setUser(JSON.parse(storedUser));
-  }, []);
-
-
   const displayName = user?.name || user?.email || "User";
 
-const isAdmin = user?.role === "Admin";
+  const isAdmin = role === "admin";
 
   // ✅ Close Menu When Clicking Outside
   useEffect(() => {
@@ -52,7 +44,7 @@ const isAdmin = user?.role === "Admin";
 
   // ✅ Logout
   function handleLogout() {
-    localStorage.removeItem("user");
+    logout();
     navigate("/login");
   }
 
@@ -169,26 +161,7 @@ const isAdmin = user?.role === "Admin";
   </>
 )}
 
-          {/* Switch Role */}
-          {!isAdmin && (
-  <button 
-    className="pm-item" 
-    onClick={() => {
-      const newRole = role === "student" ? "owner" : "student";
-      switchRole(newRole);
-      setOpenMenu(false);
 
-      if (newRole === "owner") {
-        navigate("/owner-dashboard/dashboard");
-      } else {
-        navigate("/");
-      }
-    }}
-  >
-    <ArrowLeftRight size={18} stroke="black" />
-    Switch to {role === "student" ? "Owner" : "Student"}
-  </button>
-)}
 
 {isAdmin && (
   <Link

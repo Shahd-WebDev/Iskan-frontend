@@ -140,11 +140,12 @@ import ProfileMenu from "../../ProfileMenu/ProfileMenu";
 import { Menu, X, ChevronLeft } from "lucide-react";
 import { useState, useEffect } from "react";
 
-import { useSignIn } from "../../../context/SignInContext";
+import { useAuth } from "../../../context/AuthContext";
 import "./Navbar.css";
 
 export default function Navbar({ variant }) {
-  const { role } = useSignIn();
+  const { user } = useAuth();
+  const role = user?.role?.toLowerCase();
   const [openMobile, setOpenMobile] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showTopBar, setShowTopBar] = useState(true);
