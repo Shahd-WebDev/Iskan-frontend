@@ -19,18 +19,19 @@ const propertyTypeMap = {
 
 const type =
   propertyTypeMap[Number(property.propertyType)] || "Room";
-    const imagePath = property.images?.[0]?.imageUrl;
-
+    const imagePath = property.mainImageUrl;
 
     const handlePropertyDetails = () => {
   navigate(`/admin/property-details/${property.id}`);
 };
 
-const imageUrl = imagePath
-  ? imagePath.startsWith("http")
-    ? imagePath
-    : `https://isskan-1.runasp.net${imagePath}`
-  : "/img.webp";
+const imageUrl = imagePath?.startsWith("http")
+  ? imagePath
+  : `https://isskan-1.runasp.net${imagePath}`;
+
+  console.log(property.title);
+console.log(property.mainImageUrl);
+console.log(imageUrl);
   return (
     <div className="property-card admin-card overflow-hidden w-100 h-100 d-flex flex-column">
 

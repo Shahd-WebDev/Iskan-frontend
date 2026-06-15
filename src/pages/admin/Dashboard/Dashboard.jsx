@@ -16,10 +16,22 @@ function Dashboard() {
   const [chartData, setChartData] = useState([]);
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
-  const sortedActivities = useMemo(
-  () => [...activities],
-  [activities]
-);
+  const sortedActivities = useMemo(() => {
+  return [...activities].sort((a, b) => {
+    
+    if (a.createdAt && b.createdAt) {
+      return (
+        new Date(b.createdAt) -
+        new Date(a.createdAt)
+      );
+    }
+
+    const ageA = parseInt(a.timeAgo) || 9999;
+    const ageB = parseInt(b.timeAgo) || 9999;
+
+    return ageA - ageB;
+  });
+}, [activities]);
 const [showAll, setShowAll] = useState(false);
 const displayedActivities = showAll 
   ? sortedActivities 

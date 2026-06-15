@@ -3,8 +3,6 @@ import SkeletonCard from "../../../components/common/SkeletonCard";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import PropertyHeader from "../../../components/PropertiesDetails/PropertyHeader";
-import ImageGallery from "../../../components/PropertiesDetails/PropertyGallery";
-import PropertyDescription from "../../../components/PropertiesDetails/Propertydescription";
 import "../../property-details/PropertyDetails.css";
 import KeyFeatures from "../../../components/PropertiesDetails/KeyFeatures";
 import "./AdminPropertyDetails.css";
@@ -31,6 +29,9 @@ const [loading, setLoading] = useState(true);
 const [showRejectModal, setShowRejectModal] =
   useState(false);
 
+  const [mainImage, setMainImage] = useState(null);
+const [activeThumb, setActiveThumb] = useState(0);
+
 const [rejectReason, setRejectReason] =
   useState("");
 useEffect(() => {
@@ -51,6 +52,13 @@ useEffect(() => {
   fetchProperty();
 }, [id]);
 
+useEffect(() => {
+  if (property?.images?.length > 0) {
+    setMainImage(
+      `https://isskan-1.runasp.net${property.images[0].imageUrl}`
+    );
+  }
+}, [property]);
 const handleApprove = async () => {
   try {
     await approveProperty(property.id);
@@ -60,6 +68,7 @@ const handleApprove = async () => {
       verificationStatus: "Approved",
     }));
 
+    
 toast.success("Property approved successfully");
 
   } catch (error) {
@@ -164,17 +173,28 @@ toast.error("Failed to reject property");
 console.log(property.facilities);
 console.log(property);
 
-const galleryImages =
-  property?.images?.length > 0
-    ? property.images.map(
-        (img) =>
-          `https://isskan-1.runasp.net${img.imageUrl}`
-      )
-    : [];
+
+const thumbnails =
+  property?.images?.map((img, i) => ({
+    src: `https://isskan-1.runasp.net${img.imageUrl}`,
+    label: `Image ${i + 1}`,
+    status: img.isMain ? "verified" : null,
+  })) || [];
+  
 
     console.log("IMAGES", property.images);
+    const propertyTypeMap = {
+  0: "Room",
+  1: "Apartment",
+  2: "Studio",
+};
+
+const propertyType =
+  propertyTypeMap[Number(property.propertyType)] ||
+  property.propertyType;
 console.log("COUNT", property.images?.length);
   
+
   
   // ======================
   // UI
@@ -190,29 +210,80 @@ onLocationClick={() => setShowMap(prev => !prev)}
 
 
       
-{galleryImages.length > 0 ? (
-  <ImageGallery
-    images={galleryImages}
-    showMap={showMap}
-    setShowMap={setShowMap}
-    lat={property.latitude}
-    lng={property.longitude}
-  />
-) : (
-  <div className="no-images-card">
-    <img
-      src="/no-image.png"
-      alt="No Images"
-      className="no-images-img"
-    />
+<div className="ai-card">
+  <div className="ai-card-header">
+    <h3 className="ai-card-title">Property Images</h3>
+  </div>
 
-    <p>No property images uploaded</p>
+  <div className="main-image-wrapper">
+  {showMap ? (
+    <iframe
+      title="Property Location"
+      src={`https://maps.google.com/maps?q=${property.latitude},${property.longitude}&z=15&output=embed`}
+      width="100%"
+      height="100%"
+      style={{
+        border: 0,
+        borderRadius: "16px",
+      }}
+      loading="lazy"
+    />
+  ) : mainImage ? (
+    <img
+      src={mainImage}
+      className="main-image"
+      alt="Main Property"
+    />
+  ) : (
+    <div className="no-property-images">
+      <h3>📷 No Images Uploaded</h3>
+      <p>
+        The owner has not uploaded any property images.
+      </p>
+    </div>
+  )}
+</div>
+
+  {thumbnails.length > 0 && (
+  <div className="thumbnail-strip">
+    <div className="thumbnail-row">
+      {thumbnails.map((thumb, i) => (
+        <button
+          key={i}
+          className={`thumb-wrapper${
+            activeThumb === i ? " thumb-wrapper--active" : ""
+          }`}
+          onClick={() => {
+            setMainImage(thumb.src);
+            setActiveThumb(i);
+          }}
+        >
+          <img
+            src={thumb.src}
+            className="thumbnail-img"
+            alt={thumb.label}
+          />
+        </button>
+      ))}
+    </div>
   </div>
 )}
+</div>
 <div className="verification-summary">
-  <h3>Verification Information</h3>
 
-<div className="verification-info-grid">
+  <div className="verification-header">
+    <div className="verification-icon">🛡️</div>
+
+    <div>
+      <h3>Verification Information</h3>
+      <p>
+        Property and owner details for verification
+      </p>
+    </div>
+  </div>
+
+  <div className="verification-info-grid">
+
     <div className="verification-item">
       <span>Owner Name</span>
       <p>{property.ownerName}</p>
@@ -225,16 +296,17 @@ onLocationClick={() => setShowMap(prev => !prev)}
 
     <div className="verification-item">
       <span>Property Type</span>
-      <p>{property.propertyType}</p>
+      <p>{propertyType}</p>
     </div>
 
     <div className="verification-item">
       <span>Status</span>
-     <span
-  className={`status-badge ${property.verificationStatus.toLowerCase()}`}
->
-  {property.verificationStatus}
-</span>
+
+      <span
+        className={`status-badge ${property.verificationStatus.toLowerCase()}`}
+      >
+        {property.verificationStatus}
+      </span>
     </div>
 
     <div className="verification-item">
@@ -255,14 +327,14 @@ onLocationClick={() => setShowMap(prev => !prev)}
     <div className="verification-item">
       <span>Created At</span>
       <p>
-        {new Date(
-          property.createdAt
-        ).toLocaleDateString()}
+        {new Date(property.createdAt).toLocaleDateString()}
       </p>
     </div>
 
   </div>
+
 </div>
+<KeyFeatures facilities={property.facilities} />
 
         <div className="pd-mid-section align-items-start">
           

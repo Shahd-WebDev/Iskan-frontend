@@ -1,3 +1,4 @@
+import SkeletonCard from "../../../components/common/SkeletonCard";
 import { useEffect, useState } from "react";
 import { getPropertyById } from "../../../services/adminProperties";
 import { useParams } from "react-router-dom";
@@ -66,8 +67,17 @@ useEffect(() => {
   
 }, [property]);
 
-if (loading) return <div>Loading...</div>;
-if (!property) return <div>Not Found</div>;
+if (loading) {
+  return (
+    <div className="listings-grid">
+      {Array(4)
+        .fill(0)
+        .map((_, i) => (
+          <SkeletonCard key={i} />
+        ))}
+    </div>
+  );
+}if (!property) return <div>Not Found</div>;
   const thumbnails = property.images?.map((img, i) => ({
   src: "https://isskan-1.runasp.net" + img.imageUrl,
   label: `Image ${i + 1}`,

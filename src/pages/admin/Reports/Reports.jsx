@@ -1,14 +1,26 @@
 import PaginationControls from "../../../components/Pagination/Pagination";
+import { useNavigate } from "react-router-dom";
 import SkeletonCard from "../../../components/common/SkeletonCard";
 import toast from "react-hot-toast";
 import ReportItem from "../../../components/admin/ReportItem";
 import "./Reports.css";
 import { useEffect, useState } from "react";
 import api from "../../../services/api";
+import {
+  User,
+  Home,
+  Calendar,
+  MessageSquare,
+  X,
+  CheckCircle,
+  AlertTriangle,
+  ExternalLink,
+} from "lucide-react";
 
 export default function Reports() {
 
   const [reports, setReports] = useState([]);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [pageIndex, setPageIndex] =
   useState(1);
@@ -65,23 +77,24 @@ const formattedReports =
     
 
     return {
-      id: report.id,
-      name: report.studentName,
-      issue: report.reason,
-      time: report.timeAgo,
-      priority: report.priority,
-      status: report.status,
-      propertyTitle: report.propertyTitle,
+  id: report.id,
+  name: report.studentName,
+  issue: report.reason,
+  time: report.timeAgo,
+  priority: report.priority,
+  status: report.status,
+  propertyTitle: report.propertyTitle,
 
-      avatar: report.studentName
-        ?.split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase(),
+  propertyId: report.propertyId, 
+  avatar: report.studentName
+    ?.split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase(),
 
-      avatarColor:
-        avatarColors[index % avatarColors.length],
-    };
+  avatarColor:
+    avatarColors[index % avatarColors.length],
+};
   });
         setReports(formattedReports);
 
@@ -195,10 +208,22 @@ if (loading) {
       className="report-modal"
       onClick={(e) => e.stopPropagation()}
     >
-<h3 className="modal-title">
-  Complaint Details
-</h3>
-      <div className="report-badges">
+<div className="classic-modal-header">
+
+  <h3 className="modal-title">
+    Complaint Details
+  </h3>
+
+  <button
+    className="modal-close-icon"
+    onClick={() => setSelectedReport(null)}
+  >
+    <X size={22} />
+  </button>
+
+</div>
+
+<div className="report-badges">
 
   <span
     className={`priority-badge priority-${selectedReport.priority.toLowerCase()}`}
@@ -214,58 +239,103 @@ if (loading) {
 
 </div>
 
-      <div className="report-detail">
-        <strong>Student:</strong>
-        <p>{selectedReport.name}</p>
-      </div>
+<div className="classic-info-list">
 
-      <div className="report-detail">
-        <strong>Property:</strong>
-        <p>{selectedReport.propertyTitle}</p>
-      </div>
+  <div className="classic-info-card">
+    <div className="classic-icon">
+      <User size={22} />
+    </div>
 
-      
-      <div className="report-detail">
-        <strong>Submitted:</strong>
-        <p>{selectedReport.time}</p>
-      </div>
+    <div>
+      <span>Student</span>
+      <p>{selectedReport.name}</p>
+    </div>
+  </div>
 
-      <div className="report-detail">
-        <strong>Complaint:</strong>
-        <p>{selectedReport.issue}</p>
-      </div>
+  <div className="classic-info-card">
+    <div className="classic-icon">
+      <Home size={22} />
+    </div>
+
+    <div>
+  <span>Property</span>
+
+  <div className="property-title-row">
+    <p>{selectedReport.propertyTitle}</p>
+
+    <button
+  className="property-link-btn"
+  disabled={!selectedReport.propertyId}
+  onClick={() =>
+    navigate(
+      `/admin/property-details/${selectedReport.propertyId}`
+    )
+  }
+>
+  <ExternalLink size={18} />
+</button>
+  </div>
+</div>
+  </div>
+
+  <div className="classic-info-card">
+    <div className="classic-icon">
+      <Calendar size={22} />
+    </div>
+
+    <div>
+      <span>Submitted</span>
+      <p>{selectedReport.time}</p>
+    </div>
+  </div>
+
+  <div className="classic-info-card">
+    <div className="classic-icon">
+      <MessageSquare size={22} />
+    </div>
+
+    <div>
+      <span>Complaint</span>
+      <p>{selectedReport.issue}</p>
+    </div>
+  </div>
+
+</div>
 
 <div className="report-actions">
 
   {selectedReport.status !== "Reviewed" && (
-  <button
-    className="review-btn"
-    onClick={() =>
-      handleUpdateStatus("Reviewed")
-    }
-  >
-    Mark as Reviewed
-  </button>
-)}
+    <button
+      className="review-btn"
+      onClick={() =>
+        handleUpdateStatus("Reviewed")
+      }
+    >
+      <CheckCircle size={18} />
+      Mark as Reviewed
+    </button>
+  )}
 
   {selectedReport.status !== "Rejected" && (
-  <button
-    className="reject-report-btn"
-    onClick={() =>
-      handleUpdateStatus("Rejected")
-    }
-  >
-    Reject Report
-  </button>
-)}
+    <button
+      className="reject-report-btn"
+      onClick={() =>
+        handleUpdateStatus("Rejected")
+      }
+    >
+      <AlertTriangle size={18} />
+      Reject Report
+    </button>
+  )}
 
 </div>
-      <button
-        className="close-modal-btn"
-        onClick={() => setSelectedReport(null)}
-      >
-        Close
-      </button>
+
+<button
+  className="close-modal-btn"
+  onClick={() => setSelectedReport(null)}
+>
+  Close
+</button>
     </div>
   </div>
 )}
