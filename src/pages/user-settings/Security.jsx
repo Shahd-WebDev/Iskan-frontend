@@ -3,6 +3,9 @@ import { Monitor, Smartphone, Eye, EyeOff } from "lucide-react";
 import styles from "./settings.module.css";
 
 
+import { useEffect } from "react";
+import { toast } from "react-toastify";
+import { changePassword, getSessions, revokeSession } from "../../services/settings";
 import { validatePassword } from "../../utils/validation";
 
 function Security() {
@@ -12,32 +15,35 @@ function Security() {
   const [showConfirm, setShowConfirm] = useState(false);
 
   // ------------------ Active Sessions ------------------
-  const [sessions, setSessions] = useState([
-    {
-      id: 1,
-      device: "Chrome (Windows)",
-      location: "Seoul, South Korea",
-      time: "Active now",
-      isCurrent: true,
-      icon: <Monitor size={22} />,
-    },
-    {
-      id: 2,
-      device: "Safari (iPhone)",
-      location: "Seoul, South Korea",
-      time: "2 hours ago",
-      isCurrent: false,
-      icon: <Smartphone size={22} />,
-    },
-    {
-      id: 3,
-      device: "Chrome (MacOS)",
-      location: "Busan, South Korea",
-      time: "1 day ago",
-      isCurrent: false,
-      icon: <Monitor size={22} />,
-    },
-  ]);
+  const [sessions, setSessions] = useState([]);
+  const [loadingSessions, setLoadingSessions] = useState(true);
+
+  // Fetch active sessions
+  useEffect(() => {
+    const fetchActiveSessions = async () => {
+      try {
+        setLoadingSessions(true);
+        const data = await getSessions();
+        // Assuming data is an array of sessions mapping to SessionDto
+        const mappedSessions = (data || []).map(s => ({
+          id: s.sessionId,
+          device: s.deviceName || "Unknown Device",
+          location: s.location || "Unknown Location",
+          time: s.lastActive || "Recently",
+          isCurrent: s.isCurrentDevice,
+          icon: s.deviceName?.toLowerCase().includes("phone") ? <Smartphone size={22} /> : <Monitor size={22} />,
+        }));
+        setSessions(mappedSessions);
+      } catch (err) {
+        console.error("Failed to load sessions:", err);
+        toast.error("Could not load active sessions.");
+      } finally {
+        setLoadingSessions(false);
+      }
+    };
+
+    fetchActiveSessions();
+  }, []);
 
   // ------------------ Form State ------------------
   const [formData, setFormData] = useState({
@@ -89,23 +95,42 @@ function Security() {
   };
 
   // ------------------ SUBMIT ------------------
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) return;
 
-    setMessage("Password changed successfully!");
+    try {
+      await changePassword({
+        currentPassword: formData.currentPassword,
+        newPassword: formData.newPassword,
+        confirmNewPassword: formData.confirmPassword
+      });
 
-    setFormData({
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    });
+      setMessage("Password changed successfully!");
+      toast.success("Password changed successfully!");
+
+      setFormData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+    } catch (err) {
+      console.error("Failed to change password:", err);
+      setErrors({ ...errors, currentPassword: err.response?.data?.message || "Failed to change password." });
+    }
   };
 
   // ------------------ SESSION LOGOUT ------------------
-  const handleLogoutSession = (id) => {
-    setSessions((prev) => prev.filter((s) => s.id !== id));
+  const handleLogoutSession = async (id) => {
+    try {
+      await revokeSession(id);
+      setSessions((prev) => prev.filter((s) => s.id !== id));
+      toast.success("Session revoked successfully.");
+    } catch (err) {
+      console.error("Failed to revoke session:", err);
+      toast.error("Failed to revoke session.");
+    }
   };
 
   // ------------------ JSX ------------------
@@ -216,7 +241,11 @@ function Security() {
         </div>
 
         <div className={styles.sessionsList}>
-          {sessions.map((session) => (
+          {loadingSessions ? (
+            <p style={{ padding: "16px", color: "#6b7280" }}>Loading sessions...</p>
+          ) : sessions.length === 0 ? (
+            <p style={{ padding: "16px", color: "#6b7280" }}>No active sessions found.</p>
+          ) : sessions.map((session) => (
             <div key={session.id} className={styles.sessionItem}>
               <div className={styles.sessionLeft}>
                 <div className={styles.deviceIcon}>{session.icon}</div>

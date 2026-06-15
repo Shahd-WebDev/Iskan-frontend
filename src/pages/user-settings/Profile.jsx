@@ -1,11 +1,14 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./settings.module.css";
 import { Camera, CheckCircle } from "lucide-react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
 import { validateField } from "../../utils/Validation";
+import { getProfile, updateProfile } from "../../services/settings";
+import { toast } from "react-toastify";
+
 function Profile({ role = "student", showSuccessMessage = false }) {
 
   const [formData, setFormData] = useState({
@@ -22,7 +25,39 @@ function Profile({ role = "student", showSuccessMessage = false }) {
 
   const [image, setImage] = useState(null);
   const [message, setMessage] = useState("");
-    const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  // Fetch initial profile data
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        setLoading(true);
+        const data = await getProfile();
+        // Assume data returns { firstName, lastName, email, dateOfBirth, etc... }
+        // or whatever the ProfileResultDto contains.
+        // Map the backend data to the form fields
+        setFormData({
+          name: data.firstName && data.lastName ? `${data.firstName} ${data.lastName}` : (data.name || ""),
+          email: data.email || "",
+          phone: data.phone || "",
+          department: data.department || "",
+          university: data.university || "",
+          bio: data.bio || "",
+          address: data.address || "",
+          city: data.city || "",
+          countryCode: data.countryCode || ""
+        });
+      } catch (err) {
+        console.error("Failed to load profile:", err);
+        toast.error("Failed to load profile data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfileData();
+  }, []);
 
 
   const universities = [
@@ -41,20 +76,20 @@ function Profile({ role = "student", showSuccessMessage = false }) {
   ];
 
   const handleChange = (e) => {
-  const { name, value } = e.target;
+    const { name, value } = e.target;
 
-  setFormData({
-    ...formData,
-    [name]: value
-  });
+    setFormData({
+      ...formData,
+      [name]: value
+    });
 
-  const error = validateField(name, value);
+    const error = validateField(name, value);
 
-  setErrors((prev) => ({
-    ...prev,
-    [name]: error
-  }));
-};
+    setErrors((prev) => ({
+      ...prev,
+      [name]: error
+    }));
+  };
   const handleImageChange = (e) => {
     const file = e.target.files[0];
 
@@ -69,7 +104,7 @@ function Profile({ role = "student", showSuccessMessage = false }) {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     let allValid = true;
@@ -85,12 +120,26 @@ function Profile({ role = "student", showSuccessMessage = false }) {
     });
 
     if (allValid) {
-      console.log(formData);
+      try {
+        // Send actual update request
+        // Split name into firstName and lastName for Dto if needed
+        const [firstName, ...lastNameParts] = formData.name.split(" ");
+        const lastName = lastNameParts.join(" ");
 
-      if (showSuccessMessage) {
-        setMessage("Profile saved successfully!");
-      } else {
-        alert("Profile saved successfully!");
+        await updateProfile({
+          ...formData,
+          firstName: firstName || "",
+          lastName: lastName || ""
+        });
+
+        if (showSuccessMessage) {
+          setMessage("Profile saved successfully!");
+        } else {
+          toast.success("Profile saved successfully!");
+        }
+      } catch (err) {
+        console.error("Failed to update profile:", err);
+        toast.error(err.response?.data?.message || "Failed to save profile.");
       }
     }
   };
@@ -98,6 +147,7 @@ function Profile({ role = "student", showSuccessMessage = false }) {
   return (
     <>
       <form className={styles.card} onSubmit={handleSubmit}>
+        {loading && <div className={styles.loadingOverlay}>Loading...</div>}
         {/* Header */}
         <div className={styles.header}>
           <h3 className={styles.title}>
@@ -195,16 +245,16 @@ function Profile({ role = "student", showSuccessMessage = false }) {
                   countryCode: country.dialCode
                 });
 
-               const error = validateField(
-  "phone",
-  phone,
-  country.dialCode
-);
+                const error = validateField(
+                  "phone",
+                  phone,
+                  country.dialCode
+                );
 
-setErrors((prev) => ({
-  ...prev,
-  phone: error
-}));
+                setErrors((prev) => ({
+                  ...prev,
+                  phone: error
+                }));
               }}
             />
 
@@ -353,10 +403,10 @@ setErrors((prev) => ({
             </div>
           </div>
         )}
-     
 
-      {/* OWNER SECTION */}
-             {/* Buttons */}
+
+        {/* OWNER SECTION */}
+        {/* Buttons */}
         <div className={styles.actions}>
           <button
             type="button"

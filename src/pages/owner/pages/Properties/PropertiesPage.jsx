@@ -1,25 +1,93 @@
-import { useContext } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Plus, Edit2, Trash2, Wifi, Utensils, Car, Wind, Waves, Dumbbell, Tv, Droplet } from "lucide-react";
-import AddPropertyModal from "../../features/add-property/AddPropertyModal";
-import { PropertyContext } from "../../../../context/PropertyContext";
+import { Plus, Edit2, Trash2, Building2, Search, Filter, AlertCircle, RefreshCw } from "lucide-react";
+import ConfirmDeleteModal from "../../components/ConfirmDeleteModal";
+import { getOwnerProperties, deleteProperty } from "../../../../services/ownerProperties";
 import styles from "./PropertiesPage.module.css";
-
-const amenityIcons = {
-  "WiFi": <Wifi size={14} />,
-  "Kitchen": <Utensils size={14} />,
-  "Parking": <Car size={14} />,
-  "Air Conditioning": <Wind size={14} />,
-  "Swimming Pool": <Waves size={14} />,
-  "Gym": <Dumbbell size={14} />,
-  "TV": <Tv size={14} />,
-  "Water Heater": <Droplet size={14} />
-};
 
 export default function PropertiesPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { properties, deleteProperty } = useContext(PropertyContext);
+
+  const [properties, setProperties] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Search & Filter state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  // Delete modal state
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [propertyToDelete, setPropertyToDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+
+  const fetchProperties = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const result = await getOwnerProperties();
+      // Since /Property/GetAll returns a paginated list { count, pageIndex, pageSize, data: [...] }
+      // we extract the data array
+      const items = result?.data || [];
+      setProperties(items);
+    } catch (err) {
+      console.error("Failed to load owner properties:", err);
+      setError("Failed to load property listings. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProperties();
+  }, []);
+
+  const handleDeleteClick = (property) => {
+    setPropertyToDelete(property);
+    setDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!propertyToDelete) return;
+    try {
+      setDeleting(true);
+      await deleteProperty(propertyToDelete.id);
+      setProperties((prev) => prev.filter((p) => p.id !== propertyToDelete.id));
+      setDeleteModalOpen(false);
+      setPropertyToDelete(null);
+    } catch (err) {
+      console.error("Failed to delete property:", err);
+      alert("Failed to delete property. Please try again.");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const getImageUrl = (url) => {
+    if (!url) return null;
+    if (url.startsWith("http")) return url;
+    const base = "https://isskan-1.runasp.net";
+    return url.startsWith("/") ? `${base}${url}` : `${base}/${url}`;
+  };
+
+  // Client-side filtering
+  const filteredProperties = properties.filter((property) => {
+    const title = property.title?.toLowerCase() || "";
+    const matchesSearch = title.includes(searchQuery.toLowerCase());
+
+    const status = property.verificationStatus || "";
+    const matchesStatus = statusFilter === "all" || status.toLowerCase() === statusFilter.toLowerCase();
+
+    return matchesSearch && matchesStatus;
+  });
+
+  const getStatusBadgeClass = (status) => {
+    const s = status?.toLowerCase() || "";
+    if (s === "approved" || s === "verified") return styles["verified"];
+    if (s === "pending") return styles["pending"];
+    return styles["rejected"];
+  };
 
   return (
     <div className={styles["owner-properties-wrapper"]}>
@@ -28,8 +96,8 @@ export default function PropertiesPage() {
           <h1 className={styles["op-title"]}>My Properties</h1>
           <p className={styles["op-subtitle"]}>Manage your property listings</p>
         </div>
-        <Link 
-          to="/owner-dashboard/add-property" 
+        <Link
+          to="/owner-dashboard/add-property"
           state={{ from: location.pathname }}
           style={{ textDecoration: 'none' }}
         >
@@ -40,54 +108,164 @@ export default function PropertiesPage() {
         </Link>
       </div>
 
-      <div className={styles["op-grid"]}>
-        {properties.map((property) => (
-          <div key={property.id} className={styles["op-card"]}>
-            <div className={styles["op-card-image"]} style={{ backgroundColor: property.color || '#D1D5DB' }}>
-              {property.image && <img src={property.image} alt={property.name} className={styles["property-image"]} />}
-              <div className={styles["op-card-actions"]}>
-                <button 
-                  className={`${styles["op-action-btn"]} ${styles["blue"]}`}
-                  onClick={() => navigate("/owner-dashboard/add-property", { 
-                    state: { propertyToEdit: property, from: location.pathname } 
-                  })}
-                  title="Edit Property"
-                >
-                  <Edit2 size={14} />
-                </button>
-                <button 
-                  className={`${styles["op-action-btn"]} ${styles["red"]}`}
-                  onClick={() => {
-                    if (window.confirm("Are you sure you want to delete this property?")) {
-                      deleteProperty(property.id);
-                    }
-                  }}
-                  title="Delete Property"
-                >
-                  <Trash2 size={14} />
-                </button>
-              </div>
-              <span className={`${styles["op-badge"]} ${styles[property.status]}`}>{property.status.charAt(0).toUpperCase() + property.status.slice(1)}</span>
-            </div>
-            <div className={styles["op-card-content"]}>
-              <h4>{property.name}</h4>
-              <p className={styles["op-card-location"]}>{property.location}</p>
-              {property.description && <p className={styles["op-card-desc"]}>{property.description}</p>}
-              {property.amenities && property.amenities.length > 0 && (
-                <div className={styles["op-card-amenities"]}>
-                  {property.amenities.map((amenity, idx) => (
-                    <span key={idx} className={styles["amenity-icon"]}>
-                      {amenityIcons[amenity] || <Plus size={14} />}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
+      {/* Search & Filter Controls */}
+      <div style={{ display: "flex", gap: "16px", marginBottom: "24px", flexWrap: "wrap" }}>
+        <div style={{ position: "relative", flex: "1", minWidth: "260px" }}>
+          <Search size={18} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "#9CA3AF" }} />
+          <input
+            type="text"
+            placeholder="Search properties by title..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "10px 12px 10px 40px",
+              borderRadius: "8px",
+              border: "1px solid #D1D5DB",
+              fontSize: "14px",
+              outline: "none",
+              backgroundColor: "white"
+            }}
+          />
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Filter size={18} style={{ color: "#6B7280" }} />
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            style={{
+              padding: "10px 16px",
+              borderRadius: "8px",
+              border: "1px solid #D1D5DB",
+              fontSize: "14px",
+              backgroundColor: "white",
+              outline: "none",
+              cursor: "pointer"
+            }}
+          >
+            <option value="all">All Statuses</option>
+            <option value="approved">Approved</option>
+            <option value="pending">Pending</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
       </div>
 
-      {/* Modal is now handled via routing */}
+      {loading ? (
+        /* Loading Skeleton */
+        <div className={styles["op-grid"]}>
+          {[1, 2, 3].map((i) => (
+            <div key={i} className={styles["op-card"]} style={{ animation: "pulse 1.5s infinite ease-in-out" }}>
+              <div className={styles["op-card-image"]} style={{ backgroundColor: "#E5E7EB" }}></div>
+              <div className={styles["op-card-content"]}>
+                <div style={{ height: "18px", width: "70%", backgroundColor: "#E5E7EB", borderRadius: "4px", marginBottom: "8px" }}></div>
+                <div style={{ height: "14px", width: "40%", backgroundColor: "#F3F4F6", borderRadius: "4px", marginBottom: "12px" }}></div>
+                <div style={{ height: "14px", width: "90%", backgroundColor: "#F3F4F6", borderRadius: "4px" }}></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : error ? (
+        /* Error State */
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "64px 0", textAlign: "center" }}>
+          <AlertCircle size={40} color="#EF4444" style={{ marginBottom: "12px" }} />
+          <h3 style={{ fontSize: "18px", fontWeight: "600", color: "#111827", marginBottom: "8px" }}>Failed to Load Listings</h3>
+          <p style={{ color: "#6B7280", marginBottom: "16px" }}>{error}</p>
+          <button onClick={fetchProperties} className={styles["btn-add-property"]}>
+            <RefreshCw size={16} />
+            <span>Retry</span>
+          </button>
+        </div>
+      ) : filteredProperties.length === 0 ? (
+        /* Empty State */
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "80px 0", textAlign: "center", background: "white", borderRadius: "12px", border: "1px solid #E5E7EB" }}>
+          <Building2 size={48} color="#9CA3AF" style={{ marginBottom: "16px" }} />
+          <h3 style={{ fontSize: "18px", fontWeight: "600", color: "#111827", marginBottom: "8px" }}>
+            {searchQuery || statusFilter !== "all" ? "No Matching Properties" : "No Properties Registered"}
+          </h3>
+          <p style={{ color: "#6B7280", marginBottom: "24px", maxWidth: "340px" }}>
+            {searchQuery || statusFilter !== "all"
+              ? "Try adjusting your search query or filter settings to find what you are looking for."
+              : "Register your property now to start receiving guest booking requests."}
+          </p>
+          {!(searchQuery || statusFilter !== "all") && (
+            <Link
+              to="/owner-dashboard/add-property"
+              state={{ from: location.pathname }}
+              style={{ textDecoration: 'none' }}
+            >
+              <button className={styles["btn-add-property"]}>
+                <Plus size={18} />
+                <span>Register a Property</span>
+              </button>
+            </Link>
+          )}
+        </div>
+      ) : (
+        /* Properties Grid */
+        <div className={styles["op-grid"]}>
+          {filteredProperties.map((property) => {
+            const coverImage = getImageUrl(property.imagesUrl?.[0]);
+            return (
+              <div key={property.id} className={styles["op-card"]}>
+                <div className={styles["op-card-image"]} style={{ backgroundColor: '#E5E7EB' }}>
+                  {coverImage ? (
+                    <img src={coverImage} alt={property.title} className={styles["property-image"]} />
+                  ) : (
+                    <Building2 size={40} color="#9CA3AF" />
+                  )}
+                  <div className={styles["op-card-actions"]}>
+                    <button
+                      className={`${styles["op-action-btn"]} ${styles["blue"]}`}
+                      onClick={() => navigate("/owner-dashboard/add-property", {
+                        state: { propertyToEdit: property, from: location.pathname }
+                      })}
+                      title="Edit Property"
+                    >
+                      <Edit2 size={14} />
+                    </button>
+                    <button
+                      className={`${styles["op-action-btn"]} ${styles["red"]}`}
+                      onClick={() => handleDeleteClick(property)}
+                      title="Delete Property"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                  <span className={`${styles["op-badge"]} ${getStatusBadgeClass(property.verificationStatus)}`}>
+                    {property.verificationStatus}
+                  </span>
+                </div>
+                <div className={styles["op-card-content"]}>
+                  <h4>{property.title}</h4>
+                  <p className={styles["op-card-location"]}>{property.address}</p>
+                  <p className={styles["op-card-location"]} style={{ fontWeight: "600", color: "#111827" }}>
+                    ${property.pricePerMonth} / month
+                  </p>
+                  <div style={{ display: "flex", gap: "12px", fontSize: "13px", color: "#6B7280", marginTop: "8px" }}>
+                    <span>Rooms: {property.roomsNumber}</span>
+                    <span>Baths: {property.bathroomsNumber}</span>
+                    <span style={{ textTransform: "capitalize" }}>{String(property.propertyType || "").toLowerCase()}</span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Confirm Delete Modal */}
+      <ConfirmDeleteModal
+        isOpen={deleteModalOpen}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => {
+          setDeleteModalOpen(false);
+          setPropertyToDelete(null);
+        }}
+        propertyName={propertyToDelete?.title}
+        isLoading={deleting}
+      />
     </div>
   );
 }
+

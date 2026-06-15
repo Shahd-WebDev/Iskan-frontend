@@ -56,6 +56,7 @@ import Messages from "../components/owner/Messages";
 import DashboardPage from "../pages/owner/pages/Dashboard/DashboardPage";
 import PropertiesPage from "../pages/owner/pages/Properties/PropertiesPage";
 import AddPropertyPage from "../pages/owner/pages/AddProperty/AddPropertyPage";
+import ReviewsPage from "../pages/owner/pages/Reviews/ReviewsPage";
 
 
 
@@ -119,6 +120,7 @@ export default function AppRoutes() {
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="properties" element={<PropertiesPage />} />
           <Route path="add-property" element={<AddPropertyPage />} />
+          <Route path="reviews" element={<ReviewsPage />} />
           <Route path="messages" element={<Messages />} />
           <Route path="settings" element={<SettingsLayout />}>
             <Route index element={<Navigate to="profile" replace />} />
