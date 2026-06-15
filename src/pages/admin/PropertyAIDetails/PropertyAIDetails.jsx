@@ -57,11 +57,13 @@ useEffect(() => {
 }, [id]);
 
 useEffect(() => {
+  
   if (property?.images?.length > 0) {
     setMainImage(
       "https://isskan-1.runasp.net" + property.images[0].imageUrl
     );
   }
+  
 }, [property]);
 
 if (loading) return <div>Loading...</div>;
@@ -71,6 +73,7 @@ if (!property) return <div>Not Found</div>;
   label: `Image ${i + 1}`,
   status: img.isMain ? "verified" : "verified"
 })) || [];
+console.log(property.ownerImage);
 
   return (
     <>

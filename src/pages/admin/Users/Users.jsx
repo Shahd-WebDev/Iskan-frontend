@@ -45,6 +45,7 @@ export default function Users() {
         id: user.id,
         name: user.fullName,
         email: user.email,
+          role: user.role,
         status: user.status,
         ID: user.ID,
 
@@ -174,7 +175,7 @@ const handleDelete = async (id) => {
             />
           </div>
 
-          <span>ID</span>
+          <span>Role</span>
 <span>Email</span>
 <span>Status</span>
 <span>Actions</span>

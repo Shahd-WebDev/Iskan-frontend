@@ -17,7 +17,7 @@ function Dashboard() {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const sortedActivities = useMemo(
-  () => [...activities].reverse(),
+  () => [...activities],
   [activities]
 );
 const [showAll, setShowAll] = useState(false);
@@ -40,6 +40,9 @@ const displayedActivities = showAll
         setStats(statsData);
         setChartData(formattedTrends);
 setActivities(activityData || []);
+
+console.log(activityData);
+
       } catch (error) {
 console.log("Dashboard error:", error);
 setError("Failed to load dashboard");      } finally {

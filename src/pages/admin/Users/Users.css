@@ -32,7 +32,7 @@
 /* ── HEADER BAR ── */
 .table-header-bar {
  display: grid;
-  grid-template-columns:  230px 120px 1fr 80px 50px;
+  grid-template-columns:  215px 120px 1fr 80px 50px;
   align-items: center;
   padding: 14px 20px;
   border-bottom: 2px solid #5aacff55;
