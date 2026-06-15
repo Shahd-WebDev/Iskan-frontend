@@ -72,13 +72,14 @@
 }
 
 p.section-title {
-  font-size: 14px ;
+  font-size: 14px;
   font-weight: 600;
   color: #333333;
   margin: 0px;
-    font-family: 'Urbanist', sans-serif;
+  font-family: 'Urbanist', sans-serif;
   line-height: 20px;
 }
+
 .section-group {
   display: flex;
   flex-direction: column;
@@ -90,12 +91,13 @@ p.section-title {
 .notification-container {
   position: relative;
   width: 100%;
-min-height: 100px;
-height: auto;  border-radius: 10px;
+  min-height: 100px;
+  height: auto;
+  border-radius: 10px;
   border: 0.67px solid #0088FF;
   background: #FFFFFF;
   box-sizing: border-box;
-    margin-top: 0;
+  margin-top: 0;
 }
 
 /* النقطة الزرقاء على الكونتينر نفسه - يسار في المنتصف */
@@ -144,11 +146,30 @@ height: auto;  border-radius: 10px;
   flex-shrink: 0;
 }
 
-.icon-box.critical     { background: rgba(251, 44, 54, 0.20);  color: #FB2C36; }
-.icon-box.property     { background: rgba(0, 136, 255, 0.20);  color: #0088FF; }
-.icon-box.warning      { background: rgba(251, 44, 54, 0.20);  color: #FB2C36; }
-.icon-box.registration { background: rgba(40, 167, 69, 0.20);  color: #28a745; }
-.icon-box.system       { background: rgba(255, 193, 7, 0.20);  color: #ffc107; }
+.icon-box.critical {
+  background: rgba(251, 44, 54, 0.20);
+  color: #FB2C36;
+}
+
+.icon-box.property {
+  background: rgba(0, 136, 255, 0.20);
+  color: #0088FF;
+}
+
+.icon-box.warning {
+  background: rgba(251, 44, 54, 0.20);
+  color: #FB2C36;
+}
+
+.icon-box.registration {
+  background: rgba(40, 167, 69, 0.20);
+  color: #28a745;
+}
+
+.icon-box.system {
+  background: rgba(255, 193, 7, 0.20);
+  color: #ffc107;
+}
 
 /* Text content */
 .text-content {
@@ -204,7 +225,7 @@ height: auto;  border-radius: 10px;
 
 .menu-wrapper {
   position: relative;
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
 
 .dropdown {
@@ -215,7 +236,7 @@ height: auto;  border-radius: 10px;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   width: 140px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   z-index: 10;
 }
 
@@ -229,6 +250,7 @@ height: auto;  border-radius: 10px;
 .dropdown p:hover {
   background: #f5f7fb;
 }
+
 @media (max-width: 768px) {
 
   .notifications-inner {
@@ -263,6 +285,7 @@ height: auto;  border-radius: 10px;
     font-size: 12px;
   }
 }
+
 @media (max-width: 480px) {
 
   .page-wrapper {
@@ -291,6 +314,7 @@ height: auto;  border-radius: 10px;
     width: 120px;
   }
 }
+
 html,
 body {
   overflow-x: hidden;

@@ -25,13 +25,16 @@ const type =
   navigate(`/admin/property-details/${property.id}`);
 };
 
-const imageUrl = imagePath?.startsWith("http")
-  ? imagePath
-  : `https://isskan-1.runasp.net${imagePath}`;
-
+const imageUrl =
+  imagePath &&
+  (imagePath.startsWith("http")
+    ? imagePath
+    : `https://isskan-1.runasp.net${imagePath}`);
+    
   console.log(property.title);
 console.log(property.mainImageUrl);
 console.log(imageUrl);
+console.log("status =", property.verificationStatus);
   return (
     <div className="property-card admin-card overflow-hidden w-100 h-100 d-flex flex-column">
 
@@ -40,15 +43,15 @@ console.log(imageUrl);
   onClick={handlePropertyDetails}
   style={{ cursor: "pointer" }}
 >        <img
-          src={imageUrl}
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = "/img.webp";
-          }}
-          alt={property.title}
-          className="property-image w-100 object-fit-cover"
-          style={{ height: "200px" }}
-        />
+  src={imageUrl || "/img.webp"}
+  onError={(e) => {
+    e.target.onerror = null;
+    e.target.src = "/img.webp";
+  }}
+  alt={property.title}
+  className="property-image w-100 object-fit-cover"
+  style={{ height: "200px" }}
+/>
       </div>
 
       <div className="property-content px-3 d-flex flex-column flex-grow-1">

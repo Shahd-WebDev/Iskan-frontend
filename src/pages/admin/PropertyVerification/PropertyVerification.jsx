@@ -9,70 +9,70 @@ import { getPendingProperties } from "../../../services/adminProperties";
 
 
 export default function PropertyVerification() {
-   const [properties, setProperties] = useState([]);
-const [currentPage, setCurrentPage] = useState(1);
-const [totalPages, setTotalPages] = useState(1);
-const [loading, setLoading] = useState(true);
-const [searchTerm, setSearchTerm] = useState("");
+  const [properties, setProperties] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
 
 
   const itemsPerPage = 9; // 3 × 3
 
   useEffect(() => {
-  async function fetchData() {
-    try {
-      setLoading(true);
+    async function fetchData() {
+      try {
+        setLoading(true);
 
-      const data = await getPendingProperties(currentPage, itemsPerPage);
+        const data = await getPendingProperties(currentPage, itemsPerPage);
 
-      console.log("DATA:", data);
-       
-      setProperties(data.data || []);
-      setTotalPages(Math.ceil(data.count / data.pageSize));
+        console.log("DATA:", data);
 
-    } catch (error) {
-      console.log("Error:", error);
-    } finally {
-      setLoading(false);
+        setProperties(data.data || []);
+        setTotalPages(Math.ceil(data.count / data.pageSize));
+
+      } catch (error) {
+        console.log("Error:", error);
+      } finally {
+        setLoading(false);
+      }
     }
-  }
 
-  fetchData();
-}, [currentPage]);
+    fetchData();
+  }, [currentPage]);
 
 
-const filteredProperties = properties.filter((property) =>
-  property.title
-    ?.toLowerCase()
-    .includes(searchTerm.trim().toLowerCase())
-);
+  const filteredProperties = properties.filter((property) =>
+    property.title
+      ?.toLowerCase()
+      .includes(searchTerm.trim().toLowerCase())
+  );
 
-  
+
   return (
     <div className="property-verification">
 
       {/* search */}
       <div className="top-bar">
         <SearchBar
-  value={searchTerm}
-  onChange={(e) => setSearchTerm(e.target.value)}
-/>
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
 
       {/* grid */}
       <div className="verification-grid">
-{loading
-  ? Array.from({ length: 6 }).map((_, index) => (
-      <SkeletonCard key={index} />
-    ))
-  : filteredProperties.map((item) => (
-             <AdminPropertyCard
-  key={item.id}
-  property={item}
-  isVerification={true}
-/>
+        {loading
+          ? Array.from({ length: 6 }).map((_, index) => (
+            <SkeletonCard key={index} />
+          ))
+          : filteredProperties.map((item) => (
+            <AdminPropertyCard
+              key={item.id}
+              property={item}
+              isVerification={true}
+            />
 
-        ))}
+          ))}
       </div>
 
       {/* pagination */}
@@ -80,7 +80,7 @@ const filteredProperties = properties.filter((property) =>
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={setCurrentPage}
-label={`Page ${currentPage} of ${totalPages}`}
+        label={`Page ${currentPage} of ${totalPages}`}
       />
 
     </div>

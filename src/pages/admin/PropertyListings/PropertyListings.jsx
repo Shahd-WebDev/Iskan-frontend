@@ -39,10 +39,10 @@ export default function PropertyListings() {
   }, [currentPage]); // 👈 ده المهم
 
   const filteredProperties = properties.filter((property) =>
-  property.title
-  ?.toLowerCase()
-  .includes(searchTerm.trim().toLowerCase())
-);
+    property.title
+      ?.toLowerCase()
+      .includes(searchTerm.trim().toLowerCase())
+  );
 
   return (
     <div className="property-listings">
@@ -50,9 +50,9 @@ export default function PropertyListings() {
       {/* search */}
       <div className="top-bar">
         <SearchBar
-  value={searchTerm}
-  onChange={(e) => setSearchTerm(e.target.value)}
-/>
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
 
       </div>
 
@@ -62,8 +62,8 @@ export default function PropertyListings() {
           ? Array(9).fill(0).map((_, i) => <SkeletonCard key={i} />)
           : filteredProperties.map((item) => (
 
-<AdminPropertyCard key={item.id} property={item} />
-            ))}
+            <AdminPropertyCard key={item.id} property={item} />
+          ))}
       </div>
 
       {/* pagination */}
@@ -71,7 +71,7 @@ export default function PropertyListings() {
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={setCurrentPage}
-label={`Page ${currentPage} of ${totalPages}`}
+        label={`Page ${currentPage} of ${totalPages}`}
       />
 
     </div>

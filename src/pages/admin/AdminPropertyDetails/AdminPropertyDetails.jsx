@@ -40,6 +40,7 @@ useEffect(() => {
       setLoading(true);
 
       const data = await getPropertyById(id);
+      
 
       setProperty(data);
     } catch (error) {

@@ -1,72 +1,72 @@
-.dashboard{
-  flex:1;
-  padding:40px;
+.dashboard {
+  flex: 1;
+  padding: 40px;
 }
 
 /* container */
 
-.dashboard-content{
-  max-width:1074px;
-  margin:0 auto;
-  background:#F0F8FF;
-  padding:32px;
-  border-radius:10px;
+.dashboard-content {
+  max-width: 1074px;
+  margin: 0 auto;
+  background: #F0F8FF;
+  padding: 32px;
+  border-radius: 10px;
 }
 
 /* title */
 
-.dashboard-title{
-  font-size:22px;
-  font-weight:600;
-  text-align:center;
+.dashboard-title {
+  font-size: 22px;
+  font-weight: 600;
+  text-align: center;
 }
 
-.dashboard-subtitle{
-  text-align:center;
-  color:#6B7280;
-  font-size:14px;
-  margin-bottom:24px;
+.dashboard-subtitle {
+  text-align: center;
+  color: #6B7280;
+  font-size: 14px;
+  margin-bottom: 24px;
 }
 
 /* stats */
 
-.stats-container{
-  display:flex;
-  gap:24px;
-  margin-bottom:24px;
+.stats-container {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
 }
 
-.stat-card{
-  flex:1;
-  background:white;
-  border:0.7px solid #0088FF;
-  border-radius:10px;
-  padding:16px;
+.stat-card {
+  flex: 1;
+  background: white;
+  border: 0.7px solid #0088FF;
+  border-radius: 10px;
+  padding: 16px;
   height: 177px;
 
-  display:flex;
-  flex-direction:column;
-  gap:8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.stat-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+.stat-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.icon{
-  width:48px;
-  height:48px;
-  background:#EAF4FF;
-  border-radius:8px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+.icon {
+  width: 48px;
+  height: 48px;
+  background: #EAF4FF;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.icon svg{
-  color:#0088FF;
+.icon svg {
+  color: #0088FF;
 }
 
 /* percentage */
@@ -74,7 +74,8 @@
 .increase {
   display: flex;
   align-items: center;
-  gap: 4px;                    /* مسافة بين السهم والنسبة */
+  gap: 4px;
+  /* مسافة بين السهم والنسبة */
   color: #22C55E;
   font-size: 14px;
   font-weight: 500;
@@ -86,16 +87,16 @@
 
 /* text */
 
-.stat-card p{
-  font-size:14px;
+.stat-card p {
+  font-size: 14px;
   color: #000000;
   font-weight: 400px;
 }
 
-.stat-card h3{
-  font-size:30px;
-  font-weight:400;
-  font-style:normal;
+.stat-card h3 {
+  font-size: 30px;
+  font-weight: 400;
+  font-style: normal;
   color: #000;
 }
 
@@ -116,6 +117,7 @@
   color: #64748B;
   margin-bottom: 20px;
 }
+
 /* activity */
 
 /* ==================== ACTIVITY BOX ==================== */
@@ -128,7 +130,8 @@
 }
 
 .activity-title {
-  color: #0088FF;           /* أزرق غامق زي الصورة */
+  color: #0088FF;
+  /* أزرق غامق زي الصورة */
   font-weight: 600;
   font-size: 15.5px;
   margin-bottom: 4px;
@@ -169,10 +172,12 @@
   background: #EAF4FF;
   color: #0088FF;
 }
+
 .green {
   background: #E8F8F0;
   color: #22C55E;
 }
+
 .red {
   background: #FEE2E2;
   color: #EF4444;
@@ -188,7 +193,7 @@
   margin: 0;
   font-size: 14.5px;
   font-weight: 500;
-  color: #0088FF;           
+  color: #0088FF;
 }
 
 .activity-text .description {
@@ -199,7 +204,8 @@
 
 .activity-text .time {
   font-size: 12.5px;
-  color: #EF4444;           /* أحمر زي الصورة */
+  color: #EF4444;
+  /* أحمر زي الصورة */
   margin-top: 4px;
   display: block;
 }
@@ -223,6 +229,7 @@
 .view-all-link:hover {
   text-decoration: underline;
 }
+
 .view-all-link:focus {
   outline: none;
 }
