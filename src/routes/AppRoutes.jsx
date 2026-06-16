@@ -19,6 +19,7 @@ import AdminPropertyDetails from "../pages/admin/AdminPropertyDetails/AdminPrope
 
 import Users from "../pages/admin/Users/Users";
 import Reports from "../pages/admin/Reports/Reports";
+import ContactMessages from "../pages/admin/contact/ContactMessages";
 import AdminNotifications from "../pages/admin/AdminNotifications/AdminNotifications";
 
 /* Main Pages */
@@ -108,6 +109,7 @@ export default function AppRoutes() {
     <Route path="property/:id" element={<PropertyAIDetails />} />
     <Route path="users" element={<Users />} />
     <Route path="reports" element={<Reports />} />
+    <Route path="contact" element={<ContactMessages />} />
     <Route path="notifications" element={<AdminNotifications />} />
   </Route>
 </Route>
