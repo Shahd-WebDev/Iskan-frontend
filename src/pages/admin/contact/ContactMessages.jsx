@@ -127,17 +127,24 @@ export default function ContactMessages() {
 
   const updateReply = async (replyId, replyText) => {
     try {
-      await api.put(
-        `/admin/contact/reply/${replyId}`,
-        replyText
-      );
+     const res = await api.put(
+  `/admin/contact/reply/${replyId}`,
+  JSON.stringify(replyText),
+  {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }
+);
 
+console.log("UPDATE SUCCESS", res.data);
       await fetchMessages();
 
       closeModal();
     } catch (error) {
-      console.error(error);
-    }
+  console.log(error.response?.data);
+  console.log(error.response?.data?.errors);
+}
   };
 
   // ================= Delete Reply =================

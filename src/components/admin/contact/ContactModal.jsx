@@ -12,13 +12,14 @@ export default function ContactModal({
   const [editing, setEditing] = useState(false);
 
   useEffect(() => {
-    if (message?.reply) {
-      setReplyText(message.reply.replyText);
-    } else {
-      setReplyText("");
-    }
-  }, [message]);
+  setEditing(false);
 
+  if (message?.reply) {
+    setReplyText(message.reply.replyText);
+  } else {
+    setReplyText("");
+  }
+}, [message]);
   if (!isOpen || !message) return null;
 
   const hasReply = !!message.reply;

@@ -11,14 +11,14 @@ const avatarColors = [
 ];
 
 export default function Users() {
-  const [search, setSearch] = useState("");
   const [openMenuId, setOpenMenuId] = useState(null);
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
+  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState("");
 
   // ✅ GET USERS
   const getUsers = async () => {
@@ -82,6 +82,13 @@ export default function Users() {
 
     return () => document.removeEventListener("click", closeMenu);
   }, []);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearch(searchInput);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
 
   // ✅ block
@@ -118,15 +125,18 @@ export default function Users() {
 
       await api.delete(`/AdminUser/Delete/${id}`);
 
-      // ✅ remove from ui after success
-      setUsers((prev) =>
-        prev.filter((user) => user.id !== id)
-      );
+      if (users.length === 1 && currentPage > 1) {
+        setCurrentPage((prev) => prev - 1);
+      } else {
+        getUsers();
+      }
 
       setOpenMenuId(null);
 
     } catch (error) {
       console.error("Delete error:", error);
+      console.log(error.response?.status);
+      console.log(error.response?.data);
     }
   };
   return (
@@ -168,9 +178,9 @@ export default function Users() {
               type="text"
               placeholder="Search for a name"
               className="users-search-input"
-              value={search}
+              value={searchInput}
               onChange={(e) => {
-                setSearch(e.target.value);
+                setSearchInput(e.target.value);
                 setCurrentPage(1);
               }}
             />
