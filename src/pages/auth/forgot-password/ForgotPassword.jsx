@@ -37,7 +37,7 @@ export default function ForgotPassword() {
       await forgotPassword(email);
       navigate("/check-email", { state: { email } });
     } catch (err) {
-      const message = err?.message || err?.errors?.[0] || "";
+      const message = err?.message || "";
 
       if (message.toLowerCase().includes("not registered") || message.toLowerCase().includes("not found")) {
         setError("This email is not registered. Please use a valid email.");

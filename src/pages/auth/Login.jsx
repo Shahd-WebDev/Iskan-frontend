@@ -1,9 +1,13 @@
+import { useState } from "react";
 import { login as loginApi } from "../../services/auth";
 import { useGoogleAuth } from "../../hooks/useGoogleAuth";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import {
+  getRegisterErrorMessage,
+  getLoginErrorMessage,
+} from "../../utils/authErrorMessages";
 import { GoogleLogin } from "@react-oauth/google";
 import { toast } from "react-toastify";
 import { decodeToken } from "../../utils/decodeToken";
@@ -70,28 +74,24 @@ export default function Login() {
       // ======================
       const decoded = decodeToken(token);
 
-      console.log(decoded);
-console.log("decoded.role =", decoded.role);
-console.log(
-  "claim role =",
-  decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
-);
-
       if (!decoded) {
-        toast.error("Invalid or expired token");
+        toast.error("Invalid or expired token.");
         return;
       }
 
-const role =
-  decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] ||
-  decoded.role ||
-  "Student";
-  
+      const role =
+        decoded[
+          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+        ] ||
+        decoded.role ||
+        "Student";
+
       const userData = {
-        email: res.data?.email || formData.email,
-        name: res.data?.name || "User",
+        email: res.email || res.data?.email || formData.email,
+        name: res.name || res.data?.name || "User",
         role,
-        status: res.data?.status || decoded.status || null,
+        verificationStatus: res.verificationStatus || res.data?.verificationStatus || null,
+        status: res.status || res.data?.status || decoded.status || null,
       };
 
       // ======================
@@ -102,18 +102,21 @@ const role =
       toast.success("Login successful!");
 
       // ======================
-      // NAVIGATION (UNCHANGED LOGIC)
+      // NAVIGATION
       // ======================
       if (role === "Admin") {
         navigate("/admin/dashboard");
       } else if (role === "Owner") {
+        // All owners go to dashboard
+        // ProtectedOwnerRoute will enforce verification step
         navigate("/owner-dashboard/dashboard");
       } else {
         navigate("/");
       }
     } catch (error) {
-      console.log(error);
-      toast.error(error?.response?.data?.message || "Login failed ❌");
+      const errMsg = getLoginErrorMessage(error);
+      toast.error(errMsg);
+      // Optionally set UI state if needed
     }
   }
 
@@ -122,7 +125,6 @@ const role =
   // ======================
   return (
     <div className="auth-container">
-
       {/* Logo */}
       <div className="text-center">
         <img src="/logo.png" alt="ISKAN Logo" className="iskan-logo" />
@@ -131,7 +133,13 @@ const role =
       </div>
 
       {/* Google Login */}
-      <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          marginBottom: "20px",
+        }}
+      >
         <GoogleLogin
           onSuccess={handleGoogleSuccess}
           onError={() => toast.error("Google Login Failed")}
@@ -152,7 +160,6 @@ const role =
 
       {/* Form */}
       <form className="auth-form" onSubmit={handleSubmit}>
-
         {/* Email */}
         <div className="form-group">
           <label>Email</label>
@@ -187,9 +194,7 @@ const role =
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </span>
 
-          {errors.password && (
-            <p className="error-text">{errors.password}</p>
-          )}
+          {errors.password && <p className="error-text">{errors.password}</p>}
         </div>
 
         {/* Forgot Password */}

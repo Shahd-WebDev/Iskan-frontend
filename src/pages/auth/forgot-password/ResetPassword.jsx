@@ -80,9 +80,7 @@ export default function ResetPassword() {
 
       setSuccess(true);
     } catch (err) {
-      const message =
-        err?.message || err?.errors?.[0] || "Failed to reset password.";
-      toast.error(message);
+      toast.error(err?.message || "Failed to reset password. Please try again.");
     } finally {
       setLoading(false);
     }

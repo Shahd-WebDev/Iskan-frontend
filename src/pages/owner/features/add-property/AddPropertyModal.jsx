@@ -20,7 +20,9 @@ import {
   setPropertyFacilities,
   getAllFacilities,
   getPropertyDetails,
-  getPropertyLocation
+  getPropertyLocation,
+  getPropertyImages,
+  setMainImage,
 } from "../../../../services/ownerProperties";
 
 // Utils
@@ -273,12 +275,25 @@ export default function AddPropertyModal({ onClose, propertyToEdit }) {
 
           await updatePropertyApi(propertyToEdit.id, updateData);
 
-          // Upload new images
+          // Upload new images & set main if new images were added
           const newImages = formData.photos.filter(p => !p.isExisting && p.file).map(p => p.file);
           if (newImages.length > 0) {
             const imagesFormData = new FormData();
             newImages.forEach(img => imagesFormData.append("Images", img));
             await addPropertyImages(propertyToEdit.id, imagesFormData);
+
+            // Set main image to the first available image after upload
+            try {
+              const uploadedImages = await getPropertyImages(propertyToEdit.id);
+              const firstImage = Array.isArray(uploadedImages)
+                ? uploadedImages[0]
+                : uploadedImages?.data?.[0];
+              if (firstImage?.id) {
+                await setMainImage(propertyToEdit.id, firstImage.id);
+              }
+            } catch (imgErr) {
+              console.warn("Could not set main image:", imgErr);
+            }
           }
 
           // Delete removed images
@@ -316,7 +331,7 @@ export default function AddPropertyModal({ onClose, propertyToEdit }) {
           createData.append("Address", formData.streetAddress || `${formData.city}, ${formData.state}`);
           createData.append("Description", formData.description);
           createData.append("PropertyType", formData.propertyType);
-          createData.append("RoomsNumber", Number(formData.bedrooms));
+          createData.append("BedroomsNumber", Number(formData.bedrooms));
           createData.append("BathroomsNumber", Number(formData.bathrooms));
           createData.append("PricePerMonth", Number(formData.price));
           if (formData.location.lat) {
@@ -329,15 +344,29 @@ export default function AddPropertyModal({ onClose, propertyToEdit }) {
           const propertyId = createdResponse?.id || createdResponse?.Id || createdResponse?.data?.id || createdResponse;
           
           if (!propertyId || typeof propertyId !== "string") {
-            throw new Error("Created property ID was not returned by the API.");
+            throw new Error(`Created property ID was not returned by the API. Response structure was: ${JSON.stringify(createdResponse)}`);
           }
 
-          // Upload Images
+          // Upload Images & set main image
           const newImages = formData.photos.filter(p => p.file).map(p => p.file);
           if (newImages.length > 0) {
             const imagesFormData = new FormData();
             newImages.forEach(img => imagesFormData.append("Images", img));
             await addPropertyImages(propertyId, imagesFormData);
+
+            // Fetch the uploaded images from server to get their IDs, then set the first one as main
+            try {
+              const uploadedImages = await getPropertyImages(propertyId);
+              const firstImage = Array.isArray(uploadedImages)
+                ? uploadedImages[0]
+                : uploadedImages?.data?.[0];
+              if (firstImage?.id) {
+                await setMainImage(propertyId, firstImage.id);
+              }
+            } catch (imgErr) {
+              // Non-fatal: property is created but cover photo may not be set
+              console.warn("Could not set main image:", imgErr);
+            }
           }
 
           // Upload Documents
@@ -369,7 +398,7 @@ export default function AddPropertyModal({ onClose, propertyToEdit }) {
         setIsSubmitted(true);
       } catch (err) {
         console.error("Submission failed:", err);
-        setSubmitError("Failed to submit property. Please verify your connection and try again.");
+        setSubmitError(err.message || "Failed to submit property. Please verify your connection and try again.");
       } finally {
         setSubmitting(false);
       }

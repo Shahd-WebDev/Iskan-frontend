@@ -1,8 +1,9 @@
 import api from "./api";
 
-// 1. Get properties list (can be filtered by query parameters)
+// 1. Get owner's property listings (owner-scoped, requires auth)
+// Supports pagination via PageIndex and PageSize query params
 export const getOwnerProperties = async (params = {}) => {
-  const response = await api.get("/Property/GetAll", { params });
+  const response = await api.get("/Property/GetOwnerProperties", { params });
   return response.data;
 };
 

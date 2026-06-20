@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import { useAuth } from "../../../context/AuthContext";
+import { register as registerApi } from "../../../services/auth";
+import { getRegisterErrorMessage } from "../../../utils/authErrorMessages";
 
 import RoleStep from "./steps/RoleStep";
 import BasicInfoStep from "./steps/BasicInfoStep";
@@ -36,82 +38,43 @@ export default function Register() {
     setFormData((prev) => ({ ...prev, ...data }));
 
   // =========================
-  // BUILD PAYLOAD
+  // BUILD FORM DATA
   // =========================
-  const buildPayload = () => ({
-    role: role === "owner" ? "Owner" : "Student",
-    firstName: formData.firstName,
-    lastName: formData.lastName,
-    email: formData.email,
-    password: formData.password,
-    dateOfBirth: formData.dateOfBirth,
-    gender: formData.gender
-      ? formData.gender.charAt(0).toUpperCase() + formData.gender.slice(1)
-      : null,
-  });
+  const buildFormData = (files = null) => {
+    const fd = new FormData();
 
-  // =========================
-  // REGISTER API
-  // =========================
-  const callRegisterApi = async () => {
-    const response = await fetch("/api/Authentication/Register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(buildPayload()),
-    });
+    fd.append("Role", role === "owner" ? "Owner" : "Student");
+    fd.append("FirstName", formData.firstName);
+    fd.append("LastName", formData.lastName);
+    fd.append("Email", formData.email);
+    fd.append("Password", formData.password);
 
-    const text = await response.text();
-
-    if (!response.ok) {
-      let errorMsg = "Registration failed";
-
-      try {
-        const data = JSON.parse(text);
-        errorMsg =
-          data?.message ||
-          data?.title ||
-          (data?.errors && Object.values(data.errors)[0]?.[0]) ||
-          errorMsg;
-      } catch {
-        errorMsg = text || errorMsg;
-      }
-
-      throw new Error(errorMsg);
+    if (formData.dateOfBirth) {
+      fd.append("DateOfBirth", formData.dateOfBirth);
     }
 
-    return text ? JSON.parse(text) : {};
-  };
-
-  // =========================
-  // AUTO LOGIN (CLEAN)
-  // =========================
-  const autoLogin = async (email, password) => {
-    const response = await fetch("/api/Authentication/Login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ Email: email, Password: password }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data?.message || "Login failed");
+    if (formData.gender) {
+      fd.append(
+        "Gender",
+        formData.gender.charAt(0).toUpperCase() +
+        formData.gender.slice(1)
+      );
     }
 
-    if (!data.token) {
-      throw new Error("No token received");
+    // Owner files
+    if (files?.idFront) {
+      fd.append("NationalIdImage", files.idFront);
     }
 
-    const userData = {
-      email: data.email || email,
-      name:
-        data.name ||
-        `${formData.firstName} ${formData.lastName}`.trim(),
-      status: data.status || null,
-    };
+    if (files?.idBack) {
+      fd.append("NationalIdBackImage", files.idBack);
+    }
 
-    // ✅ SINGLE SOURCE OF TRUTH
-    login(data.token, userData);
+    if (files?.selfie) {
+      fd.append("SelfieImage", files.selfie);
+    }
+
+    return fd;
   };
 
   // =========================
@@ -122,14 +85,26 @@ export default function Register() {
     setApiError("");
 
     try {
-      await callRegisterApi();
-      await autoLogin(formData.email, formData.password);
+      const fd = buildFormData();
 
-      toast.success("Account created successfully!");
-      navigate("/");
+      if (import.meta.env.DEV) {
+        console.debug("Student Register FormData:");
+        for (let pair of fd.entries()) {
+          console.log(pair[0], pair[1]);
+        }
+      }
+
+      await registerApi(fd);
+
+      toast.success(
+        "Account created successfully! Please verify your email."
+      );
+
+      setStep(4);
     } catch (error) {
-      toast.error(error.message);
-      setApiError(error.message);
+      const errMsg = error.message;
+      toast.error(errMsg);
+      setApiError(errMsg);
     } finally {
       setIsLoading(false);
     }
@@ -143,33 +118,34 @@ export default function Register() {
     setApiError("");
 
     try {
-      await callRegisterApi();
-      await autoLogin(formData.email, formData.password);
+      if (!files.selfie)
+        throw new Error("Selfie image is required");
 
-      try {
-        const fd = new FormData();
-        if (files.idFront) fd.append("IdFront", files.idFront);
-        if (files.idBack) fd.append("IdBack", files.idBack);
-        if (files.selfie) fd.append("SelfieWithId", files.selfie);
+      if (!files.idFront)
+        throw new Error("National ID Front image is required");
 
-        const token = localStorage.getItem("token");
+      const fd = buildFormData(files);
 
-        await fetch("/api/Owner/UploadVerificationDocuments", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: fd,
-        });
-      } catch {
-        toast.error("Documents upload failed, you can retry later");
+      if (import.meta.env.DEV) {
+        console.debug("Owner Register FormData:");
+        for (let pair of fd.entries()) {
+          console.log(pair[0], pair[1]);
+        }
       }
 
-      toast.success("Account created successfully!");
+      // Registration ONLY — no authenticated API calls here.
+      // SubmitVerification is deferred to after login via /identity-verification.
+      await registerApi(fd);
+
+      toast.success(
+        "Registration completed successfully! Please verify your email."
+      );
+
       next();
     } catch (error) {
-      toast.error(error.message);
-      setApiError(error.message);
+      const errMsg = getRegisterErrorMessage(error);
+      toast.error(errMsg);
+      setApiError(errMsg);
     } finally {
       setIsLoading(false);
     }
@@ -226,14 +202,21 @@ export default function Register() {
       {step === 3 && role === "owner" && (
         <OwnerVerificationStep
           onSubmit={handleOwnerVerificationSubmit}
-          onBack={googlePrefill ? () => setStep(1) : prev}
+          onBack={
+            googlePrefill
+              ? () => setStep(1)
+              : prev
+          }
           isLoading={isLoading}
           apiError={apiError}
         />
       )}
 
       {step === 4 && (
-        <SuccessStep email={formData.email} />
+        <SuccessStep
+          email={formData.email}
+          role={role}
+        />
       )}
     </>
   );

@@ -45,12 +45,12 @@ export function useGoogleAuth() {
         role: apiRole,
       });
 
-      console.log("API RESPONSE:", res.data);
+      console.log("API RESPONSE:", res);
 
-      const token = res.data?.token;
+      const token = res.token || res.data?.token;
 
       if (!token) {
-        console.error("❌ No token from backend:", res.data);
+        console.error("❌ No token from backend:", res);
         toast.error("No token received from server");
         return;
       }
@@ -66,16 +66,22 @@ export function useGoogleAuth() {
         return;
       }
 
-      const detectedRole = decoded.role || "Student";
+      const detectedRole =
+        decoded[
+          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+        ] ||
+        decoded.role ||
+        "Student";
 
       // ======================
       // USER OBJECT
       // ======================
       const userData = {
-        email: res.data?.email || decoded.email || "",
-        name: res.data?.name || "User",
+        email: res.email || res.data?.email || decoded.email || "",
+        name: res.name || res.data?.name || "User",
         role: detectedRole,
-        status: res.data?.status || decoded.status || null,
+        verificationStatus: res.verificationStatus || res.data?.verificationStatus || null,
+        status: res.status || res.data?.status || decoded.status || null,
       };
 
       // ======================

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { handleApiError } from "../utils/errorHandler";
 
 const api = axios.create({
   //مشكله الcors
@@ -16,5 +17,11 @@ api.interceptors.request.use((config) => {
 
   return config;
 });
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    return Promise.reject(handleApiError(error));
+  }
+);
 
 export default api;
