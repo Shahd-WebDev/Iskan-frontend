@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
+import ProtectedOwnerRoute from "./ProtectedOwnerRoute";
 import SearchResult from "../pages/SearchResults/SearchResults";
 
 /* Layouts */
@@ -38,6 +39,13 @@ import ChooseAccountType from "../pages/auth/ChooseAccountType";
 import ForgotPassword from "../pages/auth/forgot-password/ForgotPassword";
 import CheckEmail from "../pages/auth/forgot-password/CheckEmail";
 import ResetPassword from "../pages/auth/forgot-password/ResetPassword";
+import ConfirmEmail from "../pages/auth/ConfirmEmail";
+
+/* Verification Pages */
+import VerificationPending from "../pages/verification/VerificationPending";
+import VerificationRejected from "../pages/verification/VerificationRejected";
+import IdentityVerification from "../pages/verification/IdentityVerification";
+import VerificationCenter from "../pages/owner/pages/VerificationCenter/VerificationCenter";
 
 /* Error */
 import NotFound from "../pages/Error/NotFound";
@@ -59,8 +67,6 @@ import PropertiesPage from "../pages/owner/pages/Properties/PropertiesPage";
 import AddPropertyPage from "../pages/owner/pages/AddProperty/AddPropertyPage";
 import ReviewsPage from "../pages/owner/pages/Reviews/ReviewsPage";
 
-
-
 export default function AppRoutes() {
   return (
     <Routes>
@@ -73,6 +79,14 @@ export default function AppRoutes() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/check-email" element={<CheckEmail />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/confirm-email" element={<ConfirmEmail />} />
+      </Route>
+
+      {/* ================= Verification Pages ================= */}
+      <Route element={<AuthLayout />}>
+        <Route path="/identity-verification" element={<IdentityVerification />} />
+        <Route path="/verification-pending" element={<VerificationPending />} />
+        <Route path="/verification-rejected" element={<VerificationRejected />} />
       </Route>
 
       {/* ================= Main Website ================= */}
@@ -82,7 +96,10 @@ export default function AppRoutes() {
         <Route path="/properties/:id" element={<PropertyDetails />} />
         <Route path="/faqs" element={<FAQs />} />
         <Route path="/terms" element={<Terms />} />
-        <Route path="/bookings" element={<div>My Bookings Page (Student Only)</div>} />
+        <Route
+          path="/bookings"
+          element={<div>My Bookings Page (Student Only)</div>}
+        />
 
         <Route path="/saved" element={<SavedProperties />} />
         <Route path="/search" element={<SearchResult />} />
@@ -90,34 +107,33 @@ export default function AppRoutes() {
 
         <Route path="settings" element={<SettingsLayout />}>
           <Route path="profile" element={<Profile role="student" />} />
-            
+
           <Route path="security" element={<Security />} />
           <Route path="notifications" element={<Setting_Notifications />} />
         </Route>
 
         {/* ================= Admin Dashboard ================= */}
         <Route element={<ProtectedRoute allowedRoles={["Admin", "admin"]} />}>
-  <Route path="admin" element={<AdminLayout />}>
-    <Route path="dashboard" element={<Dashboard />} />
-    <Route path="properties" element={<PropertyListings />} />
-    <Route path="verification" element={<PropertyVerification />} />
+          <Route path="admin" element={<AdminLayout />}>
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="properties" element={<PropertyListings />} />
+            <Route path="verification" element={<PropertyVerification />} />
 
-  <Route
-  path="property-details/:id"
-  element={<AdminPropertyDetails />}
-/>
-    <Route path="property/:id" element={<PropertyAIDetails />} />
-    <Route path="users" element={<Users />} />
-    <Route path="reports" element={<Reports />} />
-    <Route path="contact" element={<ContactMessages />} />
-    <Route path="notifications" element={<AdminNotifications />} />
-  </Route>
-</Route>
+            <Route
+              path="property-details/:id"
+              element={<AdminPropertyDetails />}
+            />
+            <Route path="property/:id" element={<PropertyAIDetails />} />
+            <Route path="users" element={<Users />} />
+            <Route path="reports" element={<Reports />} />
+            <Route path="contact" element={<ContactMessages />} />
+            <Route path="notifications" element={<AdminNotifications />} />
+          </Route>
+        </Route>
+      </Route>
 
-</Route>
-
-     {/* ================= Owner Dashboard ================= */}  
-      <Route element={<ProtectedRoute allowedRoles={["Owner", "owner"]} />}>
+      {/* ================= Owner Dashboard ================= */}
+      <Route element={<ProtectedOwnerRoute />}>
         <Route path="/owner-dashboard" element={<OwnerLayout />}>
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="properties" element={<PropertiesPage />} />
@@ -126,18 +142,17 @@ export default function AppRoutes() {
           <Route path="messages" element={<Messages />} />
           <Route path="settings" element={<SettingsLayout />}>
             <Route index element={<Navigate to="profile" replace />} />
-<Route
-  path="profile"
-  element={
-    <Profile
-      role="owner"
-      showSuccessMessage={true}
-    />
-  }
-/>            <Route path="security" element={<Security />} />
+            <Route
+              path="profile"
+              element={<Profile role="owner" showSuccessMessage={true} />}
+            />{" "}
+            <Route path="security" element={<Security />} />
             <Route path="notifications" element={<Setting_Notifications />} />
           </Route>
-          <Route path="verification" element={<div>Verification Process...</div>} />
+          <Route
+            path="verification"
+            element={<VerificationCenter />}
+          />
         </Route>
       </Route>
 

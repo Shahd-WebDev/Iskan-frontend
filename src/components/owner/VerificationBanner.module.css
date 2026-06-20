@@ -1,0 +1,173 @@
+.verification-banner {
+    margin-bottom: 24px;
+    border-radius: 8px;
+    overflow: hidden;
+    animation: slideDown 0.3s ease-in-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.banner-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+}
+
+.banner-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+}
+
+.banner-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.banner-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.banner-description {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.banner-description strong {
+    font-weight: 600;
+}
+
+.banner-close {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+    padding: 0;
+}
+
+.banner-close:hover {
+    opacity: 1;
+}
+
+.banner-action {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+/* PENDING STATUS */
+.verification-banner.pending {
+    background-color: #fef3c7;
+    border-left: 4px solid #f59e0b;
+}
+
+.verification-banner.pending .banner-icon {
+    color: #f59e0b;
+}
+
+.verification-banner.pending .banner-title {
+    color: #92400e;
+}
+
+.verification-banner.pending .banner-description {
+    color: #78350f;
+}
+
+.verification-banner.pending .banner-close {
+    color: #92400e;
+}
+
+/* REJECTED STATUS */
+.verification-banner.rejected {
+    background-color: #fee2e2;
+    border-left: 4px solid #ef4444;
+}
+
+.verification-banner.rejected .banner-icon {
+    color: #ef4444;
+}
+
+.verification-banner.rejected .banner-title {
+    color: #7f1d1d;
+}
+
+.verification-banner.rejected .banner-description {
+    color: #7f1d1d;
+}
+
+.verification-banner.rejected .banner-action {
+    background-color: #ef4444;
+    color: white;
+}
+
+.verification-banner.rejected .banner-action:hover {
+    background-color: #dc2626;
+}
+
+.verification-banner.rejected .banner-close {
+    color: #7f1d1d;
+}
+
+/* APPROVED STATUS */
+.verification-banner.approved {
+    background-color: #dcfce7;
+    border-left: 4px solid #22c55e;
+}
+
+.verification-banner.approved .banner-icon {
+    color: #22c55e;
+}
+
+.verification-banner.approved .banner-title {
+    color: #166534;
+}
+
+.verification-banner.approved .banner-description {
+    color: #166534;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .banner-content {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .banner-action {
+        width: 100%;
+        text-align: center;
+    }
+}
