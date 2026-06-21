@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 
+
 import {
   Bookmark,
   Settings,
@@ -13,6 +14,7 @@ import {
   ArrowLeftRight
 } from "lucide-react";
 import { useSignIn } from "../../context/SignInContext";
+import { useAuth } from "../../context/AuthContext";
 
 import "./ProfileMenu.css";
 
@@ -25,6 +27,7 @@ export default function ProfileMenu() {
   const [openMenu, setOpenMenu] = useState(false);
 
   const menuRef = useRef(null);
+  const { logout } = useAuth();
 
   // ✅ Load User From LocalStorage
   useEffect(() => {
@@ -50,11 +53,11 @@ const isAdmin = user?.role === "Admin";
       document.removeEventListener("mousedown", handleOutsideClick);
   }, []);
 
-  // ✅ Logout
+
   function handleLogout() {
-    localStorage.removeItem("user");
-    navigate("/login");
-  }
+  logout();
+  navigate("/login");
+}
 
   // ✅ If No User Logged In
   if (!user) {

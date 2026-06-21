@@ -3,27 +3,49 @@ import { SavedContext } from "../../context/SavedContext";
 import { useNavigate } from "react-router-dom";
 import {
   Bookmark, Wifi, Wind, UtensilsCrossed,
-  Car, WashingMachine, Tv, Bed, Bath, MapPin
+  Car, WashingMachine, Tv, Bed, Bath, MapPin,
+  Camera, ArrowUpDown, BookOpen, Dumbbell, Flame, TreePine,
 } from "lucide-react";
+
 import { MdTrackChanges } from "react-icons/md";
+import { useAuth } from "../../context/AuthContext";
 
-
-const amenityConfig = {
-  WiFi:    { icon: Wifi, label: "WiFi" },
-  AC:      { icon: Wind, label: "AC" },
-  Kitchen: { icon: UtensilsCrossed, label: "Kitchen" },
-  Parking: { icon: Car, label: "Parking" },
-  Laundry: { icon: WashingMachine, label: "Laundry" },
-  TV:      { icon: Tv, label: "TV" },
+const facilityIconMap = {
+  wifi:     Wifi,
+  ac:       Wind,
+  parking:  Car,
+  elevator: ArrowUpDown,
+  cctv:     Camera,
+  kitchen:  UtensilsCrossed,
+  tv:       Tv,
+  study:    BookOpen,
+  washer:   WashingMachine,
+  gym:      Dumbbell,
+  heater:   Flame,
+  balcony:  TreePine,
 };
 
-function UserPropertyCard({ property }) {
-  const navigate = useNavigate();
+function PropertyCard({ property, facilities = [], hideBookmark = false }) {
+  console.log(property.id);
+  console.log("imagesUrl:", property.imagesUrl);
+  console.log("full property:", JSON.stringify(property));
 
-  const handleViewDetails = () => {    navigate(`/properties/${property.id}`);
-  };
+  const propertyFacilities = facilities.filter(f => 
+  property.facilities?.includes(f.id)
+);
+console.log("facilities:", property.facilities);
+console.log("all facilities:", facilities);
+console.log("filtered:", facilities.filter(f => property.facilities?.includes(f.id)));
 
-const amenities = property.amenities || [];
+  const { token } = useAuth();
+const navigate = useNavigate();
+
+  const handleViewDetails = () => {
+  console.log("Navigating to property id:", property.id);
+  navigate(`/properties/${property.id}`);
+};
+
+  const amenities = property.amenities || [];
   const propertyTypeMap = {
     0: "Room",
     1: "Apartment",
@@ -39,7 +61,28 @@ const amenities = property.amenities || [];
   const isBookmarked = savedProperties.some(
     (p) => p.id === property.id
   );
-  const imageUrl = property.image || property.imageUrl || property.images?.[0] || "/img.webp";;
+  const imageUrl = property.mainImageUrl
+    ? `https://isskan-1.runasp.net${property.mainImageUrl}`
+    : "/img.webp";
+
+const handleSave = async (e) => {
+  e.stopPropagation();
+
+  if (!token) {
+    localStorage.setItem("redirectAfterLogin", window.location.pathname);
+    navigate("/login");
+    return;
+  }
+
+  try {
+    await toggleSave(property);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+  console.log("facility icons:", propertyFacilities.map(f => f.icon));
+
   return (
     <div className="property-card overflow-hidden w-100 h-100 d-flex flex-column">
 
@@ -50,22 +93,23 @@ const amenities = property.amenities || [];
           className="property-image w-100 h-100 object-fit-cover"
         />
 
-        {/* Bookmark */}
+  
+       {/* Bookmark */}
+      {!hideBookmark && (
         <button
           type="button"
-          className={`bookmark-btn position-absolute bg-white border-0 rounded-circle d-flex align-items-center justify-content-center ${isBookmarked ? "bookmarked" : ""}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleSave(property);
-          }}
+          className={`bookmark-btn position-absolute bg-white border-0 rounded-circle d-flex align-items-center justify-content-center ${
+            isBookmarked ? "bookmarked" : ""
+          }`}
+          onClick={handleSave}
         >
-        
           <Bookmark
             size={20}
             fill={isBookmarked ? "#0088FF" : "none"}
             stroke="#0088FF"
           />
         </button>
+      )}
       </div>
 
       <div className="property-content px-3 d-flex flex-column flex-grow-1">
@@ -101,27 +145,27 @@ const amenities = property.amenities || [];
             <span>{property.bathroomsNumber || property.bathrooms}</span>
           </span>
 
-          {amenities.length > 0 && (
-            <div className="amenities-icons d-flex ms-auto">
-              {amenities.map((key) => {
-                const cfg = amenityConfig[key];
-                if (!cfg) return null;
-                const Icon = cfg.icon;
-
-                return (
-                  <span key={key} className="amenity-icon bg-white">
-                    <Icon size={12} />
-                  </span>
-                );
-              })}
-            </div>
-          )}
+       {propertyFacilities.length > 0 && (
+          <div className="amenities-icons d-flex ms-auto ">
+            {propertyFacilities.map((facility) => {
+              const IconComponent = facilityIconMap[facility.icon];
+              return (
+                <span
+                  key={facility.id}
+                  className="amenity-icon bg-white"
+                  title={facility.name}
+                >
+                  {IconComponent
+                    ? <IconComponent size={12} />
+                    : <span style={{ fontSize: "9px" }}>{facility.name}</span>
+                  }
+                </span>
+              );
+            })}
+          </div>
+        )}
         </div>
-
-
-
-       
-
+        
         <button
           className="view-details-btn w-100 text-white border-0 mt-auto"
           onClick={handleViewDetails}
@@ -134,5 +178,6 @@ const amenities = property.amenities || [];
   );
 }
 
-export default UserPropertyCard;
+ export default PropertyCard;;
+
 

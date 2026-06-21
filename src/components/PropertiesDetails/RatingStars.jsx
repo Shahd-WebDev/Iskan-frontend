@@ -11,8 +11,8 @@ export default function RatingStars({ value, onChange, size = 28 }) {
           key={s}
           size={size}
           className={`pd-star ${
-            s <= (hovered || value) ? "pd-star--filled" : ""
-          }`}
+  s <= (hovered ? hovered : value) ? "pd-star--filled" : ""
+}`}
           onClick={() => onChange?.(s)}
           onMouseEnter={() => setHovered(s)}
           onMouseLeave={() => setHovered(0)}

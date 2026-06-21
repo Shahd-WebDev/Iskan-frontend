@@ -279,6 +279,44 @@
   font-size: 11px;
   font-weight: 500;
 }
+/* أزرار الحجز */
+.pd-action-btn--primary {
+  background: #0088FF;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+/* حالة Pending - انتظار الموافقة */
+.booking-btn.pending {
+  background: #FFF3E0 !important;
+  color: #E65100 !important;
+}
+
+/* حالة Approved - تمت الموافقة */
+.booking-btn.approved {
+  background: #E8F5E9 !important;
+  color: #2E7D32 !important;
+}
+
+/* حالة Confirmed - تم التأكيد */
+.booking-btn.confirmed {
+  background: #E3F2FD !important;
+  color: #1565C0 !important;
+}
+
+
+
+
+
 /* ── Key Features ── */
 .pd-key-features {
   border: 1px solid #F5FAFF;
@@ -371,10 +409,6 @@
   font-family: inherit;
   font-weight: 600;
 }
-.pd-contact-btn:hover {
-  border-color: #0088FF;
-  color: #0088FF;
-}
 .pd-contact-note {
   font-size: 15px;
   font-weight: 300;
@@ -382,6 +416,36 @@
   margin: 0;
   border-left: 1px solid #0088FF;
   padding-left: 10px;
+}
+.pd-agent-avatar-fallback {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #0088ff;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+}
+.pd-contact-btn.disabled-style {
+  background: #FFFFFF !important;
+  color: #808080 !important;
+  /* cursor: not-allowed; */
+}
+
+.pd-contact-btn.whatsapp-btn.active {
+  background: #FFFFFF;
+  color:#34C759;
+}
+
+.pd-contact-btn.email-btn.active {
+  background: #FFFFFF;
+  color: #0088FF;
+}
+.pd-contact-btn {
+  outline: none;
 }
 /* ══════════════════════════
    REVIEW SECTION

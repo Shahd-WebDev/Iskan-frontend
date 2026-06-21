@@ -1,83 +1,120 @@
-import { useState } from "react";
+import { SavedContext } from "../../context/SavedContext";
 import { Bookmark, Share2, CalendarCheck } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
 
-function PropertyActions({ onBookingClick, bookingStatus }) {
-  const [saved, setSaved] = useState(false);
+export default function PropertyActions({
+  onOpenBooking,
+  onOpenStatusAlert,
+  bookingStatus,
+  property,
+}) {
+  const { savedProperties, toggleSave } = useContext(SavedContext);
+  const { token } = useAuth();
+  const navigate = useNavigate();
 
-  // ==============================
-  // Share handler
-  // ==============================
+  const isBookmarked = savedProperties.some((p) => p.id === property?.id);
+
   const handleShare = () => {
     if (navigator.share) {
-      navigator.share({
-        title: document.title,
-        url: window.location.href,
-      });
+      navigator.share({ title: document.title, url: window.location.href });
     } else {
       navigator.clipboard.writeText(window.location.href);
       alert("Link copied to clipboard!");
     }
   };
 
-  // ==============================
-  // Booking Button State
-  // ==============================
+  const handleSave = async () => {
+    if (!token) {
+      localStorage.setItem("redirectAfterLogin", window.location.pathname);
+      navigate("/login");
+      return;
+    }
+    try {
+      await toggleSave(property);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleBookingClick = () => {
+    if (!token) {
+      localStorage.setItem("redirectAfterLogin", window.location.pathname);
+      navigate("/login");
+      return;
+    }
+
+  
+    if (bookingStatus) {
+      onOpenStatusAlert?.(); 
+    } else {
+      onOpenBooking?.(); 
+    }
+  };
+
+  //  تحديد حالة الزر
   const getBookingButton = () => {
-    if (bookingStatus === "pending") {
-      return {
-        text: "Pending",
-        className: "booking-btn pending",
-      };
-    }
-
-    if (bookingStatus === "approved") {
-      return {
-        text: "Approved",
-        className: "booking-btn approved",
-      };
-    }
-
-    if (bookingStatus === "confirmed") {
-      return {
-        text: "Confirmed",
-        className: "booking-btn confirmed",
-      };
-    }
-
+    if (bookingStatus === "loading") {
     return {
-      text: "Request Booking",
+      text: "Loading...",
       className: "booking-btn request",
+      disabled: true,
+    };
+  }
+
+    if (bookingStatus === "pending") {
+      return { 
+        text: "Pending", 
+        className: "booking-btn pending",
+        disabled: true 
+      };
+    }
+    if (bookingStatus === "approved") {
+      return { 
+        text: "Approved", 
+        className: "booking-btn approved",
+        disabled: false 
+      };
+    }
+    if (bookingStatus === "confirmed") {
+      return { 
+        text: "Confirmed", 
+        className: "booking-btn confirmed",
+        disabled: true 
+      };
+    }
+    // لا يوجد حجز
+    return { 
+      text: "Request Booking", 
+      className: "booking-btn request",
+      disabled: false 
     };
   };
 
   const bookingBtn = getBookingButton();
 
-  // ==============================
-  // UI
-  // ==============================
   return (
     <div className="pd-actions d-flex justify-content-between align-items-center flex-wrap mb-4">
-      
-      {/* Request Booking */}
       <button
-        className={`pd-action-btn pd-action-btn--primary d-inline-flex align-items-center cursor-pointer ${bookingBtn.className}`}
-        onClick={onBookingClick}
+        className={`pd-action-btn pd-action-btn--primary ${bookingBtn.className}`}
+        onClick={handleBookingClick}
+        disabled={bookingBtn.disabled}
       >
         <CalendarCheck size={14} />
         {bookingBtn.text}
       </button>
 
-      {/* Save + Share */}
       <div className="pd-actions-button d-flex">
         <button
           className={`pd-action-btn d-inline-flex align-items-center cursor-pointer pd-action-btn--ghost ${
-            saved ? "pd-action-btn--saved" : ""
+            isBookmarked ? "pd-action-btn--saved" : ""
           }`}
-          onClick={() => setSaved(!saved)}
+          onClick={handleSave}
           type="button"
         >
-          <Bookmark size={14} fill={saved ? "#0088FF" : "none"} />
-          {saved ? "Saved" : "Save"}
+          <Bookmark size={14} fill={isBookmarked ? "#0088FF" : "none"} />
+          {isBookmarked ? "Saved" : "Save"}
         </button>
 
         <button
@@ -91,5 +128,3 @@ function PropertyActions({ onBookingClick, bookingStatus }) {
     </div>
   );
 }
-
-export default PropertyActions;

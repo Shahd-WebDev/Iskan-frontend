@@ -77,26 +77,37 @@ localStorage.setItem("token", token);
 const decoded = jwtDecode(token);
 console.log("Decoded token:", decoded);
 
-// 🔥 هات role من التوكن
-const role =
-  decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] ||
-  "Student";
+      // ======================
+      // SINGLE SOURCE OF TRUTH
+      // ======================
+      // login(token, userData, res.refreshToken);
 
-// بيانات المستخدم
-const userData = {
-  email: res.data?.email || formData.email,
-  name: res.data?.name || "User",
-  role: role,
-};
+      // toast.success("Login successful!");
 
-// حفظ في الكونتكست
-loginContext(userData, role);
+      // // ======================
+      // // NAVIGATION (UNCHANGED LOGIC)
+      // // ======================
+      // if (role === "Admin") {
+      //   navigate("/admin/dashboard");
+      // } else if (role === "Owner") {
+      //   navigate("/owner-dashboard/dashboard");
+      // } else {
+      //   navigate("/");
+      // }
+      login(token, userData, res.refreshToken);
 
-localStorage.setItem("user", JSON.stringify(userData));
-localStorage.setItem("userRole", role);
+toast.success("Login successful!");
 
-// تحديد لو أدمن
-if (role === "Admin") {
+// ======================
+// NAVIGATION (WITH REDIRECT SUPPORT)
+// ======================
+const redirect = localStorage.getItem("redirectAfterLogin");
+
+if (redirect) {
+  localStorage.removeItem("redirectAfterLogin");
+  navigate(redirect);
+} else if (role === "Admin") {
+>>>>>>> Stashed changes
   navigate("/admin/dashboard");
 } else if (role === "Owner") {
   navigate("/owner-dashboard/dashboard");
@@ -105,16 +116,12 @@ if (role === "Admin") {
 }
 
 
-  } catch (error) {
-  console.log("FULL ERROR:", error);
-  console.log("RESPONSE:", error.response);
-  console.log("DATA:", error.response?.data);
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.response?.data?.message || "Login failed ❌");
+    }
+  }
 
-console.log("ERROR:", error);
-
-alert("Login failed ❌");}
-}
-   
 
   return (
     <div className="auth-container">

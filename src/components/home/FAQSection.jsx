@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import abstractDesign from "../../assets/home/Abstract Design.png";
 import FAQCard from "../home/FAQCard";
 import PaginationControls from "../../components/Pagination/Pagination";
+import { useAuth } from "../../context/AuthContext";
 
 const ITEMS_PER_PAGE = 3;
 
@@ -10,6 +11,7 @@ function FAQSection() {
   const [currentPage, setCurrentPage] = useState(1);
   const [faqs, setFaqs] = useState([]);
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth(); 
 
   useEffect(() => {
     fetch("/api/FAQ/GetFAQs/items")
@@ -42,6 +44,7 @@ function FAQSection() {
           </p>
         </div>
         <button className="view-all-Faq mt-auto"  onClick={() => navigate("/faqs")} >View All FAQ's</button>
+        
       </div>
 
       <div className="row g-3 mb-4">
