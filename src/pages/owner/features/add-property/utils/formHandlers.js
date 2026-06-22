@@ -32,9 +32,28 @@ export const handleDocUploadLogic = (e) => {
   const file = e.target.files[0];
   if (!file) return { file: null, fileName: null, error: null };
   
-  const validTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+  const validTypes = [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    'text/plain',
+    'text/csv',
+    'application/rtf',
+    'image/jpeg',
+    'image/png',
+    'image/jpg',
+  ];
   if (!validTypes.includes(file.type)) {
-    return { file: null, fileName: null, error: "Invalid file type (PDF, JPG, PNG only)" };
+    return {
+      file: null,
+      fileName: null,
+      error:
+        "Invalid file type. Allowed: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, TXT, CSV, RTF, JPG, PNG.",
+    };
   }
   if (file.size > 10 * 1024 * 1024) {
     return { file: null, fileName: null, error: "File must be under 10MB" };

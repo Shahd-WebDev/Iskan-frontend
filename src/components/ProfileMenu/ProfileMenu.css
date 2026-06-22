@@ -183,3 +183,67 @@
   color: red;
 }
 
+/* ================= Notification Badge ================= */
+
+/* Wrapper that holds the Bell icon + badge together */
+.pm-notif-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 6px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+/* Numbered badge on the Bell icon */
+.pm-notif-badge {
+  position: absolute;
+  top: -2px;
+  right: -4px;
+
+  background: #e53e3e;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1.5px solid #fff;
+  pointer-events: none;
+  animation: badgePop 0.25s ease;
+}
+
+/* Small red dot on the avatar button */
+.pm-avatar-small--badge {
+  position: relative;
+}
+
+.pm-avatar-dot {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #e53e3e;
+  border: 2px solid #fff;
+  pointer-events: none;
+  animation: badgePop 0.25s ease;
+}
+
+@keyframes badgePop {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}

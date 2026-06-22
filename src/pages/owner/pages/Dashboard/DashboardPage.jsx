@@ -16,6 +16,9 @@ import { Link, useLocation } from "react-router-dom";
 import styles from "./DashboardPage.module.css";
 import { useAuth } from "../../../../context/AuthContext";
 import { getOwnerDashboard } from "../../../../services/ownerDashboard";
+import { getOwnerProperties } from "../../../../services/ownerProperties";
+import { getOwnerReviews } from "../../../../services/ownerReviews";
+import { getBookingsByProperty } from "../../../../services/bookings";
 import VerificationBanner from "../../../../components/owner/VerificationBanner";
 import "../../../../styles/verification.css";
 
@@ -27,12 +30,58 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [allProperties, setAllProperties] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [totalActiveBookings, setTotalActiveBookings] = useState(0);
+
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await getOwnerDashboard();
+      const [data, propsData, reviewsData] = await Promise.all([
+        getOwnerDashboard(),
+        getOwnerProperties({ PageIndex: 1, PageSize: 1000 }),
+        getOwnerReviews(),
+      ]);
       setDashboardData(data);
+      const ownedProperties = Array.isArray(propsData?.items)
+        ? propsData.items
+        : Array.isArray(propsData?.data)
+          ? propsData.data
+          : Array.isArray(propsData)
+            ? propsData
+            : [];
+      setAllProperties(ownedProperties);
+      setReviews(
+        Array.isArray(reviewsData)
+          ? reviewsData
+          : reviewsData?.data || reviewsData?.reviews || []
+      );
+
+      // ── Compute real active booking count from all properties ──
+      if (ownedProperties.length > 0) {
+        const bookingResults = await Promise.allSettled(
+          ownedProperties.map((p) =>
+            getBookingsByProperty(p.id, { PageIndex: 1, PageSize: 1 })
+          )
+        );
+        const total = bookingResults.reduce((sum, result) => {
+          if (result.status === "fulfilled") {
+            const count =
+              result.value?.count ??
+              result.value?.totalCount ??
+              result.value?.data?.length ??
+              0;
+            return sum + Number(count);
+          }
+          return sum;
+        }, 0);
+        setTotalActiveBookings(total);
+      } else {
+        // Fall back to dashboard stat when no properties loaded yet
+        const fallback = data?.stats?.activeBookings ?? 0;
+        setTotalActiveBookings(fallback);
+      }
     } catch (err) {
       console.error("Failed to fetch owner dashboard data:", err);
       setError("Failed to load dashboard. Please try again.");
@@ -44,6 +93,7 @@ export default function DashboardPage() {
   useEffect(() => {
     fetchDashboardData();
   }, []);
+
 
   const displayName = dashboardData?.ownerName || user?.name || "Owner";
 
@@ -271,6 +321,28 @@ export default function DashboardPage() {
   const activities = dashboardData?.recentActivities || [];
   const properties = dashboardData?.recentProperties || [];
 
+  const totalCount = stats.totalProperties ?? 0;
+  const activeBookings = totalActiveBookings;
+  const pendingActions = stats.pendingActions ?? 0;
+
+  // Compute dynamic average rating from backend reviews API
+  const averageRating = reviews.length > 0
+    ? reviews.reduce((sum, r) => sum + Number(r.rating || r.stars || 0), 0) / reviews.length
+    : 0;
+
+  const renderDashboardStars = (rating) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    for (let i = 1; i <= 5; i++) {
+      if (i <= fullStars) {
+        stars.push(<Star key={i} size={14} className={styles["star-filled"]} style={{ fill: "#F59E0B", color: "#F59E0B" }} />);
+      } else {
+        stars.push(<Star key={i} size={14} className={styles["star-empty"]} style={{ color: "#CBD5E1" }} />);
+      }
+    }
+    return stars;
+  };
+
   return (
     <div className={styles["dashboard-content-wrapper"]}>
       {/* ── Account Verification Status Banner ── */}
@@ -326,17 +398,9 @@ export default function DashboardPage() {
             >
               <Building2 size={20} className={styles["blue-icon"]} />
             </div>
-            {stats.propertiesGrowth !== 0 && (
-              <span
-                className={`${styles["dc-stat-trend"]} ${stats.propertiesGrowth > 0 ? styles["positive"] : ""}`}
-              >
-                {stats.propertiesGrowth > 0 ? "↑" : "↓"}{" "}
-                {Math.abs(stats.propertiesGrowth)}%
-              </span>
-            )}
           </div>
           <div className={styles["dc-stat-body"]}>
-            <h3>{stats.totalProperties}</h3>
+            <h3>{totalCount}</h3>
             <p>Total Properties</p>
           </div>
         </div>
@@ -345,18 +409,13 @@ export default function DashboardPage() {
         <div className={styles["dc-stat-card"]}>
           <div className={styles["dc-stat-header"]}>
             <div
-              className={`${styles["dc-stat-icon-wrapper"]} ${styles["orange-bg"]}`}
+              className={`${styles["dc-stat-icon-wrapper"]} ${styles["green-bg"]}`}
             >
-              <Calendar size={20} className={styles["orange-icon"]} />
+              <Calendar size={20} className={styles["green-icon"]} />
             </div>
-            {stats.actionRequired && (
-              <span className={`${styles["dc-stat-badge"]} ${styles["alert"]}`}>
-                Action Required
-              </span>
-            )}
           </div>
           <div className={styles["dc-stat-body"]}>
-            <h3>{stats.activeBookings}</h3>
+            <h3>{activeBookings}</h3>
             <p>Active Bookings</p>
           </div>
         </div>
@@ -369,18 +428,12 @@ export default function DashboardPage() {
             >
               <Star size={20} className={styles["yellow-icon"]} />
             </div>
-            {stats.ratingChange !== 0 && (
-              <span
-                className={`${styles["dc-stat-trend"]} ${stats.ratingChange > 0 ? styles["positive"] : ""}`}
-              >
-                {stats.ratingChange > 0 ? "+" : ""}
-                {stats.ratingChange}
-              </span>
-            )}
           </div>
           <div className={styles["dc-stat-body"]}>
             <h3>
-              {stats.averageRating ? stats.averageRating.toFixed(1) : "0.0"}
+              {typeof averageRating === "number"
+                ? averageRating.toFixed(1)
+                : averageRating}
             </h3>
             <p>Average Rating</p>
           </div>
@@ -390,13 +443,13 @@ export default function DashboardPage() {
         <div className={styles["dc-stat-card"]}>
           <div className={styles["dc-stat-header"]}>
             <div
-              className={`${styles["dc-stat-icon-wrapper"]} ${styles["purple-bg"]}`}
+              className={`${styles["dc-stat-icon-wrapper"]} ${styles["red-bg"]}`}
             >
-              <AlertCircle size={20} className={styles["purple-icon"]} />
+              <AlertTriangle size={20} className={styles["red-icon"]} />
             </div>
           </div>
           <div className={styles["dc-stat-body"]}>
-            <h3>{stats.pendingActions}</h3>
+            <h3>{pendingActions}</h3>
             <p>Pending Actions</p>
           </div>
         </div>
@@ -546,6 +599,70 @@ export default function DashboardPage() {
             )}
           </div>
         </div>
+
+        {/* Recent Reviews Card */}
+        <div className={styles["dc-section-card"]}>
+          <div className={styles["dc-section-header"]}>
+            <h2 className={styles["dc-section-title"]}>Recent Guest Reviews</h2>
+            <Link
+              to="/owner-dashboard/reviews"
+              className={styles["dc-view-all"]}
+            >
+              View All
+            </Link>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginTop: "16px" }}>
+            {reviews.slice(0, 3).length > 0 ? (
+              reviews.slice(0, 3).map((rev) => {
+                const id = rev.id || rev.reviewId;
+                const rating = Number(rev.rating || rev.stars || 0);
+                const comment = rev.comment || rev.text || rev.reviewText || "No comment provided.";
+                const createdAt = rev.createdAt || rev.date || rev.reviewDate;
+                const studentName = rev.studentName || rev.reviewerName || rev.user?.name || "Student Guest";
+                const propertyName = rev.propertyName || rev.propertyTitle || "My Property";
+
+                const formattedDate = createdAt
+                  ? new Date(createdAt).toLocaleDateString(undefined, {
+                      month: "short",
+                      day: "numeric",
+                    })
+                  : "";
+
+                return (
+                  <div key={id} style={{ display: "flex", flexDirection: "column", padding: "12px", border: "1px solid #F3F4F6", borderRadius: "10px", gap: "6px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <div>
+                        <span style={{ fontSize: "14px", fontWeight: "600", color: "#111827" }}>{studentName}</span>
+                        <span style={{ fontSize: "10px", backgroundColor: "#F3F4F6", color: "#4B5563", padding: "2px 6px", borderRadius: "9999px", marginLeft: "8px", fontWeight: "600" }}>
+                          {propertyName}
+                        </span>
+                      </div>
+                      <span style={{ fontSize: "11px", color: "#9CA3AF" }}>{formattedDate}</span>
+                    </div>
+                    <div style={{ display: "flex", gap: "2px" }}>
+                      {renderDashboardStars(rating)}
+                    </div>
+                    <p style={{ fontSize: "13px", color: "#4B5563", margin: "4px 0 0 0", lineBreak: "anywhere", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+                      {comment}
+                    </p>
+                  </div>
+                );
+              })
+            ) : (
+              <div
+                style={{
+                  textAlign: "center",
+                  padding: "24px 0",
+                  color: "#6B7280",
+                }}
+              >
+                No reviews yet.
+              </div>
+            )}
+          </div>
+        </div>
+
       </div>
     </div>
   );

@@ -23,21 +23,13 @@ export const getPropertyLocation = async (id) => {
 // Note: Handled defensively because Swagger indicates the return type is CreatePropertyDto which does not show an ID.
 // We check if the response data contains 'id' or if it is a string/contains properties.
 export const createProperty = async (formData) => {
-  const response = await api.post("/Property/Create", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  const response = await api.post("/Property/Create", formData);
   return response.data;
 };
 
 // 5. Update property details by ID (takes FormData)
 export const updateProperty = async (id, formData) => {
-  const response = await api.put(`/Property/Update/${id}`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  const response = await api.put(`/Property/Update/${id}`, formData);
   return response.data;
 };
 
@@ -57,9 +49,6 @@ export const getPropertyImages = async (id) => {
 export const addPropertyImages = async (propertyId, formData) => {
   const response = await api.post("/Property/AddImages", formData, {
     params: { propertyId },
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
   });
   return response.data;
 };
@@ -94,9 +83,6 @@ export const getPropertyDocuments = async (id) => {
 export const uploadPropertyDocument = async (propertyId, formData) => {
   const response = await api.post("/Property/UploadDocument", formData, {
     params: { propertyId },
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
   });
   return response.data;
 };
@@ -124,5 +110,17 @@ export const setPropertyFacilities = async (propertyId, facilityIds) => {
 // 17. Get all global facilities/amenities registered in the system
 export const getAllFacilities = async () => {
   const response = await api.get("/Facility/GetAll");
+  return response.data;
+};
+
+// 18. Create a new facility for owners to add custom amenities
+export const createFacility = async (facility) => {
+  const response = await api.post("/Facility/Create", facility);
+  return response.data;
+};
+
+// 19. Trigger AI validation for a property
+export const validateProperty = async (propertyId) => {
+  const response = await api.post(`/Ai/ValidateProperty/property/validate/${propertyId}`);
   return response.data;
 };

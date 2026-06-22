@@ -13,10 +13,13 @@ import {
 import ConfirmDeleteModal from "../../components/ConfirmDeleteModal";
 import {
   getOwnerProperties,
+  getPropertyDetails,
   deleteProperty,
 } from "../../../../services/ownerProperties";
+import { getPropertyReviews } from "../../../../services/ownerReviews";
 import { useAuth } from "../../../../context/AuthContext";
 import VerificationBanner from "../../../../components/owner/VerificationBanner";
+import { enrichPropertyWithVerificationData } from "../../../../utils/verificationUtils";
 import styles from "./PropertiesPage.module.css";
 
 export default function PropertiesPage() {
@@ -45,7 +48,57 @@ export default function PropertiesPage() {
       // Since /Property/GetAll returns a paginated list { count, pageIndex, pageSize, data: [...] }
       // we extract the data array
       const items = result?.data || [];
-      setProperties(items);
+
+      const enrichedItems = await Promise.all(
+        items.map(async (item) => {
+          try {
+            // Always fetch full details to get verification data
+            const details = await getPropertyDetails(item.id);
+            const enrichedProperty =
+              enrichPropertyWithVerificationData(details);
+            
+            // Fetch property reviews
+            let reviewsData = [];
+            try {
+              reviewsData = await getPropertyReviews(item.id);
+            } catch (err) {
+              console.warn("Failed to load reviews for property:", item.id, err);
+            }
+
+            const reviewsList = Array.isArray(reviewsData)
+              ? reviewsData
+              : reviewsData?.data || reviewsData?.reviews || [];
+
+            const totalReviews = reviewsList.length;
+            const avgRating = totalReviews > 0
+              ? reviewsList.reduce((sum, r) => sum + Number(r.rating || r.stars || 0), 0) / totalReviews
+              : 0;
+
+            return {
+              ...item,
+              ...enrichedProperty,
+              // Ensure verificationStatus is the primary status displayed
+              status: enrichedProperty.verificationStatus,
+              avgRating,
+              totalReviews,
+            };
+          } catch (detailErr) {
+            console.warn(
+              "Failed to load property details for status enrichment:",
+              item.id,
+              detailErr,
+            );
+            // Return item with default reviews data
+            return {
+              ...item,
+              avgRating: 0,
+              totalReviews: 0,
+            };
+          }
+        }),
+      );
+
+      setProperties(enrichedItems);
     } catch (err) {
       console.error("Failed to load owner properties:", err);
       setError("Failed to load property listings. Please try again.");
@@ -53,6 +106,7 @@ export default function PropertiesPage() {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     fetchProperties();
@@ -89,15 +143,28 @@ export default function PropertiesPage() {
   // Client-side filtering
   // Note: verificationStatus may not be present in the paginated list DTO from the API.
   // When absent, all properties pass the status filter so nothing is hidden unintentionally.
+  const normalizePropertyStatus = (status) => {
+    const raw = String(status || "")
+      .trim()
+      .toLowerCase();
+    if (!raw) return "";
+    if (raw === "verified") return "approved";
+    if (raw === "approved") return "approved";
+    if (raw === "pending") return "pending";
+    if (raw === "rejected") return "rejected";
+    return raw;
+  };
+
   const filteredProperties = properties.filter((property) => {
     const title = property.title?.toLowerCase() || "";
     const matchesSearch = title.includes(searchQuery.toLowerCase());
 
-    const status = (
+    const rawStatus =
+      property.status ||
       property.verificationStatus ||
       property.listingStatus ||
-      ""
-    ).toLowerCase();
+      "";
+    const status = normalizePropertyStatus(rawStatus);
     const matchesStatus =
       statusFilter === "all" ||
       !status || // if no status field, show in all filters
@@ -360,7 +427,7 @@ export default function PropertiesPage() {
                 key={property.id}
                 className={styles["op-card"]}
                 style={{ cursor: "pointer" }}
-                onClick={() => navigate(`/properties/${property.id}`)}
+                onClick={() => navigate(`/owner-properties/${property.id}`)}
               >
                 <div
                   className={styles["op-card-image"]}
@@ -402,11 +469,13 @@ export default function PropertiesPage() {
                       <Trash2 size={14} />
                     </button>
                   </div>
-                  {property.verificationStatus && (
+                  {(property.status || property.verificationStatus) && (
                     <span
-                      className={`${styles["op-badge"]} ${getStatusBadgeClass(property.verificationStatus)}`}
+                      className={`${styles["op-badge"]} ${getStatusBadgeClass(
+                        property.status || property.verificationStatus,
+                      )}`}
                     >
-                      {property.verificationStatus}
+                      {property.status || property.verificationStatus}
                     </span>
                   )}
                 </div>
@@ -421,6 +490,24 @@ export default function PropertiesPage() {
                   >
                     ${property.pricePerMonth?.toLocaleString()} / month
                   </p>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                      fontSize: "13px",
+                      color: "#4B5563",
+                      marginTop: "8px",
+                    }}
+                  >
+                    <span>⭐</span>
+                    <span style={{ fontWeight: "600" }}>
+                      {property.avgRating > 0 ? property.avgRating.toFixed(1) : "0.0"}
+                    </span>
+                    <span style={{ color: "#6B7280" }}>
+                      ({property.totalReviews ?? 0} {property.totalReviews === 1 ? "Review" : "Reviews"})
+                    </span>
+                  </div>
                   <div
                     style={{
                       display: "flex",

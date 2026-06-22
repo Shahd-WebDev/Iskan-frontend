@@ -5,10 +5,19 @@ export const validateField = (name, value, countryCode = "") => {
   let error = "";
 
   if (name === "name") {
-    if (!value.trim()) {
+    if (!value || !value.trim()) {
       error = "Name is required";
     } else if (!/^[A-Za-z\s]{3,}$/.test(value)) {
       error = "Name must contain letters only and at least 3 characters";
+    }
+  }
+
+  if (name === "firstName" || name === "lastName") {
+    const fieldName = name === "firstName" ? "First name" : "Last name";
+    if (!value || !value.trim()) {
+      error = `${fieldName} is required`;
+    } else if (!/^[A-Za-z\s]+$/.test(value)) {
+      error = `${fieldName} must contain letters only`;
     }
   }
 
@@ -20,7 +29,7 @@ export const validateField = (name, value, countryCode = "") => {
     }
   }
 
-  if (name === "phone") {
+  if (name === "phone" || name === "phoneNumber") {
     if (!value) {
       error = "Phone number is required";
     } else {
@@ -28,8 +37,25 @@ export const validateField = (name, value, countryCode = "") => {
 
       if (digitsOnly.length < 10) {
         error = "Phone number too short";
-      } else if (digitsOnly.length > 10) {
+      } else if (digitsOnly.length > 15) {
         error = "Phone number too long";
+      }
+    }
+  }
+
+  if (name === "dateOfBirth") {
+    if (!value) {
+      error = "Date of birth is required";
+    } else {
+      const birthDate = new Date(value);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const m = today.getMonth() - birthDate.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      if (age < 15 || age > 100) {
+        error = "Age must be between 15 and 100 years";
       }
     }
   }

@@ -29,7 +29,7 @@
    PROPERTY HEADER
    ══════════════════════════ */
 .pd-topbar {
-  margin-bottom: 60px;
+  margin-bottom: 20px;
 }
 .pd-topbar-left {
   gap: 10px;
@@ -90,11 +90,11 @@
    IMAGE GALLERY
    ══════════════════════════ */
 .pd-gallery {
-  margin-bottom: 36px;
+  margin-bottom: 20px;
   background-color: #F5FAFF;
-  padding: 35px;
+  padding: 20px;
   border-radius: 10px;
-    position: relative;
+  position: relative;
 }
 .pd-thumbnails {
   gap: 10px;
@@ -191,8 +191,8 @@
    ══════════════════════════ */
 .pd-mid-section {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));  gap: 40px;
-  margin-bottom: 52px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));  gap: 24px;
+  margin-bottom: 28px;
 }
 /* ── Actions ── */
 .pd-actions {
@@ -225,16 +225,15 @@
 }
 /* ── Description ── */
 .pd-description {
-  padding: 30px 30px 60px 30px;
-  gap: 20px;
+  padding: 20px 24px 32px 24px;
+  gap: 16px;
   border: 1px solid #F5FAFF;
   border-radius: 10px;
 }
 .pd-section-title-sm {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 600;
   color: #000000;
-  min-height: 40px;
   margin: 0;
 }
 .pd-specs {
@@ -283,14 +282,13 @@
 .pd-key-features {
   border: 1px solid #F5FAFF;
   border-radius: 10px;
-  padding: 40px;
+  padding: 20px 24px;
 }
 .pd-section-title-sm1 {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 600;
   color: #000000;
-  min-height: 40px;
-  margin-bottom: 11px;
+  margin-bottom: 8px;
 }
 .pd-features-list {
   gap: 15px;
