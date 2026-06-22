@@ -10,22 +10,30 @@ import {
   ChevronDown,
   ChevronRight,
   UserPlus,
-  ArrowLeftRight
+  ArrowLeftRight,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import { useProfile } from "../../context/ProfileContext";
+import { useNotifications } from "../../hooks/useNotifications";
 
 import "./ProfileMenu.css";
 
 export default function ProfileMenu() {
-  
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { profile } = useProfile();
   const role = user?.role?.toLowerCase();
   const [openMenu, setOpenMenu] = useState(false);
 
+  // ✅ Live notification badge — only fetches unread count
+  const { unreadCount } = useNotifications({ autoFetch: !!user, pageSize: 1 });
+
   const menuRef = useRef(null);
 
-  const displayName = user?.name || user?.email || "User";
+  const displayName =
+    (profile
+      ? `${profile.firstName || ""} ${profile.lastName || ""}`.trim()
+      : user?.name || user?.email) || "User";
 
   const isAdmin = role === "admin";
 
@@ -38,8 +46,7 @@ export default function ProfileMenu() {
     }
 
     document.addEventListener("mousedown", handleOutsideClick);
-    return () =>
-      document.removeEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, []);
 
   // ✅ Logout
@@ -67,13 +74,14 @@ export default function ProfileMenu() {
           setOpenMenu(!openMenu);
         }}
       >
-        {/* ✅ Avatar Letter Instead Of Image */}
-        <div className="pm-avatar-small">
-          {user.avatar ? (
-            <img src={user.avatar} alt="avatar" />
+        {/* ✅ Avatar with optional unread dot */}
+        <div className="pm-avatar-small pm-avatar-small--badge">
+          {profile?.profileImageUrl ? (
+            <img src={profile.profileImageUrl} alt="avatar" />
           ) : (
-<span>{displayName.charAt(0).toUpperCase()}</span>
+            <span>{displayName.charAt(0).toUpperCase()}</span>
           )}
+          {unreadCount > 0 && <span className="pm-avatar-dot" />}
         </div>
 
         <ChevronDown
@@ -83,50 +91,53 @@ export default function ProfileMenu() {
       </button>
 
       {/* ================= Dropdown Menu ================= */}
-    {openMenu && (
-  <div className="pm-menu">
-
-    {/* User Info */}
-              {/* User Info */}
+      {openMenu && (
+        <div className="pm-menu">
+          {/* User Info */}
+          {/* User Info */}
           <div
-  className={`pm-user ${isAdmin ? "admin-clickable" : ""}`}
-  onClick={() => {
-    if (isAdmin) {
-      navigate("/admin/dashboard");
-      setOpenMenu(false);
-    }
-  }}
->
+            className={`pm-user ${isAdmin ? "admin-clickable" : ""}`}
+            onClick={() => {
+              if (isAdmin) {
+                navigate("/admin/dashboard");
+                setOpenMenu(false);
+              }
+            }}
+          >
             {/* ✅ Avatar Letter */}
             <div className="pm-avatar">
-              {user.avatar ? (
-                <img src={user.avatar} alt="avatar" />
+              {profile?.profileImageUrl ? (
+                <img src={profile.profileImageUrl} alt="avatar" />
               ) : (
-<span>{displayName.charAt(0).toUpperCase()}</span>
+                <span>{displayName.charAt(0).toUpperCase()}</span>
               )}
             </div>
 
             <div>
               {/* ✅ Show Only First 2 Words */}
-<h4>{displayName.split(" ").slice(0, 2).join(" ")}</h4>
-              <p>{user.email}</p>
+              <h4>{displayName.split(" ").slice(0, 2).join(" ")}</h4>
+              <p>{profile?.email || user.email}</p>
             </div>
           </div>
 
           <hr />
 
           {/* Saved */}
-{!isAdmin && (
-  <Link to="/saved" className="pm-item">
-    <Bookmark size={18} stroke="black" fill="black" />
-    Saved Property
-  </Link>
-)}
+          {!isAdmin && (
+            <Link to="/saved" className="pm-item">
+              <Bookmark size={18} stroke="black" fill="black" />
+              Saved Property
+            </Link>
+          )}
 
           {/* Profile */}
-          <Link 
-            to={role === "owner" ? "/owner-dashboard/settings/profile" : "/settings/profile"} 
-            className="pm-item" 
+          <Link
+            to={
+              role === "owner"
+                ? "/owner-dashboard/settings/profile"
+                : "/settings/profile"
+            }
+            className="pm-item"
             onClick={() => setOpenMenu(false)}
           >
             <Settings size={18} stroke="black" />
@@ -135,44 +146,45 @@ export default function ProfileMenu() {
 
           {/* Notifications */}
           <Link
-  to={
-    isAdmin
-      ? "/admin/notifications"
-      : "/notifications"
-  }
-  className="pm-item"
-  onClick={() => setOpenMenu(false)}
->
-  <Bell size={18} stroke="black" fill="black" />
-  Notifications
-</Link>
+            to={isAdmin ? "/admin/notifications" : "/notifications"}
+            className="pm-item"
+            onClick={() => setOpenMenu(false)}
+          >
+            <span className="pm-notif-icon-wrap">
+              <Bell size={18} stroke="black" fill="black" />
+              {unreadCount > 0 && (
+                <span className="pm-notif-badge">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
+            </span>
+            Notifications
+          </Link>
 
           <hr />
-{!isAdmin && (
-  <>
-    {/* Help */}
-    <Link to="/help" className="pm-item">
-      <LifeBuoy size={18} stroke="black" />
-      Help
-      <ChevronRight className="pm-arrow" size={18} />
-    </Link>
+          {!isAdmin && (
+            <>
+              {/* Help */}
+              <Link to="/help" className="pm-item">
+                <LifeBuoy size={18} stroke="black" />
+                Help
+                <ChevronRight className="pm-arrow" size={18} />
+              </Link>
 
-    <hr />
-  </>
-)}
+              <hr />
+            </>
+          )}
 
-
-
-{isAdmin && (
-  <Link
-    to="/admin/dashboard"
-    className="pm-item"
-    onClick={() => setOpenMenu(false)}
-  >
-    <UserPlus size={18} stroke="black" />
-    Dashboard
-  </Link>
-)}
+          {isAdmin && (
+            <Link
+              to="/admin/dashboard"
+              className="pm-item"
+              onClick={() => setOpenMenu(false)}
+            >
+              <UserPlus size={18} stroke="black" />
+              Dashboard
+            </Link>
+          )}
 
           {/* Logout */}
           <button onClick={handleLogout} className="pm-item pm-logout">

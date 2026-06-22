@@ -25,12 +25,24 @@ import styles from "./BookingsPage.module.css";
 function BookingStatusBadge({ status }) {
   const s = (status || "").toLowerCase();
   const map = {
-    pending:  { label: "Pending",   cls: styles["bs--pending"],   icon: Clock },
-    confirmed:{ label: "Confirmed", cls: styles["bs--confirmed"], icon: CheckCircle2 },
-    rejected: { label: "Rejected",  cls: styles["bs--rejected"],  icon: XCircle },
-    cancelled:{ label: "Cancelled", cls: styles["bs--cancelled"], icon: XCircle },
+    pending: { label: "Pending", cls: styles["bs--pending"], icon: Clock },
+    confirmed: {
+      label: "Confirmed",
+      cls: styles["bs--confirmed"],
+      icon: CheckCircle2,
+    },
+    rejected: { label: "Rejected", cls: styles["bs--rejected"], icon: XCircle },
+    cancelled: {
+      label: "Cancelled",
+      cls: styles["bs--cancelled"],
+      icon: XCircle,
+    },
   };
-  const cfg = map[s] ?? { label: status, cls: styles["bs--pending"], icon: Clock };
+  const cfg = map[s] ?? {
+    label: status,
+    cls: styles["bs--pending"],
+    icon: Clock,
+  };
   const Icon = cfg.icon;
   return (
     <span className={`${styles["bs"]} ${cfg.cls}`}>
@@ -41,7 +53,13 @@ function BookingStatusBadge({ status }) {
 }
 
 // ─── Individual booking card ──────────────────────────────────────────────────
-function BookingCard({ booking, onConfirm, onReject, onCancel, actionLoading }) {
+function BookingCard({
+  booking,
+  onConfirm,
+  onReject,
+  onCancel,
+  actionLoading,
+}) {
   const [expanded, setExpanded] = useState(false);
   const id = booking.id;
   const status = (booking.status || booking.bookingStatus || "").toLowerCase();
@@ -52,14 +70,21 @@ function BookingCard({ booking, onConfirm, onReject, onCancel, actionLoading }) 
     if (!dateStr) return "—";
     try {
       return new Date(dateStr).toLocaleDateString("en-GB", {
-        day: "2-digit", month: "short", year: "numeric",
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
       });
-    } catch { return dateStr; }
+    } catch {
+      return dateStr;
+    }
   };
 
   return (
     <div className={styles["bk-card"]}>
-      <div className={styles["bk-card-header"]} onClick={() => setExpanded((v) => !v)}>
+      <div
+        className={styles["bk-card-header"]}
+        onClick={() => setExpanded((v) => !v)}
+      >
         <div className={styles["bk-card-left"]}>
           <div className={styles["bk-avatar"]}>
             <User size={18} />
@@ -69,12 +94,15 @@ function BookingCard({ booking, onConfirm, onReject, onCancel, actionLoading }) 
               {booking.studentName || booking.tenantName || "Student"}
             </p>
             <p className={styles["bk-date"]}>
-              Move-in: {fmt(booking.moveInDate)} · {booking.durationInMonths ?? "?"} mo
+              Move-in: {fmt(booking.moveInDate)} ·{" "}
+              {booking.durationInMonths ?? "?"} mo
             </p>
           </div>
         </div>
         <div className={styles["bk-card-right"]}>
-          <BookingStatusBadge status={booking.status || booking.bookingStatus} />
+          <BookingStatusBadge
+            status={booking.status || booking.bookingStatus}
+          />
           {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
         </div>
       </div>
@@ -87,7 +115,11 @@ function BookingCard({ booking, onConfirm, onReject, onCancel, actionLoading }) 
             <dt>Move-in Date</dt>
             <dd>{fmt(booking.moveInDate)}</dd>
             <dt>Duration</dt>
-            <dd>{booking.durationInMonths ? `${booking.durationInMonths} months` : "—"}</dd>
+            <dd>
+              {booking.durationInMonths
+                ? `${booking.durationInMonths} months`
+                : "—"}
+            </dd>
             <dt>Student Email</dt>
             <dd>{booking.studentEmail || booking.tenantEmail || "—"}</dd>
           </dl>
@@ -172,7 +204,7 @@ export default function BookingsPage() {
       setBookingsError(null);
       const data = await getBookingsByProperty(propertyId);
       // Backend returns either an array or a paginated result
-      const items = Array.isArray(data) ? data : data?.data ?? [];
+      const items = Array.isArray(data) ? data : (data?.data ?? []);
       setBookings(items);
     } catch {
       setBookingsError("Failed to load bookings for this property.");
@@ -181,7 +213,9 @@ export default function BookingsPage() {
     }
   }, []);
 
-  useEffect(() => { fetchProperties(); }, [fetchProperties]);
+  useEffect(() => {
+    fetchProperties();
+  }, [fetchProperties]);
   useEffect(() => {
     if (selectedPropertyId) fetchBookings(selectedPropertyId);
   }, [selectedPropertyId, fetchBookings]);
@@ -192,7 +226,11 @@ export default function BookingsPage() {
       setActionLoading(id);
       await confirmBooking(id);
       setBookings((prev) =>
-        prev.map((b) => b.id === id ? { ...b, status: "Confirmed", bookingStatus: "Confirmed" } : b)
+        prev.map((b) =>
+          b.id === id
+            ? { ...b, status: "Confirmed", bookingStatus: "Confirmed" }
+            : b,
+        ),
       );
     } catch {
       alert("Failed to confirm booking. Please try again.");
@@ -206,7 +244,11 @@ export default function BookingsPage() {
       setActionLoading(id);
       await rejectBooking(id);
       setBookings((prev) =>
-        prev.map((b) => b.id === id ? { ...b, status: "Rejected", bookingStatus: "Rejected" } : b)
+        prev.map((b) =>
+          b.id === id
+            ? { ...b, status: "Rejected", bookingStatus: "Rejected" }
+            : b,
+        ),
       );
     } catch {
       alert("Failed to reject booking. Please try again.");
@@ -220,7 +262,11 @@ export default function BookingsPage() {
       setActionLoading(id);
       await cancelBooking(id);
       setBookings((prev) =>
-        prev.map((b) => b.id === id ? { ...b, status: "Cancelled", bookingStatus: "Cancelled" } : b)
+        prev.map((b) =>
+          b.id === id
+            ? { ...b, status: "Cancelled", bookingStatus: "Cancelled" }
+            : b,
+        ),
       );
     } catch {
       alert("Failed to cancel booking. Please try again.");
@@ -232,7 +278,7 @@ export default function BookingsPage() {
   const selectedProperty = properties.find((p) => p.id === selectedPropertyId);
 
   const pendingCount = bookings.filter(
-    (b) => (b.status || b.bookingStatus || "").toLowerCase() === "pending"
+    (b) => (b.status || b.bookingStatus || "").toLowerCase() === "pending",
   ).length;
 
   return (
@@ -280,7 +326,9 @@ export default function BookingsPage() {
               <button
                 key={p.id}
                 className={`${styles["bp-prop-btn"]} ${
-                  selectedPropertyId === p.id ? styles["bp-prop-btn--active"] : ""
+                  selectedPropertyId === p.id
+                    ? styles["bp-prop-btn--active"]
+                    : ""
                 }`}
                 onClick={() => setSelectedPropertyId(p.id)}
               >
@@ -298,7 +346,10 @@ export default function BookingsPage() {
             <div className={styles["bp-prop-info"]}>
               <Building2 size={18} />
               <span>{selectedProperty.title}</span>
-              <VerificationBadge status={selectedProperty.verificationStatus} size="sm" />
+              <VerificationBadge
+                status={selectedProperty.verificationStatus}
+                size="sm"
+              />
               <button
                 className={styles["bp-refresh-btn"]}
                 onClick={() => fetchBookings(selectedPropertyId)}

@@ -6,7 +6,7 @@ import styles from "./settings.module.css";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { changePassword, getSessions, revokeSession } from "../../services/settings";
-import { validatePassword } from "../../utils/validation";
+import { validateField } from "../owner/features/add-property/utils/validation";
 
 function Security() {
   // ------------------ Show/Hide Password ------------------
@@ -76,18 +76,14 @@ function Security() {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.currentPassword) {
-      newErrors.currentPassword = "Current password is required";
-    }
+    const currentError = validateField("currentPassword", formData.currentPassword, formData);
+    if (currentError) newErrors.currentPassword = currentError;
 
-    const pwdError = validatePassword(formData.newPassword);
-    if (pwdError) newErrors.newPassword = pwdError;
+    const newError = validateField("newPassword", formData.newPassword, formData);
+    if (newError) newErrors.newPassword = newError;
 
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Confirm password is required";
-    } else if (formData.confirmPassword !== formData.newPassword) {
-      newErrors.confirmPassword = "Passwords must match";
-    }
+    const confirmError = validateField("confirmPassword", formData.confirmPassword, formData);
+    if (confirmError) newErrors.confirmPassword = confirmError;
 
     setErrors(newErrors);
 

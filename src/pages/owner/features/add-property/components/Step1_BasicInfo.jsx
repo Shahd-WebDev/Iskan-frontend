@@ -1,15 +1,19 @@
-import React from 'react';
-import FormInput from './FormInput';
-import MapPicker from './MapPicker';
-import styles from '../AddPropertyModal.module.css';
-import compStyles from '../AddPropertyModalComponents.module.css';
+import React from "react";
+import FormInput from "./FormInput";
+import styles from "../AddPropertyModal.module.css";
+import compStyles from "../AddPropertyModalComponents.module.css";
 
-const Step1_BasicInfo = ({ formData, errors, touched, handleChange, handleBlur, onLocationSelect }) => {
+const Step1_BasicInfo = ({
+  formData,
+  errors,
+  touched,
+  handleChange,
+  handleBlur,
+}) => {
   const propertyTypeOptions = [
-    { value: "apartment", label: "Apartment" },
-    { value: "house", label: "House" },
-    { value: "villa", label: "Villa" },
-    { value: "studio", label: "Studio" }
+    { value: "Room", label: "Room" },
+    { value: "Studio", label: "Studio" },
+    { value: "Apartment", label: "Apartment" },
   ];
 
   return (
@@ -40,71 +44,54 @@ const Step1_BasicInfo = ({ formData, errors, touched, handleChange, handleBlur, 
         required
       />
 
-      <div className={compStyles["form-group"]}>
-        <label>Street Address *</label>
-        <MapPicker
-          location={formData.location}
-          isLocationSelected={formData.isLocationSelected}
-          onLocationSelect={onLocationSelect}
-        />
+      <div className={styles["form-row-3"]}>
         <FormInput
-          name="streetAddress"
-          value={formData.streetAddress}
+          label="Rooms"
+          name="rooms"
+          type="number"
+          value={formData.rooms}
           onChange={handleChange}
           onBlur={handleBlur}
-          error={errors.streetAddress}
-          touched={touched.streetAddress}
-          placeholder="Address will be auto-filled from map"
-          readOnly={formData.isLocationSelected}
-          className={compStyles["mt-2"]}
-        />
-      </div>
-
-      <div className={styles["form-row-2"]}>
-        <FormInput
-          label="City"
-          name="city"
-          value={formData.city}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          error={errors.city}
-          touched={touched.city}
+          error={errors.rooms}
+          touched={touched.rooms}
           required
         />
         <FormInput
-          label="Country"
-          name="country"
-          value={formData.country}
+          label="Bedrooms"
+          name="bedrooms"
+          type="number"
+          value={formData.bedrooms}
           onChange={handleChange}
           onBlur={handleBlur}
-          error={errors.country}
-          touched={touched.country}
+          error={errors.bedrooms}
+          touched={touched.bedrooms}
+          required
+        />
+        <FormInput
+          label="Bathrooms"
+          name="bathrooms"
+          type="number"
+          value={formData.bathrooms}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={errors.bathrooms}
+          touched={touched.bathrooms}
           required
         />
       </div>
 
-      <div className={styles["form-row-2"]}>
-        <FormInput
-          label="State/Region"
-          name="state"
-          value={formData.state}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          error={errors.state}
-          touched={touched.state}
-          required
-        />
-        <FormInput
-          label="Zip Code"
-          name="zipCode"
-          value={formData.zipCode}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          error={errors.zipCode}
-          touched={touched.zipCode}
-          
-        />
-      </div>
+      <FormInput
+        label="Monthly Price (EGP)"
+        name="price"
+        type="number"
+        value={formData.price}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        error={errors.price}
+        touched={touched.price}
+        placeholder="e.g., 2400"
+        required
+      />
 
       <FormInput
         label="Description"
@@ -117,7 +104,11 @@ const Step1_BasicInfo = ({ formData, errors, touched, handleChange, handleBlur, 
         touched={touched.description}
         placeholder="Describe your property..."
         rows={4}
-        footer={<span className={compStyles["char-count"]}>{formData.description?.length || 0} chars</span>}
+        footer={
+          <span className={compStyles["char-count"]}>
+            {formData.description?.length || 0} chars
+          </span>
+        }
         required
       />
     </>

@@ -19,16 +19,20 @@ export const createBooking = async ({
 
 // ======================
 // GET BOOKINGS BY PROPERTY (Owner)
-// GET /api/Bookings/GetByProperty/property/{propertyId}
+// Returns paginated response: { pageIndex, pageSize, count, data: [...] }
+// Each booking item includes an embedded `student` object.
 // ======================
-export const getBookingsByProperty = async (propertyId) => {
-  const response = await api.get(`/Bookings/GetByProperty/property/${propertyId}`);
+export const getBookingsByProperty = async (propertyId, params = {}) => {
+  const response = await api.get(
+    `/Bookings/GetBookingsByProperty/property/${propertyId}`,
+    { params }
+  );
   return response.data;
 };
 
 // ======================
 // CONFIRM BOOKING (Owner)
-// PUT /api/Bookings/Confirm/{id}/confirm
+// POST /api/Bookings/Confirm/{id}/confirm
 // ======================
 export const confirmBooking = async (id) => {
   const response = await api.put(`/Bookings/Confirm/${id}/confirm`);
@@ -37,7 +41,7 @@ export const confirmBooking = async (id) => {
 
 // ======================
 // REJECT BOOKING (Owner)
-// PUT /api/Bookings/Reject/{id}/reject
+// POST /api/Bookings/Reject/{id}/reject
 // ======================
 export const rejectBooking = async (id) => {
   const response = await api.put(`/Bookings/Reject/${id}/reject`);
@@ -46,7 +50,7 @@ export const rejectBooking = async (id) => {
 
 // ======================
 // CANCEL BOOKING (Student or Owner)
-// PUT /api/Bookings/Cancel/{id}/cancel
+// POST /api/Bookings/Cancel/{id}/cancel
 // ======================
 export const cancelBooking = async (id) => {
   const response = await api.put(`/Bookings/Cancel/${id}/cancel`);

@@ -17,3 +17,10 @@ export const deleteReviewReply = async (reviewId) => {
   const response = await api.delete(`/OwnerReviews/DeleteReply/${reviewId}/reply`);
   return response.data;
 };
+
+// 4. Get property reviews
+export const getPropertyReviews = async (propertyId) => {
+  const response = await api.get(`/Reviews/GetPropertyReviews/properties/${propertyId}`);
+  return response.data;
+};
+

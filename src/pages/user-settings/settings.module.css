@@ -120,6 +120,12 @@
   transition: all 0.3s ease;
 }
 
+.formGroup input[type="password"],
+.inputWrapper input[type="password"] {
+  font-family: Arial, Helvetica, sans-serif !important;
+  letter-spacing: 0.15em;
+}
+
 /* Select Arrow */
 .formGroup select{
   appearance: none;

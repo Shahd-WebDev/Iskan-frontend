@@ -1,471 +1,220 @@
-
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./settings.module.css";
-import { Camera, CheckCircle } from "lucide-react";
+import { Camera } from "lucide-react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
-import { validateField } from "../../utils/Validation";
-import { getProfile, updateProfile } from "../../services/settings";
-import { toast } from "react-toastify";
+import { useProfile } from "../../context/ProfileContext";
+import { validateField } from "../owner/features/add-property/utils/validation";
 
-function Profile({ role = "student", showSuccessMessage = false }) {
+function Profile() {
+  const { profile, loading, updateProfile } = useProfile();
 
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    department: "",
-    university: "",
-    bio: "",
-    address: "",
-    city: "",
-    countryCode: "" // optional لو هتستخدميه
-  });
-
-  const [image, setImage] = useState(null);
-  const [message, setMessage] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(true);
 
-  // Fetch initial profile data
   useEffect(() => {
-    const fetchProfileData = async () => {
-      try {
-        setLoading(true);
-        const data = await getProfile();
-        // Assume data returns { firstName, lastName, email, dateOfBirth, etc... }
-        // or whatever the ProfileResultDto contains.
-        // Map the backend data to the form fields
-        setFormData({
-          name: data.firstName && data.lastName ? `${data.firstName} ${data.lastName}` : (data.name || ""),
-          email: data.email || "",
-          phone: data.phone || "",
-          department: data.department || "",
-          university: data.university || "",
-          bio: data.bio || "",
-          address: data.address || "",
-          city: data.city || "",
-          countryCode: data.countryCode || ""
-        });
-      } catch (err) {
-        console.error("Failed to load profile:", err);
-        toast.error("Failed to load profile data.");
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (profile) {
+      setFirstName(profile.firstName || "");
+      setLastName(profile.lastName || "");
+      setEmail(profile.email || "");
+      setDateOfBirth(
+        profile.dateOfBirth ? profile.dateOfBirth.split("T")[0] : "",
+      );
+      setPhoneNumber(profile.phoneNumber || "");
+      setImagePreview(profile.profileImageUrl || null);
+    }
+  }, [profile]);
 
-    fetchProfileData();
-  }, []);
-
-
-  const universities = [
-    "Tanta University",
-    "Mansoura University",
-    "Alexandria University",
-    "Cairo University",
-    "Ain Shams University"
-  ];
-
-  const departments = [
-    "Computer Science",
-    "Information Technology",
-    "Information Systems",
-    "Artificial Intelligence"
-  ];
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-
-    const error = validateField(name, value);
-
-    setErrors((prev) => ({
-      ...prev,
-      [name]: error
-    }));
+  const handleFirstNameChange = (val) => {
+    setFirstName(val);
+    if (errors.firstName) {
+      setErrors((prev) => ({ ...prev, firstName: "" }));
+    }
   };
+
+  const handleLastNameChange = (val) => {
+    setLastName(val);
+    if (errors.lastName) {
+      setErrors((prev) => ({ ...prev, lastName: "" }));
+    }
+  };
+
+  const handleDOBChange = (val) => {
+    setDateOfBirth(val);
+    if (errors.dateOfBirth) {
+      setErrors((prev) => ({ ...prev, dateOfBirth: "" }));
+    }
+  };
+
+  const handlePhoneChange = (val) => {
+    setPhoneNumber(val);
+    if (errors.phoneNumber) {
+      setErrors((prev) => ({ ...prev, phoneNumber: "" }));
+    }
+  };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-
-    if (file) {
-      if (file.size > 2000000) {
-        alert("Image must be less than 2MB");
-        return;
-      }
-
-      const imageUrl = URL.createObjectURL(file);
-      setImage(imageUrl);
+    if (!file) return;
+    if (file.size > 2_000_000) {
+      alert("Image must be less than 2MB");
+      return;
     }
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    const firstNameError = validateField("firstName", firstName);
+    if (firstNameError) newErrors.firstName = firstNameError;
+
+    const lastNameError = validateField("lastName", lastName);
+    if (lastNameError) newErrors.lastName = lastNameError;
+
+    const dobError = validateField("dateOfBirth", dateOfBirth);
+    if (dobError) newErrors.dateOfBirth = dobError;
+
+    const phoneError = validateField("phoneNumber", phoneNumber, "20");
+    if (phoneError) newErrors.phoneNumber = phoneError;
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
+    setSubmitting(true);
 
-    let allValid = true;
-
-    Object.keys(formData).forEach((key) => {
-      const isValid = validateField(
-        key,
-        formData[key],
-        formData.countryCode || ""
-      );
-
-      if (!isValid) allValid = false;
-    });
-
-    if (allValid) {
-      try {
-        // Send actual update request
-        // Split name into firstName and lastName for Dto if needed
-        const [firstName, ...lastNameParts] = formData.name.split(" ");
-        const lastName = lastNameParts.join(" ");
-
-        await updateProfile({
-          ...formData,
-          firstName: firstName || "",
-          lastName: lastName || ""
-        });
-
-        if (showSuccessMessage) {
-          setMessage("Profile saved successfully!");
-        } else {
-          toast.success("Profile saved successfully!");
-        }
-      } catch (err) {
-        console.error("Failed to update profile:", err);
-        toast.error(err.response?.data?.message || "Failed to save profile.");
-      }
+    try {
+      await updateProfile({
+        firstName,
+        lastName,
+        dateOfBirth,
+        phoneNumber,
+        profileImageFile: imageFile,
+      });
+      setImageFile(null);
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <>
-      <form className={styles.card} onSubmit={handleSubmit}>
-        {loading && <div className={styles.loadingOverlay}>Loading...</div>}
-        {/* Header */}
-        <div className={styles.header}>
-          <h3 className={styles.title}>
-            Profile Information
-          </h3>
+    <form className={styles.card} onSubmit={handleSubmit}>
+      {loading && <div className={styles.loadingOverlay}>Loading...</div>}
 
-          <p className={styles.subtitle}>
-            Manage your personal information
-          </p>
-        </div>
+      <div className={styles.header}>
+        <h3 className={styles.title}>Profile Information</h3>
+        <p className={styles.subtitle}>Manage your personal information</p>
+      </div>
 
-        {/* Profile Image */}
-        <div className={styles.avatarSection}>
-          <div className={styles.avatarCircle}>
-            {image ? (
-              <img
-                src={image}
-                alt="profile"
-                className={styles.avatarImg}
-              />
-            ) : (
-              "JS"
-            )}
-
-            <label className={styles.cameraBtn}>
-              <Camera size={14} color="#fff" />
-
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                style={{ display: "none" }}
-              />
-            </label>
-          </div>
-
-          <div className={styles.avatarInfo}>
-            <h4>Profile Picture</h4>
-            <p>JPG or PNG (max 2MB)</p>
-          </div>
-        </div>
-
-        {/* Form Fields */}
-        <div className={styles.formContent}>
-
-          {/* Name */}
-          <div className={styles.formGroup}>
-            <label>Name</label>
-
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Enter your full name"
+      <div className={styles.avatarSection}>
+        <div className={styles.avatarCircle}>
+          {imagePreview ? (
+            <img
+              src={imagePreview}
+              alt="profile"
+              className={styles.avatarImg}
             />
-
-            {errors.name && (
-              <span className={styles.error}>
-                {errors.name}
-              </span>
-            )}
-          </div>
-
-          {/* Email */}
-          <div className={styles.formGroup}>
-            <label>Email</label>
-
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Enter your email"
-            />
-
-            {errors.email && (
-              <span className={styles.error}>
-                {errors.email}
-              </span>
-            )}
-          </div>
-
-          {/* Phone */}
-          <div className={styles.formGroup}>
-            <label>Phone Number</label>
-
-            <PhoneInput
-              country={"eg"}
-              value={formData.phone}
-              onChange={(phone, country) => {
-                setFormData({
-                  ...formData,
-                  phone: phone,
-                  countryCode: country.dialCode
-                });
-
-                const error = validateField(
-                  "phone",
-                  phone,
-                  country.dialCode
-                );
-
-                setErrors((prev) => ({
-                  ...prev,
-                  phone: error
-                }));
-              }}
-            />
-
-            {errors.phone && (
-              <span className={styles.error}>
-                {errors.phone}
-              </span>
-            )}
-          </div>
-
-          {/* Student Fields */}
-          {role === "student" ? (
-            <div className={styles.row}>
-
-              <div className={styles.formGroup}>
-                <label>Department</label>
-
-                <select
-                  name="department"
-                  value={formData.department}
-                  onChange={handleChange}
-                >
-                  <option value="">
-                    Select Department
-                  </option>
-
-                  {departments.map((dep, index) => (
-                    <option
-                      key={index}
-                      value={dep}
-                    >
-                      {dep}
-                    </option>
-                  ))}
-                </select>
-
-                {errors.department && (
-                  <span className={styles.error}>
-                    {errors.department}
-                  </span>
-                )}
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>University</label>
-
-                <select
-                  name="university"
-                  value={formData.university}
-                  onChange={handleChange}
-                >
-                  <option value="">
-                    Select University
-                  </option>
-
-                  {universities.map((uni, index) => (
-                    <option
-                      key={index}
-                      value={uni}
-                    >
-                      {uni}
-                    </option>
-                  ))}
-                </select>
-
-                {errors.university && (
-                  <span className={styles.error}>
-                    {errors.university}
-                  </span>
-                )}
-              </div>
-            </div>
           ) : (
-            <>
-              {/* Bio */}
-              <div className={styles.formGroup}>
-                <label>Bio</label>
-
-                <textarea
-                  name="bio"
-                  value={formData.bio}
-                  onChange={handleChange}
-                  placeholder="Write a short bio about yourself..."
-                />
-              </div>
-
-              {/* Address & City */}
-              <div className={styles.row}>
-
-                <div className={styles.formGroup}>
-                  <label>Address</label>
-
-                  <input
-                    type="text"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    placeholder="Enter your address"
-                  />
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label>City</label>
-
-                  <input
-                    type="text"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                    placeholder="Enter your city"
-                  />
-                </div>
-
-              </div>
-            </>
+            `${(firstName || "").charAt(0)}${(lastName || "").charAt(0)}`.toUpperCase()
           )}
+
+          <label className={styles.cameraBtn}>
+            <Camera size={14} color="#fff" />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              style={{ display: "none" }}
+            />
+          </label>
         </div>
 
-        {/* Owner Verification Section */}
-        {role === "owner" && (
-          <div className={styles.verificationSection}>
-            <h4>Owner Verification</h4>
-
-            <p>
-              Upload your government ID for account
-              verification (one-time)
-            </p>
-
-            <div className={styles.verifiedBox}>
-              <div className={styles.verifiedHeader}>
-                <CheckCircle size={18} />
-                Account Verified
-              </div>
-
-              <p className={styles.verifiedText}>
-                Your identity has been verified on{" "}
-                {new Date().toLocaleDateString(
-                  "en-US",
-                  {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric"
-                  }
-                )}
-              </p>
-            </div>
-          </div>
-        )}
-
-
-        {/* OWNER SECTION */}
-        {/* Buttons */}
-        <div className={styles.actions}>
-          <button
-            type="button"
-            className={styles.btnOutline}
-          >
-            Cancel
-          </button>
-
-          <button
-            type="submit"
-            className={styles.btnPrimary}
-          >
-            Save Changes
-          </button>
+        <div className={styles.avatarInfo}>
+          <h4>Profile Picture</h4>
+          <p>JPG or PNG (max 2MB)</p>
         </div>
-      </form>
+      </div>
 
-      {/* Success Message */}
-      {showSuccessMessage && message && (
-        <div
-          className={styles.card}
-          style={{ marginTop: "16px" }}
+      <div className={styles.formContent}>
+        <div className={styles.formGroup}>
+          <label>First Name</label>
+          <input
+            type="text"
+            name="firstName"
+            value={firstName}
+            onChange={(e) => handleFirstNameChange(e.target.value)}
+          />
+          {errors.firstName && <span className={styles.error}>{errors.firstName}</span>}
+        </div>
+
+        <div className={styles.formGroup}>
+          <label>Last Name</label>
+          <input
+            type="text"
+            name="lastName"
+            value={lastName}
+            onChange={(e) => handleLastNameChange(e.target.value)}
+          />
+          {errors.lastName && <span className={styles.error}>{errors.lastName}</span>}
+        </div>
+
+        <div className={styles.formGroup}>
+          <label>Email</label>
+          <input type="email" name="email" value={email} readOnly />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label>Date of Birth</label>
+          <input
+            type="date"
+            name="dateOfBirth"
+            value={dateOfBirth}
+            onChange={(e) => handleDOBChange(e.target.value)}
+          />
+          {errors.dateOfBirth && <span className={styles.error}>{errors.dateOfBirth}</span>}
+        </div>
+
+        <div className={styles.formGroup}>
+          <label>Phone Number</label>
+          <PhoneInput
+            country={"eg"}
+            value={phoneNumber}
+            onChange={(val) => handlePhoneChange(val)}
+          />
+          {errors.phoneNumber && <span className={styles.error}>{errors.phoneNumber}</span>}
+        </div>
+      </div>
+
+      <div className={styles.actions}>
+        <button
+          type="button"
+          className={styles.btnOutline}
+          disabled={submitting}
         >
-          <div className={styles.header}>
-            <h3 className={styles.title}>
-              Owner Verification
-            </h3>
-
-            <p className={styles.subtitle}>
-              Upload your government ID for account
-              verification (one-time)
-            </p>
-          </div>
-
-          <div className={styles.verifiedBox}>
-            <p className={styles.verifiedTitle}>
-              <CheckCircle
-                size={16}
-                color="#16a34a"
-                style={{ marginRight: "6px" }}
-              />
-              Account Verified
-            </p>
-
-            <p className={styles.verifiedSubtitle}>
-              Your identity has been verified on{" "}
-              {new Date().toLocaleDateString(
-                "en-US",
-                {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric"
-                }
-              )}
-            </p>
-          </div>
-        </div>
-      )}
-    </>
+          Cancel
+        </button>
+        <button
+          type="submit"
+          className={styles.btnPrimary}
+          disabled={submitting}
+        >
+          {submitting ? "Saving..." : "Save Changes"}
+        </button>
+      </div>
+    </form>
   );
 }
 

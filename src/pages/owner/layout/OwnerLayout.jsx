@@ -1,31 +1,45 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { Home, Building2, MessageSquare, Settings, Star, ShieldCheck } from "lucide-react";
+import {
+  Home,
+  Building2,
+  MessageSquare,
+  Settings,
+  Star,
+  ShieldCheck,
+} from "lucide-react";
 
 import Navbar from "../../../components/layout/Navbar/Navbar";
 import Footer from "../../../components/layout/Footer/Footer";
 import { useAuth } from "../../../context/AuthContext";
+import { useProfile } from "../../../context/ProfileContext";
 import { useVerificationPolling } from "../../../hooks/useVerificationPolling";
 import styles from "./OwnerLayout.module.css";
 
 export default function OwnerLayout() {
   const { verificationStatus } = useAuth();
-  
+
   // Activate polling globally inside the Owner Dashboard
   useVerificationPolling({ interval: 45000 });
 
-  const stored = JSON.parse(localStorage.getItem("user") || "{}");
+  const { profile } = useProfile();
+  const { user: authUser } = useAuth();
   const user = {
-    name: stored.name || "User",
-    email: stored.email || "",
-    avatar: stored.avatar || null,
-    initials: stored.name
-      ? stored.name
-          .split(" ")
-          .map((n) => n[0])
-          .join("")
-          .toUpperCase()
-          .slice(0, 2)
-      : "U",
+    name: profile
+      ? `${profile.firstName || ""} ${profile.lastName || ""}`.trim()
+      : authUser?.name || "User",
+    email: profile?.email || authUser?.email || "",
+    avatar: profile?.profileImageUrl || null,
+    initials:
+      profile && (profile.firstName || profile.lastName)
+        ? `${(profile.firstName || "").charAt(0)}${(profile.lastName || "").charAt(0)}`.toUpperCase()
+        : authUser?.name
+          ? authUser.name
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
+              .toUpperCase()
+              .slice(0, 2)
+          : "U",
   };
 
   const navItems = [

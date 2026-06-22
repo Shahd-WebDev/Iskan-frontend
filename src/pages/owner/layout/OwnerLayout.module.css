@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: #fff;
+  background: #F8FAFC;
   font-family: "Poppins", sans-serif;
 }
 /* ══════════════════════════════
@@ -15,28 +15,28 @@
 .od-body {
   display: flex;
   flex: 1;
-  max-width: 1200px;
+  max-width: 100%;
   width: 100%;
-  margin: 40px auto;
-  padding: 0 24px;
-  gap: 44px;
+  margin: 30px auto;
+  padding: 0 40px;
+  gap: 30px;
+  box-sizing: border-box;
 }
 
 /* ── Sidebar ── */
 .od-sidebar {
   width: 280px;
-  background: #F0F8FF;
-  border-right: .67px solid #F5FAFF;
-  border-radius: 10px;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
   display: flex;
   flex-direction: column;
   position: sticky;
-  top: 0;
-  height: 100vh;
+  top: 30px;
+  height: calc(100vh - 120px);
   overflow-y: auto;
   flex-shrink: 0;
-  padding-right: .67px;
-  
 }
 
 .od-nav {
@@ -98,7 +98,7 @@
   align-items: center;
   gap: 10px;
   padding: 16px 20px;
-  border-top: .9px solid #00000033;
+  border-top: 1px solid #E2E8F0;
 }
 
 
@@ -150,9 +150,10 @@
 .od-main {
   flex: 1;
   min-width: 0;
-  /* background: #f0f4f8; */
-  border: .9px solid #F5FAFF;
-  border-radius: 18px;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 
 .od-content {
@@ -163,7 +164,15 @@
    Responsive
    ══════════════════════════════ */
 @media (max-width: 768px) {
+  .od-body {
+    padding: 0 16px;
+    margin: 15px auto;
+    gap: 15px;
+  }
+
   .od-sidebar {
+    position: static;
+    height: auto;
     width: 60px;
   }
 

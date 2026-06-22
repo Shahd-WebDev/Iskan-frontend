@@ -66,6 +66,8 @@ import DashboardPage from "../pages/owner/pages/Dashboard/DashboardPage";
 import PropertiesPage from "../pages/owner/pages/Properties/PropertiesPage";
 import AddPropertyPage from "../pages/owner/pages/AddProperty/AddPropertyPage";
 import ReviewsPage from "../pages/owner/pages/Reviews/ReviewsPage";
+import OwnerPropertyDetails from "../pages/owner/pages/PropertyDetails/OwnerPropertyDetails";
+import BookingsPage from "../pages/owner/pages/Bookings/BookingsPage";
 
 export default function AppRoutes() {
   return (
@@ -84,9 +86,15 @@ export default function AppRoutes() {
 
       {/* ================= Verification Pages ================= */}
       <Route element={<AuthLayout />}>
-        <Route path="/identity-verification" element={<IdentityVerification />} />
+        <Route
+          path="/identity-verification"
+          element={<IdentityVerification />}
+        />
         <Route path="/verification-pending" element={<VerificationPending />} />
-        <Route path="/verification-rejected" element={<VerificationRejected />} />
+        <Route
+          path="/verification-rejected"
+          element={<VerificationRejected />}
+        />
       </Route>
 
       {/* ================= Main Website ================= */}
@@ -130,6 +138,14 @@ export default function AppRoutes() {
             <Route path="notifications" element={<AdminNotifications />} />
           </Route>
         </Route>
+
+        {/* Protected Owner routes inside Layout */}
+        <Route element={<ProtectedOwnerRoute />}>
+          <Route
+            path="/owner-properties/:id"
+            element={<OwnerPropertyDetails />}
+          />
+        </Route>
       </Route>
 
       {/* ================= Owner Dashboard ================= */}
@@ -149,10 +165,8 @@ export default function AppRoutes() {
             <Route path="security" element={<Security />} />
             <Route path="notifications" element={<Setting_Notifications />} />
           </Route>
-          <Route
-            path="verification"
-            element={<VerificationCenter />}
-          />
+          <Route path="verification" element={<VerificationCenter />} />
+          <Route path="bookings" element={<BookingsPage />} />
         </Route>
       </Route>
 
