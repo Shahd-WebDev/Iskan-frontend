@@ -1,32 +1,31 @@
-import { Bed, Bath, Grid3X3, Wifi, Wind, UtensilsCrossed, Car, WashingMachine, Tv } from "lucide-react";
-
-const amenityConfig = {
-  WiFi:    { icon: Wifi,            label: "Wi-Fi" },
-  AC:      { icon: Wind,            label: "AC" },
-  Kitchen: { icon: UtensilsCrossed, label: "Kitchen" },
-  Parking: { icon: Car,             label: "Parking" },
-  Laundry: { icon: WashingMachine,  label: "Laundry" },
-  TV:      { icon: Tv,              label: "TV" },
-};
+import { Bed, Bath, Grid3X3 } from "lucide-react";
+import { useState, useEffect } from "react";
 
 function PropertyDescription({ property }) {
-  const amenities = property.amenities || [];
+  const [amenities, setAmenities] = useState([]);
+
+  useEffect(() => {
+    if (!property?.id) return;
+    const token = localStorage.getItem("token");
+    fetch(`/api/Property/GetFacilities?id=${property.id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(res => res.json())
+      .then(data => setAmenities(Array.isArray(data) ? data : []))
+      .catch(() => {});
+  }, [property?.id]);
 
   return (
     <div className="pd-description d-flex flex-column">
       <h3 className="pd-section-title-sm">Description</h3>
 
-      {/* Specs Row */}
       <div className="pd-specs d-flex align-items-center">
         <div className="pd-spec d-flex flex-column align-items-start">
           <span>
             <Bed size={20} className="pd-spec-icon" />
             <span className="pd-spec-label">Bedrooms</span>
           </span>
-          
-          <span className="pd-spec-val">
-            02
-          </span>
+          <span className="pd-spec-val">{property.bedroomsNumber ?? 0}</span>
         </div>
         <div className="pd-spec-divider" />
         <div className="pd-spec d-flex flex-column align-items-start">
@@ -34,9 +33,7 @@ function PropertyDescription({ property }) {
             <Bath size={20} className="pd-spec-icon" />
             <span className="pd-spec-label">Bathrooms</span>
           </span>
-          <span className="pd-spec-val">
-             01
-          </span>
+          <span className="pd-spec-val">{property.bathroomsNumber ?? 0}</span>
         </div>
         <div className="pd-spec-divider" />
         <div className="pd-spec d-flex flex-column align-items-start">
@@ -44,24 +41,16 @@ function PropertyDescription({ property }) {
             <Grid3X3 size={20} className="pd-spec-icon" />
             <span className="pd-spec-label">Rooms</span>
           </span>
-          <span className="pd-spec-val">
-            05
-          </span>
+          <span className="pd-spec-val">{property.roomsNumber ?? 0}</span>
         </div>
       </div>
 
-      {/* Amenity Tags */}
       <div className="pd-amenity-tags d-flex flex-wrap">
-        {amenities.map((key) => {
-          const cfg = amenityConfig[key];
-          if (!cfg) return null;
-          const Icon = cfg.icon;
-          return (
-            <span key={key} className="pd-amenity-tag d-inline-flex align-items-center ">
-              {cfg.label}
-            </span>
-          );
-        })}
+        {amenities.map((facility, i) => (
+          <span key={i} className="pd-amenity-tag d-inline-flex align-items-center">
+            {facility.facilityName}
+          </span>
+        ))}
       </div>
     </div>
   );

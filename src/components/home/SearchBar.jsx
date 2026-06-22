@@ -21,7 +21,7 @@ function SearchBar({ value, onChange, onSubmit }) {
       onSubmit?.(e);
     } else {
       
-      navigate(`/search?q=${encodeURIComponent(localText.trim())}`);
+      navigate(`/properties?search=${encodeURIComponent(localText.trim())}`);
     }
   };
 

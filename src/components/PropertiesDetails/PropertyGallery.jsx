@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import PropertyMap from "./PropertyMap";
 
-function PropertyGallery({ images, showMap, setShowMap, lat, lng }) {
+function PropertyGallery({ images, showMap, setShowMap, propertyId }) {
 
   const [active, setActive] = useState(0);
 
@@ -19,7 +19,7 @@ function PropertyGallery({ images, showMap, setShowMap, lat, lng }) {
             ✕
           </button>
 
-          <PropertyMap lat={lat} lng={lng} />
+          <PropertyMap propertyId={propertyId} />
         </div>
       )}
 

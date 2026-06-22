@@ -20,12 +20,10 @@ function FilterDropdown({ icon, label, options = [], value = "", onChange }) {
 
   const handleSelect = (option) => {
     if (isArray) {
-      // Multi-select: toggle item in array, keep dropdown open
       const newVal = value.includes(option)
         ? value.filter((v) => v !== option)
         : [...value, option];
       onChange?.(newVal);
-      // don't close dropdown — let user pick more
     } else {
       // Single select: toggle or clear, close dropdown
       onChange?.(option === value ? "" : option);

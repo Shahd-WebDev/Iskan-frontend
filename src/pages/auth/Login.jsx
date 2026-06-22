@@ -55,70 +55,65 @@ export default function Login() {
   // SUBMIT LOGIN
   // ======================
   async function handleSubmit(e) {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!validate()) return;
+  if (!validate()) return;
 
-    try {
-      const res = await loginApi(formData.email, formData.password);
+  try {
+    const res = await loginApi(formData.email, formData.password);
 
-      const token = res.token;
+    const token = res.token;
 
-      if (!token) {
-        toast.error("No token received ❌");
-        return;
-      }
-
-      // ======================
-      // SAFE decode (centralized util)
-      // ======================
-      const decoded = decodeToken(token);
-
-      if (!decoded) {
-        toast.error("Invalid or expired token.");
-        return;
-      }
-
-      const role =
-        decoded[
-          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-        ] ||
-        decoded.role ||
-        "Student";
-
-      const userData = {
-        email: res.email || res.data?.email || formData.email,
-        name: res.name || res.data?.name || "User",
-        role,
-        verificationStatus: res.verificationStatus || res.data?.verificationStatus || null,
-        status: res.status || res.data?.status || decoded.status || null,
-      };
-
-      // ======================
-      // SINGLE SOURCE OF TRUTH
-      // ======================
-      login(token, userData);
-
-      toast.success("Login successful!");
-
-      // ======================
-      // NAVIGATION
-      // ======================
-      if (role === "Admin") {
-        navigate("/admin/dashboard");
-      } else if (role === "Owner") {
-        // All owners go to dashboard
-        // ProtectedOwnerRoute will enforce verification step
-        navigate("/owner-dashboard/dashboard");
-      } else {
-        navigate("/");
-      }
-    } catch (error) {
-      const errMsg = getLoginErrorMessage(error);
-      toast.error(errMsg);
-      // Optionally set UI state if needed
+    if (!token) {
+      toast.error("No token received ❌");
+      return;
     }
+
+    const decoded = decodeToken(token);
+
+    if (!decoded) {
+      toast.error("Invalid or expired token.");
+      return;
+    }
+
+    const role =
+      decoded[
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+      ] ||
+      decoded.role ||
+      "Student";
+
+    const userData = {
+      email: res.email || res.data?.email || formData.email,
+      name: res.name || res.data?.name || "User",
+      role,
+      verificationStatus:
+        res.verificationStatus || res.data?.verificationStatus || null,
+      status: res.status || res.data?.status || decoded.status || null,
+    };
+
+    login(token, userData);
+
+    toast.success("Login successful!");
+
+    const redirect = localStorage.getItem("redirectAfterLogin");
+
+    if (redirect) {
+      localStorage.removeItem("redirectAfterLogin");
+      navigate(redirect);
+    } else if (role === "Admin") {
+      navigate("/admin/dashboard");
+    } else if (role === "Owner") {
+      navigate("/owner-dashboard/dashboard");
+    } else {
+      navigate("/");
+    }
+  } catch (error) {
+    const errMsg = getLoginErrorMessage(error);
+    toast.error(errMsg);
   }
+}
+
 
   // ======================
   // UI

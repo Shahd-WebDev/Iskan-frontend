@@ -1,26 +1,55 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
-import { allProperties } from "../../components/data/PropertiesData";
 import SearchBar from "../../components/home/SearchBar";
 import FiltersRow from "../../components/home/FiltersRow";
 import PaginationControls from "../../components/Pagination/Pagination";
-import { applyFilters, detectSearchIntent, hasAnyFilter, EMPTY_FILTERS, PRICE_BUCKETS } from "../../components/Search/FilterSearch";
+import { applyFilters, detectSearchIntent, hasAnyFilter, EMPTY_FILTERS, getAvailablePriceBuckets } from "../../components/Search/FilterSearch";
 import ResultsGrid from "../../components/Search/ResultsGrid";
 import "./SearchResults.css";
 
 function SearchResult() {
- 
   const [searchParams] = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
 
-  // اقري الفلاتر من الـ URL لو جاية من الـ Home
+  const [allProperties, setAllProperties] = useState([]);
+  const [propertiesLoading, setPropertiesLoading] = useState(true);
+const [facilities, setFacilities] = useState([]);
+
+ useEffect(() => {
+  const fetchProperties = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const [propertiesRes, facilitiesRes] = await Promise.all([
+        fetch(`/api/Property/GetAll?pageSize=1000`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        }),
+        fetch(`/api/Facility/GetAll`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        }),
+      ]);
+      if (!propertiesRes.ok) throw new Error("Failed");
+      const data = await propertiesRes.json();
+      setAllProperties(data.data || []);
+      if (facilitiesRes.ok) {
+        const facilitiesData = await facilitiesRes.json();
+        setFacilities(facilitiesData.data || []);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setPropertiesLoading(false);
+    }
+  };
+  fetchProperties();
+}, []);
+
   const initialFilters = useMemo(() => ({
     location:     searchParams.get("location")     || "",
     propertyType: searchParams.get("propertyType") || "",
     priceRange:   searchParams.get("priceRange")   || "",
     rooms:        searchParams.get("rooms")        || "",
     facilities:   searchParams.get("facilities") ? searchParams.get("facilities").split(",") : [],
-  }), [searchParams]);  // ← حطيها في useMemo
+  }), [searchParams]);
 
   const hasInitialFilters = useMemo(() =>
     Object.values(initialFilters).some((v) => Array.isArray(v) ? v.length > 0 : !!v)
@@ -28,51 +57,55 @@ function SearchResult() {
 
   const [searchText, setSearchText]       = useState(initialQuery);
   const [activeFilters, setActiveFilters] = useState(() =>
-    initialQuery ? detectSearchIntent(initialQuery).filters : initialFilters
+    initialQuery ? detectSearchIntent(initialQuery, []).filters : initialFilters
   );
   const [currentPage, setCurrentPage]     = useState(1);
   const [hasSearched, setHasSearched]     = useState(!!initialQuery);
   const [searchMatched, setSearchMatched] = useState(() =>
-    initialQuery ? detectSearchIntent(initialQuery).matched : false
+    initialQuery ? detectSearchIntent(initialQuery, []).matched : false
   );
   const [titleResults, setTitleResults]   = useState(() =>
-    initialQuery ? detectSearchIntent(initialQuery).titleResults || null : null
+    initialQuery ? detectSearchIntent(initialQuery, []).titleResults || null : null
   );
   const [showResults, setShowResults]     = useState(!!initialQuery || hasInitialFilters);
   const ITEMS_PER_PAGE = 8;
 
- const results = useMemo(() => {
+ const results  = useMemo(() => {
     if (!showResults) return [];
     if (searchText.trim() && !searchMatched && !hasInitialFilters) return [];
     const baseList = titleResults || allProperties;
     return applyFilters(baseList, activeFilters);
-  }, [activeFilters, showResults, searchMatched, searchText, titleResults, hasInitialFilters]);
+  }, [activeFilters, showResults, searchMatched, searchText, titleResults, hasInitialFilters, allProperties]);
+
+  const getType = (p) => {
+  if (typeof p.propertyType === "number") {
+    return ["Room", "Apartment", "Studio"][p.propertyType] ?? "Room";
+  }
+  return p.propertyType || p.type || "Room";
+};
 
   const dynamicOptions = useMemo(() => {
-  const baseList = titleResults || allProperties;
+    const baseList = titleResults || allProperties;
 
- 
-  if (!hasAnyFilter(activeFilters)) {
-        return {
-          locations:  [...new Set(baseList.map((p) => p.location.split(",")[0].trim()))].sort(),
-          types:      [...new Set(baseList.map((p) => p.type))].sort(),
-          prices:     PRICE_BUCKETS.map((b) => b.label),
-          rooms:      [...new Set(baseList.map((p) => String(p.rooms)))].sort((a, b) => a - b),
-          facilities: [...new Set(baseList.flatMap((p) => p.amenities))].sort(),
-        };
-      }
-
-      const without = (key) => applyFilters(baseList, { ...activeFilters, [key]: key === "facilities" ? [] : "" });
+    if (!hasAnyFilter(activeFilters)) {
       return {
-        locations:  [...new Set(without("location").map((p) => p.location.split(",")[0].trim()))].sort(),
-        types:      [...new Set(without("propertyType").map((p) => p.type))].sort(),
-        prices:     PRICE_BUCKETS.filter(({ min, max }) =>
-                      without("priceRange").some((p) => { const pr = parseInt(p.price); return pr >= min && pr <= max; })
-                    ).map((b) => b.label),
-        rooms:      [...new Set(without("rooms").map((p) => String(p.rooms)))].sort((a, b) => a - b),
-        facilities: [...new Set(without("facilities").flatMap((p) => p.amenities))].sort(),
+        locations: [...new Set(baseList.map((p) => p.address || p.location || ""))].filter(Boolean).sort(),
+        types:      [...new Set(baseList.map((p) => getType(p)))].sort(),
+        prices:     getAvailablePriceBuckets(baseList).map((b) => b.label),
+        rooms:      [...new Set(baseList.map((p) => String(p.roomsNumber ?? p.rooms)))].sort((a, b) => a - b),
+        facilities: [...new Set(baseList.flatMap((p) => p.amenities || []))].sort(),
       };
-    }, [activeFilters, titleResults]);
+    }
+
+    const without = (key) => applyFilters(baseList, { ...activeFilters, [key]: key === "facilities" ? [] : "" });
+    return {
+      locations:  [...new Set(without("location").map((p) => (p.address || p.location || "").split(",")[0].trim()))].sort(),
+      types:      [...new Set(without("propertyType").map((p) => getType(p)))].sort(),
+      prices:     getAvailablePriceBuckets(without("priceRange")).map((b) => b.label),
+      rooms:      [...new Set(without("rooms").map((p) => String(p.roomsNumber ?? p.rooms)))].sort((a, b) => a - b),
+      facilities: [...new Set(without("facilities").flatMap((p) => p.amenities || []))].sort(),
+    };
+  }, [activeFilters, titleResults, allProperties]);
 
   const handleFilterChange = useCallback((key, value) => {
     setActiveFilters((prev) => ({ ...prev, [key]: value }));
@@ -89,12 +122,13 @@ function SearchResult() {
       setCurrentPage(1);
       return;
     }
-    const { filters, matched, titleResults: tr } = detectSearchIntent(searchText);
+     console.log("search result:", detectSearchIntent(searchText, allProperties)); // ← ضيفي ده
+    const { filters, matched, titleResults: tr } = detectSearchIntent(searchText, allProperties);
     setActiveFilters(filters);
     setHasSearched(true);
     setSearchMatched(matched);
     setTitleResults(tr || null);
-    setShowResults(matched);
+    setShowResults(true);
     setCurrentPage(1);
   };
 
@@ -131,26 +165,28 @@ function SearchResult() {
         dynamicOptions={dynamicOptions}
       />
 
-      {(hasSearched && !searchMatched) || showResults ? (
-        <div className="results-section">
-          <h5 className="results-label">RESULTS</h5>
-          {(hasSearched && !searchMatched) || results.length === 0 ? (
-            <div className="no-results text-center py-5">
-              <p className="text-muted">No properties found matching your search.</p>
-            </div>
-          ) : (
-            <>
-              <ResultsGrid properties={currentProperties} />
-              <PaginationControls
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={setCurrentPage}
-                label={`${results.length} of ${allProperties.length}`}
-              />
-            </>
-          )}
-        </div>
-      ) : null}
+      {propertiesLoading ? (
+        <p className="text-center">Loading...</p>
+      ) : (hasSearched && !searchMatched) || showResults ? (
+         <div className="results-section">
+    <h5 className="results-label">RESULTS</h5>
+    {results.length === 0 ? (
+      <div className="no-results text-center py-5">
+        <p className="text-muted">No properties found matching your search.</p>
+      </div>
+    ) : (
+      <>
+        <ResultsGrid properties={currentProperties} facilities={facilities} />
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          label={`${results.length} of ${allProperties.length}`}
+        />
+      </>
+    )}
+  </div>
+) : null}
     </div>
   );
 }

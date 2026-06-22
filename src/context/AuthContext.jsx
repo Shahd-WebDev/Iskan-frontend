@@ -47,6 +47,25 @@ export const AuthProvider = ({ children }) => {
   // INIT AUTH ON APP LOAD
   // ======================
   useEffect(() => {
+    if (!token) {
+      setIsLoading(false);
+      return;
+    }
+
+    const decoded = decodeToken(token);
+
+    if (!decoded) {
+      logout();
+      setIsLoading(false);
+      return;
+    }
+
+    const userRole = getRoleFromToken(decoded);
+
+    setRole(userRole);
+    localStorage.setItem("userRole", userRole);
+
+    setIsLoading(false);
     const initializeAuth = async () => {
       if (!token) {
         setIsLoading(false);
@@ -119,7 +138,7 @@ export const AuthProvider = ({ children }) => {
   // ======================
   // LOGIN (SINGLE SOURCE OF TRUTH)
   // ======================
-  const login = (newToken, userData = {}) => {
+  const login = (newToken, userData = {}, refreshToken = null) => {
     const decoded = decodeToken(newToken);
 
     if (!decoded) {

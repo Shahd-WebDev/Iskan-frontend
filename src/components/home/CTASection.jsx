@@ -1,4 +1,8 @@
+import { useNavigate } from "react-router-dom";
+
 function CTASection() {
+  const navigate = useNavigate();
+
   return (
     <section className="cta-section d-flex justify-content-between align-items-center">
       <div className="cta-content">
@@ -10,8 +14,14 @@ function CTASection() {
           properties or get in touch with the owner.
         </p>
       </div>
-      <button className="cta-btn text-white border-0 rounded-2 flex-shrink-0 ">Explore Properties</button>
+      <button
+        className="cta-btn text-white border-0 rounded-2 flex-shrink-0"
+        onClick={() => navigate("/properties")}
+      >
+        Explore Properties
+      </button>
     </section>
   );
 }
-export default CTASection
+
+export default CTASection;

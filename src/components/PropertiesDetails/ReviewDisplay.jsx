@@ -6,7 +6,7 @@ import participant4 from "../../assets/PropertiesDetails/participant4.png";
 
 
 const mockReview = {
-  text: "Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint.Velit officia consequat duis enim velit mollit.Exercitation veniam consequat sunt nostrud amet.",
+  text: "Easy application and tracking: Many users mentioned that the platform saved them from going to offices, and they can now submit applications and track their status online easily. User-friendly interface: Several reviews praised the app for being organized and easy to navigate, especially after the recent updates. Time-saving: Users pointed out that the procedures have become faster compared to relying on paper transactions.",
   reviewer: "Mary Hilll",
   rating: 4.9,
   participants: [

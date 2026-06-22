@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 
+
 import {
   Bookmark,
   Settings,
@@ -12,6 +13,8 @@ import {
   UserPlus,
   ArrowLeftRight,
 } from "lucide-react";
+import { useSignIn } from "../../context/SignInContext";
+import { useAuth } from "../../context/AuthContext";
 import { useAuth } from "../../context/AuthContext";
 import { useProfile } from "../../context/ProfileContext";
 import { useNotifications } from "../../hooks/useNotifications";
@@ -49,7 +52,7 @@ export default function ProfileMenu() {
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, []);
 
-  // ✅ Logout
+
   function handleLogout() {
     logout();
     navigate("/login");

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { allProperties } from "../../components/data/PropertiesData";
-
+import { useState, useEffect, useCallback } from "react";
+import { useAuth } from "../../context/AuthContext";
 import PropertyHeader from "../../components/PropertiesDetails/PropertyHeader";
 import ImageGallery from "../../components/PropertiesDetails/PropertyGallery";
 import PropertyActions from "../../components/PropertiesDetails/PropertyActions";
@@ -10,13 +10,12 @@ import KeyFeatures from "../../components/PropertiesDetails/KeyFeatures";
 import BookingContact from "../../components/PropertiesDetails/BookingContact";
 import ReviewSection from "../../components/PropertiesDetails/ReviewsSection";
 import RecommendedProperties from "../../components/PropertiesDetails/RecommendedProperties";
-
-import "../property-details/PropertyDetails.css";
-
+import BookingStatusAlert from "../../components/booking/BookingStatusAlert";
 import RequestBookingModal from "../../components/booking/RequestBookingModal";
-import { BOOKING_STATUS } from "../../components/booking/bookingStatus";
-
 import PropertyMap from "../../components/PropertiesDetails/PropertyMap";
+import api from "../../services/api";
+import toast from "react-hot-toast";
+import "../property-details/PropertyDetails.css";
 
 import { useAuth } from "../../context/AuthContext";
 import { getPropertyDetails } from "../../services/ownerProperties";
@@ -25,98 +24,181 @@ import OwnerPanel from "../../components/owner/PropertyDetails/OwnerPanel";
 export default function PropertyDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { token } = useAuth();
 
-  const { role } = useAuth();
-  const isOwner = role === "Owner" || role === "owner";
-
-  // ======================
-  // STATES
-  // ======================
-  const [showBooking, setShowBooking] = useState(false);
+  const [property, setProperty] = useState(null);
+  const [recommendations, setRecommendations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(false);
   const [bookingStatus, setBookingStatus] = useState(null);
+  const [bookingId, setBookingId] = useState(null);
+  const [bookingStatusLoading, setBookingStatusLoading] = useState(true); 
+ 
   const [showMap, setShowMap] = useState(false);
+  const [galleryImages, setGalleryImages] = useState([]);
+  const [allFacilities, setAllFacilities] = useState([]);
+  const [showAlert, setShowAlert] = useState(false);
 
-  const localProperty = allProperties.find((p) => String(p.id) === String(id));
-  const [apiProperty, setApiProperty] = useState(null);
-  const [loading, setLoading] = useState(!localProperty);
 
-  useEffect(() => {
-    if (!localProperty && id) {
-      setLoading(true);
-      getPropertyDetails(id)
-        .then((data) => {
-          setApiProperty(data);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error(err);
-          setLoading(false);
-        });
+  const refreshBookingStatus = useCallback(async () => {
+    
+    if (!token || !property?.id) {
+      console.log("⚠️ Cannot fetch booking: missing token or property ID");
+   setBookingStatusLoading(false);
+      return;
     }
-  }, [id, localProperty]);
 
-  const refreshProperty = () => {
-    if (!localProperty && id) {
-      getPropertyDetails(id).then(setApiProperty).catch(console.error);
+    try {
+      setBookingStatusLoading(true);
+      console.log("🔄 Fetching booking status for property:", property.id);
+      
+      const res = await api.get("/Bookings/GetMyBookings", {
+        params: { PageIndex: 1, PageSize: 100 },
+      });
+
+      const bookings = res.data.data || [];
+      console.log("📋 All bookings:", bookings);
+
+      console.log("🔍 First booking object:", bookings[0]);
+console.log("🔍 Property ID we're looking for:", property.id);
+
+      const booking = bookings.find(
+  (b) =>
+    b.propertyId === property.id ||
+    b.property?.id === property.id ||
+    b.propertyTitle === property.title
+);
+
+      if (!booking) {
+        console.log(" No booking found for this property");
+        setBookingStatus(null);
+        setBookingId(null);
+        return;
+      }
+
+      console.log(" Found booking with status:", booking.status);
+      setBookingStatus(booking.status.toLowerCase());
+      setBookingId(booking.id);
+
+    } catch (err) {
+      console.error(" Error fetching booking status:", err);
+    }finally {
+    setBookingStatusLoading(false); 
+  }
+  }, [token, property?.id]);
+
+  // جلب بيانات العقار
+  useEffect(() => {
+    const fetchProperty = async () => {
+      try {
+        const res = await fetch(`/api/Property/GetDetails?id=${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!res.ok) throw new Error("Not found");
+
+        const data = await res.json();
+        setProperty(data.property ?? data);
+      } catch {
+        setProperty(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProperty();
+  }, [id, token]);
+
+  // ✅ جلب حالة الحجز عند تحميل العقار
+  useEffect(() => {
+    if (property?.id && token) {
+      refreshBookingStatus();
+    }
+  }, [property?.id, token, refreshBookingStatus]);
+
+
+  // ✅ دالة معالجة تأكيد الحجز (للمالك)
+  const handleConfirmBooking = async () => {
+    if (!bookingId) {
+      console.error("❌ No booking ID to confirm");
+      return;
+    }
+
+    try {
+      console.log("✅ Confirming booking:", bookingId);
+      
+      const res = await fetch(`/api/Bookings/Confirm/${bookingId}/confirm`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.ok) {
+        console.log("✅ Booking confirmed successfully");
+        await refreshBookingStatus(); 
+        toast.success("Booking confirmed successfully!");
+      } else {
+        console.error("❌ Failed to confirm booking");
+        toast.error("Failed to confirm booking");
+      }
+    } catch (err) {
+      console.error("❌ Error confirming booking:", err);
+      toast.error("An error occurred");
     }
   };
 
-  // ======================
-  // DATA NORMALIZATION
-  // ======================
-  let property = localProperty;
-
-  if (apiProperty) {
-    const propertyTypeMap = { 0: "Room", 1: "Apartment", 2: "Studio" };
-    const mappedFacilities =
-      apiProperty.facilities?.map((f) => f.facilityName || f.name) || [];
-
-    property = {
-      id: apiProperty.id,
-      title: apiProperty.title,
-      location: apiProperty.address,
-      address: apiProperty.address,
-      pricePerMonth: apiProperty.pricePerMonth
-        ? `${apiProperty.pricePerMonth} EGP`
-        : "N/A",
-      price: apiProperty.pricePerMonth,
-      description: apiProperty.description,
-      lat: apiProperty.latitude,
-      lng: apiProperty.longitude,
-      images:
-        apiProperty.images?.map(
-          (img) => `https://isskan-1.runasp.net${img.imageUrl}`,
-        ) || [],
-      image: apiProperty.mainImageUrl
-        ? `https://isskan-1.runasp.net${apiProperty.mainImageUrl}`
-        : null,
-      bedrooms: apiProperty.bedroomsNumber ?? apiProperty.roomsNumber,
-      bathrooms: apiProperty.bathroomsNumber,
-      propertyType:
-        propertyTypeMap[Number(apiProperty.propertyType)] ||
-        apiProperty.propertyType,
-      features: mappedFacilities.length > 0 ? mappedFacilities : undefined,
-      // Owner specific data
-      documents: apiProperty.documents || [],
-      rawImages: apiProperty.images || [],
-      verificationStatus: apiProperty.verificationStatus,
-      ownerName: apiProperty.ownerName,
-      ownerEmail: apiProperty.ownerEmail,
-      createdAt: apiProperty.createdAt,
-    };
-
-    if (property.images.length === 0 && property.image) {
-      property.images = [property.image];
+  useEffect(() => {
+  const fetchFacilities = async () => {
+    try {
+      const res = await fetch(`/api/Facility/GetAll`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      setAllFacilities(data.data || []);
+    } catch (err) {
+      console.error("❌ Error fetching facilities:", err);
     }
-  }
+  };
+  fetchFacilities();
+}, [token]);
 
-  // ======================
-  // NOT FOUND / LOADING
-  // ======================
+// جلب التوصيات
+useEffect(() => {
+  const fetchRecommendations = async () => {
+    try {
+      const res = await fetch(`/api/Ai/GetRecommendations/recommend/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) {
+        setRecommendations([]);
+        return;
+      }
+
+      const data = await res.json();
+      setRecommendations(data.recommendations ?? data ?? []);
+    } catch (err) {
+      console.error("❌ Error fetching recommendations:", err);
+      setRecommendations([]);
+    }
+  };
+
+  if (id) fetchRecommendations();
+}, [id, token]);
+  // ✅ دالة معالجة تقديم طلب حجز جديد
+  const handleBookingSubmit = async () => {
+  console.log("📝 Booking submitted, refreshing status...");
+  setOpen(false);
+  await refreshBookingStatus();
+  setShowAlert(true); 
+};
+
   if (loading) {
     return (
-      <div style={{ textAlign: "center", padding: "80px 20px" }}>
-        <h2>Loading property details...</h2>
+      <div style={{ textAlign: "center", padding: "80px" }}>
+        Loading...
       </div>
     );
   }
@@ -125,7 +207,6 @@ export default function PropertyDetails() {
     return (
       <div style={{ textAlign: "center", padding: "80px 20px" }}>
         <h2>Property not found</h2>
-
         <button
           onClick={() =>
             navigate(isOwner ? "/owner-dashboard/properties" : "/properties")
@@ -147,25 +228,9 @@ export default function PropertyDetails() {
     );
   }
 
-  const galleryImages =
-    property.images && property.images.length > 0
-      ? property.images
-      : property.image
-        ? [property.image]
-        : [];
-
-  // ======================
-  // UI
-  // ======================
   return (
     <>
       <div className="pd-page">
-        {isOwner && apiProperty && (
-          <OwnerPanel
-            property={{ ...property, images: property.rawImages }}
-            onUpdate={refreshProperty}
-          />
-        )}
         <PropertyHeader
           property={property}
           onLocationClick={() => setShowMap((prev) => !prev)}
@@ -176,49 +241,63 @@ export default function PropertyDetails() {
           images={galleryImages}
           showMap={showMap}
           setShowMap={setShowMap}
-          lat={property.lat}
-          lng={property.lng}
+          propertyId={id}
         />
 
         <div className="pd-mid-section align-items-start">
           <div className="pd-left-col">
             <PropertyActions
+                        
+              bookingStatus={bookingStatusLoading ? "loading" : bookingStatus}
+              property={property}
+              onOpenBooking={() => setOpen(true)}
+              onOpenStatusAlert={() => setShowAlert(true)}
+            />
+            
+                      
+            <BookingStatusAlert
               bookingStatus={bookingStatus}
-              onBookingClick={() => setShowBooking(true)}
+              visible={showAlert}
+              onDismiss={() => setShowAlert(false)}
+              onConfirm={handleConfirmBooking}
             />
 
-            <PropertyDescription property={property} />
+            <PropertyDescription
+              property={property}
+              allFacilities={allFacilities}
+            />
           </div>
 
           <div className="pd-right-col">
-            <KeyFeatures features={property.features} />
+            <KeyFeatures
+              facilities={property.facilities}
+              allFacilities={allFacilities}
+            />
           </div>
         </div>
 
-        {!isOwner && (
-          <>
-            <BookingContact
-              bookingStatus={bookingStatus}
-              onBookingClick={() => setShowBooking(true)}
+        <BookingContact property={property} bookingStatus={bookingStatus} />
+
+        <ReviewSection
+          propertyId={property.id}
+          bookingStatus={bookingStatus}
+        />
+
+        {recommendations && recommendations.length > 0 && (
+              <RecommendedProperties
+              currentPropertyId={property.id}
+              recommendations={recommendations}
+              allFacilities={allFacilities}
             />
-            <ReviewSection propertyId={property.id} />
-            <RecommendedProperties currentPropertyId={property.id} />
-          </>
         )}
       </div>
 
-      {/* ======================
-          BOOKING MODAL
-      ====================== */}
       <RequestBookingModal
-        open={showBooking}
-        onClose={() => setShowBooking(false)}
-        onSubmit={() => {
-          // 👇 هنا التحويل الحقيقي للحالة
-          setBookingStatus(BOOKING_STATUS.PENDING);
-          setShowBooking(false);
-        }}
+        open={open}
+        onClose={() => setOpen(false)}
+        propertyId={property.id}
         propertyTitle={property.title}
+        onSubmit={handleBookingSubmit}
       />
     </>
   );

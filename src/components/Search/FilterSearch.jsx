@@ -1,19 +1,31 @@
-import { allProperties } from "../data/PropertiesData";
-
-export const EMPTY_FILTERS = { location: "", propertyType: "", priceRange: "", rooms: "", facilities: [] };
+export const EMPTY_FILTERS = { location: "", propertyType: "", priceRange: "", rooms: "", facilities: [], search: "" };
 
 export const PRICE_BUCKETS = [
-  { label: "800 - 1000",  min: 800,  max: 1000 },
-  { label: "1000 - 1300", min: 1000, max: 1300 },
-  { label: "1300 - 1600", min: 1300, max: 1600 },
-  { label: "1600 - 2000", min: 1600, max: 2000 },
-  { label: "2000+",       min: 2001, max: Infinity },
+  { label: "Less than 1000", min: 0,    max: 999  },
+  { label: "1000 - 2000",    min: 1000, max: 2000 },
+  { label: "2000 - 3000",    min: 2001, max: 3000 },
+  { label: "3000 - 4000",    min: 3001, max: 4000 },
+  { label: "4000 - 5000",    min: 4001, max: 5000 },
+  { label: "5000 - 6000",    min: 5001, max: 6000 },
+  { label: "6000 - 7000",    min: 6001, max: 7000 },
+  { label: "7000+",          min: 7001, max: Infinity },
 ];
+export function getAvailablePriceBuckets(properties) {
+  if (!properties.length) return PRICE_BUCKETS;
+  const maxPrice = Math.max(...properties.map((p) => parseInt(p.pricePerMonth || p.price || 0)));
+  return PRICE_BUCKETS.filter((b) => 
+    properties.some((p) => {
+      const price = parseInt(p.pricePerMonth || p.price || 0);
+      return price >= b.min && price <= b.max;
+    })
+  );
+}
 
 export function matchesPrice(p, priceRange) {
   if (!priceRange) return true;
-  const price = parseInt(p.price);
-  if (priceRange === "2000+") return price > 2000;
+  const price = parseInt(p.pricePerMonth || p.price || 0);
+  if (priceRange === "7000+") return price >= 7001;
+  if (priceRange === "Less than 1000") return price < 1000;
   const parts = priceRange.split("-").map((s) => s.trim());
   let match = true;
   if (parts[0]) match = price >= parseInt(parts[0]);
@@ -21,64 +33,104 @@ export function matchesPrice(p, priceRange) {
   return match;
 }
 
-export function applyFilters(list, filters) {
+function getType(p) {
+  if (typeof p.propertyType === "number") {
+    return ["Room", "Apartment", "Studio"][p.propertyType] ?? "Room";
+  }
+  return p.propertyType || p.type || "Room";
+}
+
+
+export function applyFilters(list, filters, facilitiesMap = {}) {
   return list.filter((p) => {
-    if (filters.location && !p.location.toLowerCase().includes(filters.location.toLowerCase())) return false;
-    if (filters.propertyType && p.type.toLowerCase() !== filters.propertyType.toLowerCase()) return false;
+    const location = p.address || p.location || "";
+    const type = getType(p);
+    const rooms = p.roomsNumber ?? p.rooms;
+    const title = p.title || "";
+
+    if (filters.location && !location.toLowerCase().includes(filters.location.toLowerCase())) return false;
+    if (filters.propertyType && type.toLowerCase() !== filters.propertyType.toLowerCase()) return false;
     if (!matchesPrice(p, filters.priceRange)) return false;
-    if (filters.rooms && p.rooms !== parseInt(filters.rooms)) return false;
-    if (filters.facilities?.length > 0 && !filters.facilities.every((f) => p.amenities.includes(f))) return false;
+    if (filters.rooms && rooms !== parseInt(filters.rooms)) return false;
+
+    if (filters.facilities?.length > 0) {
+      const propFacilityNames = (p.facilities || []).map((id) => facilitiesMap[id]).filter(Boolean);
+      if (!filters.facilities.every((f) => propFacilityNames.includes(f))) return false;
+    }
+
+    if (filters.search?.trim()) {
+      const q = filters.search.trim().toLowerCase();
+      const haystack = `${title} ${location} ${type}`.toLowerCase();
+      if (!haystack.includes(q)) return false;
+    }
+
     return true;
   });
 }
 
-export function detectSearchIntent(query) {
+export function detectSearchIntent(query, allProperties = []) {
   const q = query.toLowerCase().trim();
   if (!q) return { filters: EMPTY_FILTERS, matched: false };
 
-  const allLocations = [...new Set(allProperties.map((p) => p.location.split(",")[0].trim().toLowerCase()))];
-  const allTypes     = [...new Set(allProperties.map((p) => p.type.toLowerCase()))];
-  const allAmenities = [...new Set(allProperties.flatMap((p) => p.amenities.map((a) => a.toLowerCase())))];
-  const allRooms     = [...new Set(allProperties.map((p) => p.rooms))];
+  const allLocations = [...new Set(allProperties.map((p) => (p.address || p.location || "").toLowerCase()))];
+  const allTypes     = [...new Set(allProperties.map((p) => getType(p).toLowerCase()))];
+  const allAmenities = [...new Set(allProperties.flatMap((p) => p.amenities || []).map((a) => a.toLowerCase()))];
+  const allRooms     = [...new Set(allProperties.map((p) => p.roomsNumber ?? p.rooms))];
+
+  console.log("DEBUG q:", q);
+  console.log("DEBUG allLocations:", allLocations);
 
   const matchedLocation = allLocations.find((loc) => loc.includes(q) || q.includes(loc));
+  console.log("DEBUG matchedLocation:", matchedLocation);
   if (matchedLocation) {
     const original = allProperties.find((p) =>
-      p.location.split(",")[0].trim().toLowerCase() === matchedLocation
-    )?.location.split(",")[0].trim();
-    return { filters: { ...EMPTY_FILTERS, location: original || matchedLocation }, matched: true };
+      (p.address || p.location || "").toLowerCase() === matchedLocation
+    );
+    return { filters: { ...EMPTY_FILTERS, location: original?.address || original?.location || "" }, matched: true };
   }
 
   const matchedType = allTypes.find((t) => t === q || t.includes(q));
+  console.log("DEBUG matchedType:", matchedType);
   if (matchedType) {
-    const original = allProperties.find((p) => p.type.toLowerCase() === matchedType)?.type;
-    return { filters: { ...EMPTY_FILTERS, propertyType: original || matchedType }, matched: true };
+    const original = allProperties.find((p) => getType(p).toLowerCase() === matchedType);
+    return { filters: { ...EMPTY_FILTERS, propertyType: getType(original) || matchedType }, matched: true };
   }
 
   const numQ = parseInt(q);
   if (!isNaN(numQ) && allRooms.includes(numQ)) {
+    console.log("DEBUG matched rooms");
     return { filters: { ...EMPTY_FILTERS, rooms: String(numQ) }, matched: true };
   }
 
   if (!isNaN(numQ) && numQ > 10) {
     const bucket = PRICE_BUCKETS.find(({ min, max }) => numQ >= min && numQ <= max);
-    if (bucket) return { filters: { ...EMPTY_FILTERS, priceRange: bucket.label }, matched: true };
+    if (bucket) {
+      console.log("DEBUG matched price bucket");
+      return { filters: { ...EMPTY_FILTERS, priceRange: bucket.label }, matched: true };
+    }
   }
+
   const matchedBucket = PRICE_BUCKETS.find((b) => b.label.toLowerCase() === q);
-  if (matchedBucket) return { filters: { ...EMPTY_FILTERS, priceRange: matchedBucket.label }, matched: true };
+  if (matchedBucket) {
+    console.log("DEBUG matched bucket label");
+    return { filters: { ...EMPTY_FILTERS, priceRange: matchedBucket.label }, matched: true };
+  }
 
   const matchedAmenity = allAmenities.find((a) => a.includes(q) || q.includes(a));
+  console.log("DEBUG matchedAmenity:", matchedAmenity, "allAmenities:", allAmenities);
   if (matchedAmenity) {
-    const original = allProperties.flatMap((p) => p.amenities).find((a) => a.toLowerCase() === matchedAmenity);
+    const original = allProperties.flatMap((p) => p.amenities || []).find((a) => a.toLowerCase() === matchedAmenity);
     return { filters: { ...EMPTY_FILTERS, facilities: [original || matchedAmenity] }, matched: true };
   }
 
-  // 6. Title
-  const titleMatches = allProperties.filter((p) => p.title.toLowerCase().includes(q));
+  console.log("DEBUG checking titles:", allProperties.map(p => p.title));
+  const titleMatches = allProperties.filter((p) => (p.title || "").toLowerCase().includes(q));
+  console.log("DEBUG titleMatches:", titleMatches);
   if (titleMatches.length > 0) {
     return { filters: EMPTY_FILTERS, matched: true, titleResults: titleMatches };
   }
 
+  console.log("DEBUG: no match at all, returning matched:false");
   return { filters: EMPTY_FILTERS, matched: false };
 }
 
@@ -88,6 +140,7 @@ export function hasAnyFilter(filters) {
     !!filters.propertyType ||
     !!filters.priceRange ||
     !!filters.rooms ||
-    (filters.facilities?.length > 0)
+    (filters.facilities?.length > 0) ||
+    !!filters.search
   );
 }
