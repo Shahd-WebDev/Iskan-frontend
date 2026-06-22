@@ -327,8 +327,14 @@ export default function OwnerPanel({ property, onUpdate }) {
 
   const closeImagePreview = () => setPreviewImage(null);
 
-  // Safely parse validationResultJson
-  const rawValResult = property.validationResultJson || property.ValidationResultJson || property.validationResult || property.ValidationResult || extractValidationResult(property);
+  // Safely parse validationResultJson — comes from API as string or object
+  const rawValResult =
+    property.validationResultJson ||
+    property.ValidationResultJson ||
+    property.validationResult ||
+    property.ValidationResult ||
+    extractValidationResult(property);
+
   let validationResult = null;
   if (rawValResult) {
     if (typeof rawValResult === "object") {
@@ -342,11 +348,41 @@ export default function OwnerPanel({ property, onUpdate }) {
     }
   }
 
+  // hasAiResult — true only when there is an actual AI analysis result
+  const hasAiResult = validationResult !== null;
+
   const ownershipVerified = validationResult?.ownership_verified ?? validationResult?.ownershipVerified;
   const imageForensicsFlags = validationResult?.image_forensics_flags ?? validationResult?.imageForensicsFlags;
   const extraFlags = validationResult?.Flags ?? validationResult?.flags;
-  const fraudScore = validationResult?.fraudScore ?? validationResult?.fraud_score ?? property?.fraudScore ?? property?.fraud_score;
-  const trustScore = validationResult?.trustScore ?? validationResult?.trust_score ?? property?.trustScore ?? property?.trust_score;
+
+  // Fraud score: prefer from validationResult, then top-level property fields
+  const fraudScore =
+    validationResult?.fraudScore ??
+    validationResult?.fraud_score ??
+    property?.fraudScore ??
+    property?.fraud_score ??
+    null;
+
+  // Trust score: top-level trustScoreJson from API, or inside validationResult
+  let trustScore = null;
+  if (property?.trustScoreJson) {
+    try {
+      const ts = typeof property.trustScoreJson === "object"
+        ? property.trustScoreJson
+        : JSON.parse(property.trustScoreJson);
+      trustScore = ts?.score ?? ts?.trustScore ?? ts?.trust_score ?? ts;
+    } catch (_) {
+      trustScore = null;
+    }
+  }
+  if (trustScore === null) {
+    trustScore =
+      validationResult?.trustScore ??
+      validationResult?.trust_score ??
+      property?.trustScore ??
+      property?.trust_score ??
+      null;
+  }
 
   // Forensics flags mapping
   let forensicsFlagsList = [];
@@ -356,7 +392,7 @@ export default function OwnerPanel({ property, onUpdate }) {
     } else if (typeof imageForensicsFlags === "object") {
       forensicsFlagsList = Object.entries(imageForensicsFlags)
         .filter(([_, val]) => val === true || val === "true" || String(val).toLowerCase() === "true")
-        .map(([key, _]) => key);
+        .map(([key]) => key);
     }
   }
   const hasForensicsFlags = forensicsFlagsList.length > 0;
@@ -367,6 +403,34 @@ export default function OwnerPanel({ property, onUpdate }) {
     extraFlagsList = extraFlags;
   }
   const hasExtraFlags = extraFlagsList.length > 0;
+
+  // Ownership status display — 4 cases
+  const verStatus = property.verificationStatus;
+  const renderOwnershipStatus = () => {
+    // Case A: AI result exists — use it
+    if (hasAiResult) {
+      if (ownershipVerified === true) {
+        return <span style={{ color: "#166534", fontWeight: "600" }}>✓ Ownership Verified by AI</span>;
+      } else if (ownershipVerified === false) {
+        return <span style={{ color: "#991b1b", fontWeight: "600" }}>✗ Ownership Verification Failed</span>;
+      }
+      return <span style={{ color: "#854d0e" }}>⚠ Ownership Verification Pending</span>;
+    }
+    // Case B: No AI result + Admin approved
+    if (verStatus === "Approved") {
+      return (
+        <span style={{ color: "#166534", fontWeight: "600" }}>
+          ✓ Property reviewed and approved by Admin
+        </span>
+      );
+    }
+    // Case D: Rejected
+    if (verStatus === "Rejected") {
+      return <span style={{ color: "#991b1b", fontWeight: "600" }}>✗ Property Rejected</span>;
+    }
+    // Case C: Pending
+    return <span style={{ color: "#854d0e" }}>⚠ Ownership Verification Pending</span>;
+  };
 
   return (
     <div className="owner-panel-container">
@@ -548,40 +612,45 @@ export default function OwnerPanel({ property, onUpdate }) {
                   {property.verificationStatus || "Pending"}
                 </span>
               </p>
-              <p style={{ margin: 0 }}>
-                Fraud Score: <strong>{fraudScore !== undefined && fraudScore !== null ? `${fraudScore}%` : "N/A"}</strong>
-              </p>
-              <p style={{ margin: 0 }}>
-                Trust Score: <strong>{trustScore !== undefined && trustScore !== null ? `${trustScore}/100` : "N/A"}</strong>
-              </p>
+              {/* Only render Fraud/Trust scores when AI analysis has actually run */}
+              {hasAiResult && fraudScore !== null && (
+                <p style={{ margin: 0 }}>
+                  Fraud Score: <strong>{fraudScore}%</strong>
+                </p>
+              )}
+              {hasAiResult && trustScore !== null && (
+                <p style={{ margin: 0 }}>
+                  Trust Score: <strong>{trustScore}/100</strong>
+                </p>
+              )}
             </div>
 
             <div className="validation-status-details" style={{ display: "flex", flexDirection: "column", gap: "10px", margin: "16px 0", fontSize: "14px" }}>
+              {/* Ownership status — 4 cases */}
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                {ownershipVerified === true ? (
-                  <span style={{ color: "#166534", fontWeight: "600" }}>✓ Ownership Verified</span>
-                ) : ownershipVerified === false ? (
-                  <span style={{ color: "#991b1b", fontWeight: "600" }}>✗ Ownership Verification Failed</span>
-                ) : (
-                  <span style={{ color: "#854d0e" }}>⚠ Ownership Verification Pending</span>
-                )}
+                {renderOwnershipStatus()}
               </div>
 
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                {!hasForensicsFlags ? (
-                  <span style={{ color: "#166534", fontWeight: "600" }}>✓ No Image Forensics Issues Detected</span>
-                ) : (
-                  <span style={{ color: "#991b1b", fontWeight: "600" }}>✗ Image Forensics Issues Detected</span>
-                )}
-              </div>
+              {/* Forensics lines only shown when AI analysis exists */}
+              {hasAiResult && (
+                <>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    {!hasForensicsFlags ? (
+                      <span style={{ color: "#166534", fontWeight: "600" }}>✓ No Image Forensics Issues Detected</span>
+                    ) : (
+                      <span style={{ color: "#991b1b", fontWeight: "600" }}>✗ Image Forensics Issues Detected</span>
+                    )}
+                  </div>
 
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                {!hasForensicsFlags ? (
-                  <span style={{ color: "#166534", fontWeight: "600" }}>✓ Images Appear Authentic</span>
-                ) : (
-                  <span style={{ color: "#991b1b", fontWeight: "600" }}>✗ Images May Be AI-Generated/Manipulated</span>
-                )}
-              </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    {!hasForensicsFlags ? (
+                      <span style={{ color: "#166534", fontWeight: "600" }}>✓ Images Appear Authentic</span>
+                    ) : (
+                      <span style={{ color: "#991b1b", fontWeight: "600" }}>✗ Images May Be AI-Generated/Manipulated</span>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
 
             {/* List Forensics Flags */}

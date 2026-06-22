@@ -7,7 +7,6 @@ import ImageGallery from "../../../../components/PropertiesDetails/PropertyGalle
 import OwnerPropertyActions from "../../../../components/owner/PropertyDetails/OwnerPropertyActions";
 import OwnerPropertyDescription from "../../../../components/owner/PropertyDetails/OwnerPropertyDescription";
 import KeyFeatures from "../../../../components/PropertiesDetails/KeyFeatures";
-import PropertyBookingsSection from "../../../../components/owner/PropertyDetails/PropertyBookingsSection";
 
 import "../../../property-details/PropertyDetails.css";
 import {
@@ -179,10 +178,7 @@ export default function OwnerPropertyDetails() {
       apiProperty.owner?.name ||
       apiProperty.owner?.fullName ||
       null,
-    ownerEmail:
-      apiProperty.ownerEmail ||
-      apiProperty.owner?.email ||
-      null,
+    ownerEmail: apiProperty.ownerEmail || apiProperty.owner?.email || null,
     ownerPhone:
       apiProperty.ownerPhone ||
       apiProperty.ownerPhoneNumber ||
@@ -202,6 +198,10 @@ export default function OwnerPropertyDetails() {
       apiProperty.validationResultJson ||
       apiProperty.ValidationResultJson ||
       null,
+    // AI verification fields from GetDetails response
+    fraudScore: apiProperty.fraudScore ?? apiProperty.FraudScore ?? null,
+    trustScoreJson:
+      apiProperty.trustScoreJson || apiProperty.TrustScoreJson || null,
     listingStatus: apiProperty.listingStatus,
     availabilityStatus: apiProperty.availabilityStatus,
     bookingCount: apiProperty.bookingCount,
@@ -317,7 +317,14 @@ export default function OwnerPropertyDetails() {
               )}
 
               {/* Info */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "5px", minWidth: 0 }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "5px",
+                  minWidth: 0,
+                }}
+              >
                 <h4
                   style={{
                     margin: 0,
@@ -342,7 +349,13 @@ export default function OwnerPropertyDetails() {
                   }}
                 >
                   <Mail size={12} style={{ flexShrink: 0 }} />
-                  <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <span
+                    style={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
                     {normalizedProperty.ownerEmail || "—"}
                   </span>
                 </div>
@@ -363,137 +376,8 @@ export default function OwnerPropertyDetails() {
               </div>
             </div>
           </div>
-
-          {/* Listing & Status Details Card */}
-          <div
-            className="pd-key-features"
-            style={{
-              marginTop: "12px",
-              display: "flex",
-              flexDirection: "column",
-              gap: "10px",
-              padding: "20px",
-            }}
-          >
-            <h3
-              className="pd-section-title-sm1"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                margin: 0,
-                minHeight: "unset",
-                fontSize: "15px",
-              }}
-            >
-              <ShieldCheck size={16} /> Listing & Status Details
-            </h3>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "12px",
-                borderTop: "1px solid #F5FAFF",
-                paddingTop: "16px",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  fontSize: "14px",
-                }}
-              >
-                <span style={{ color: "#64748b" }}>Listing Status:</span>
-                <span
-                  style={{
-                    fontWeight: "600",
-                    textTransform: "capitalize",
-                    color:
-                      normalizedProperty.listingStatus?.toLowerCase() ===
-                      "active"
-                        ? "#166534"
-                        : "#b91c1c",
-                  }}
-                >
-                  {normalizedProperty.listingStatus || "N/A"}
-                </span>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  fontSize: "14px",
-                }}
-              >
-                <span style={{ color: "#64748b" }}>Availability Status:</span>
-                <span
-                  style={{
-                    fontWeight: "600",
-                    textTransform: "capitalize",
-                    color:
-                      normalizedProperty.availabilityStatus?.toLowerCase() ===
-                      "available"
-                        ? "#166534"
-                        : "#b91c1c",
-                  }}
-                >
-                  {normalizedProperty.availabilityStatus || "N/A"}
-                </span>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  fontSize: "14px",
-                }}
-              >
-                <span style={{ color: "#64748b" }}>Verification Status:</span>
-                <span
-                  className={`status-badge ${normalizedProperty.verificationStatus?.toLowerCase() || "pending"}`}
-                  style={{ fontSize: "12px", padding: "2px 10px" }}
-                >
-                  {normalizedProperty.verificationStatus || "Pending"}
-                </span>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  fontSize: "14px",
-                  borderTop: "1px dashed #e2e8f0",
-                  paddingTop: "8px",
-                }}
-              >
-                <span style={{ color: "#64748b" }}>Total Bookings:</span>
-                <span style={{ fontWeight: "600" }}>
-                  {normalizedProperty.bookingCount ?? 0}
-                </span>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  fontSize: "14px",
-                }}
-              >
-                <span style={{ color: "#64748b" }}>Total Comments:</span>
-                <span style={{ fontWeight: "600" }}>
-                  {normalizedProperty.commentCount ?? 0}
-                </span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
-
-      {/* ── Booking Management Section ── */}
-      <PropertyBookingsSection propertyId={id} />
     </div>
   );
 }

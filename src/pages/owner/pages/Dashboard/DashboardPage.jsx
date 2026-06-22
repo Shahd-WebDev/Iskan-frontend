@@ -480,7 +480,6 @@ export default function DashboardPage() {
           </Link>
           <Link
             to="/owner-dashboard/messages"
-            state={{ tab: "messages" }}
             style={{ textDecoration: "none" }}
           >
             <button className={`${styles["btn"]} ${styles["btn-outline"]}`}>

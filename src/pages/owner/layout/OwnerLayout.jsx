@@ -6,6 +6,7 @@ import {
   Settings,
   Star,
   ShieldCheck,
+  Calendar,
 } from "lucide-react";
 
 import Navbar from "../../../components/layout/Navbar/Navbar";
@@ -50,8 +51,13 @@ export default function OwnerLayout() {
       icon: Building2,
     },
     {
+      to: "/owner-dashboard/bookings",
+      label: "Bookings",
+      icon: Calendar,
+    },
+    {
       to: "/owner-dashboard/messages",
-      label: "Messages & Bookings",
+      label: "Messages",
       icon: MessageSquare,
     },
     { to: "/owner-dashboard/reviews", label: "Reviews", icon: Star },

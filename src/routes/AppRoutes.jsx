@@ -63,13 +63,15 @@ import Setting_Notifications from "../pages/user-settings/Notifications";
 
 /* Owner Dashboard */
 import OwnerLayout from "../pages/owner/layout/OwnerLayout";
-import Messages from "../components/owner/Messages";
+import MessagesPage from "../pages/owner/pages/Messages/MessagesPage";
 import DashboardPage from "../pages/owner/pages/Dashboard/DashboardPage";
 import PropertiesPage from "../pages/owner/pages/Properties/PropertiesPage";
 import AddPropertyPage from "../pages/owner/pages/AddProperty/AddPropertyPage";
 import ReviewsPage from "../pages/owner/pages/Reviews/ReviewsPage";
 import OwnerPropertyDetails from "../pages/owner/pages/PropertyDetails/OwnerPropertyDetails";
 import BookingsPage from "../pages/owner/pages/Bookings/BookingsPage";
+import BookingDetailsPage from "../pages/owner/pages/Bookings/BookingDetailsPage";
+import PropertyBookingsPage from "../pages/owner/pages/Bookings/PropertyBookingsPage";
 
 export default function AppRoutes() {
   return (
@@ -159,7 +161,7 @@ export default function AppRoutes() {
           <Route path="properties" element={<PropertiesPage />} />
           <Route path="add-property" element={<AddPropertyPage />} />
           <Route path="reviews" element={<ReviewsPage />} />
-          <Route path="messages" element={<Messages />} />
+          <Route path="messages" element={<MessagesPage />} />
           <Route path="settings" element={<SettingsLayout />}>
             <Route index element={<Navigate to="profile" replace />} />
             <Route
@@ -171,6 +173,8 @@ export default function AppRoutes() {
           </Route>
           <Route path="verification" element={<VerificationCenter />} />
           <Route path="bookings" element={<BookingsPage />} />
+          <Route path="bookings/:id" element={<BookingDetailsPage />} />
+          <Route path="property-bookings/:propertyId" element={<PropertyBookingsPage />} />
         </Route>
       </Route>
 

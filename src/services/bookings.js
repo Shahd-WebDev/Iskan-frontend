@@ -32,7 +32,7 @@ export const getBookingsByProperty = async (propertyId, params = {}) => {
 
 // ======================
 // CONFIRM BOOKING (Owner)
-// POST /api/Bookings/Confirm/{id}/confirm
+// PUT /api/Bookings/Confirm/{id}/confirm
 // ======================
 export const confirmBooking = async (id) => {
   const response = await api.put(`/Bookings/Confirm/${id}/confirm`);
@@ -41,18 +41,29 @@ export const confirmBooking = async (id) => {
 
 // ======================
 // REJECT BOOKING (Owner)
-// POST /api/Bookings/Reject/{id}/reject
+// PUT /api/Bookings/Reject/{id}/reject
 // ======================
-export const rejectBooking = async (id) => {
-  const response = await api.put(`/Bookings/Reject/${id}/reject`);
+export const rejectBooking = async (id, reason) => {
+  const response = await api.put(`/Bookings/Reject/${id}/reject`, { reason });
   return response.data;
 };
 
 // ======================
-// CANCEL BOOKING (Student or Owner)
-// POST /api/Bookings/Cancel/{id}/cancel
+// GET BOOKINGS FOR OWNER (Owner)
+// GET /api/Bookings/GetBookingsForOwner/owner
+// Params: Status, PageIndex, PageSize
 // ======================
-export const cancelBooking = async (id) => {
-  const response = await api.put(`/Bookings/Cancel/${id}/cancel`);
+export const getBookingsForOwner = async (params = {}) => {
+  const response = await api.get("/Bookings/GetBookingsForOwner/owner", { params });
   return response.data;
 };
+
+// ======================
+// GET BOOKING DETAILS (Owner)
+// GET /api/Bookings/GetBookingDetails/{id}
+// ======================
+export const getBookingDetails = async (id) => {
+  const response = await api.get(`/Bookings/GetBookingDetails/${id}`);
+  return response.data;
+};
+
