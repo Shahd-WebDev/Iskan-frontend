@@ -1,7 +1,5 @@
-import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
-import { useAuth } from "../../context/AuthContext";
 import PropertyHeader from "../../components/PropertiesDetails/PropertyHeader";
 import ImageGallery from "../../components/PropertiesDetails/PropertyGallery";
 import PropertyActions from "../../components/PropertiesDetails/PropertyActions";
@@ -10,7 +8,6 @@ import KeyFeatures from "../../components/PropertiesDetails/KeyFeatures";
 import BookingContact from "../../components/PropertiesDetails/BookingContact";
 import ReviewSection from "../../components/PropertiesDetails/ReviewsSection";
 import RecommendedProperties from "../../components/PropertiesDetails/RecommendedProperties";
-import BookingStatusAlert from "../../components/booking/BookingStatusAlert";
 import RequestBookingModal from "../../components/booking/RequestBookingModal";
 import PropertyMap from "../../components/PropertiesDetails/PropertyMap";
 import api from "../../services/api";
@@ -255,13 +252,7 @@ useEffect(() => {
             />
             
                       
-            <BookingStatusAlert
-              bookingStatus={bookingStatus}
-              visible={showAlert}
-              onDismiss={() => setShowAlert(false)}
-              onConfirm={handleConfirmBooking}
-            />
-
+           
             <PropertyDescription
               property={property}
               allFacilities={allFacilities}

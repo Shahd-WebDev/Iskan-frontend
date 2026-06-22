@@ -13,8 +13,6 @@ import {
   UserPlus,
   ArrowLeftRight,
 } from "lucide-react";
-import { useSignIn } from "../../context/SignInContext";
-import { useAuth } from "../../context/AuthContext";
 import { useAuth } from "../../context/AuthContext";
 import { useProfile } from "../../context/ProfileContext";
 import { useNotifications } from "../../hooks/useNotifications";

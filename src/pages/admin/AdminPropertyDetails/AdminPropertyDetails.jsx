@@ -111,6 +111,8 @@ setRejectReason("");
 
 toast.success("Property rejected successfully");
   } catch (error) {
+    console.log("STATUS:", error.response?.status);
+    console.log("DATA:", error.response?.data);
 
     if (error.response?.status === 500) {
 
