@@ -1,0 +1,41 @@
+.booking-label {
+  font-size: 25px;
+  font-weight: 500;
+  color: #000;
+  border-left:1px solid #0088FF;
+  padding: 16px 21px;
+  margin-bottom: 35px;
+  /* gap:10px */
+}
+.booking-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 16px !important;
+  width: 100% !important;
+}
+
+.booking-item {
+  position: relative !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  flex: unset !important;
+}
+
+/* Responsive */
+@media (max-width: 1199px) {
+  .booking-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .booking-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
