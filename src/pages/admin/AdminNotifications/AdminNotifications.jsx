@@ -22,178 +22,178 @@ export default function NotificationsPage() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pageIndex, setPageIndex] =
-  useState(1);
+    useState(1);
 
-const [totalPages, setTotalPages] =
-  useState(1);
+  const [totalPages, setTotalPages] =
+    useState(1);
 
   const [unreadCount, setUnreadCount] =
-  useState(0);
+    useState(0);
 
-const pageSize = 7;
+  const pageSize = 7;
 
- const getSection = (date) => {
+  const getSection = (date) => {
 
-  const now = new Date();
+    const now = new Date();
 
-  const notificationDate =
-    new Date(date);
+    const notificationDate =
+      new Date(date);
 
-  const diffHours =
-    (now - notificationDate) /
-    (1000 * 60 * 60);
+    const diffHours =
+      (now - notificationDate) /
+      (1000 * 60 * 60);
 
-  if (diffHours <= 24)
-    return "Today";
+    if (diffHours <= 24)
+      return "Today";
 
-  if (diffHours <= 48)
-    return "Yesterday";
+    if (diffHours <= 48)
+      return "Yesterday";
 
-  return "Earlier";
-};
+    return "Earlier";
+  };
 
   useEffect(() => {
 
-  async function fetchNotifications() {
+    async function fetchNotifications() {
 
-    try {
+      try {
 
-      setLoading(true);
+        setLoading(true);
 
-      const response = await api.get(
-  "/Notification/Get",
-  {
-    params: {
-      PageIndex: pageIndex,
-      PageSize: pageSize,
-    },
-  }
-);
+        const response = await api.get(
+          "/Notification/Get",
+          {
+            params: {
+              PageIndex: pageIndex,
+              PageSize: pageSize,
+            },
+          }
+        );
 
-const unreadResponse =
-  await api.get(
-    "/Notification/UnreadCount/unread-count"
-  );
+        const unreadResponse =
+          await api.get(
+            "/Notification/UnreadCount/unread-count"
+          );
 
-setUnreadCount(
-  unreadResponse.data
-);
+        setUnreadCount(
+          unreadResponse.data
+        );
 
-      console.log(response.data);
-      setTotalPages(
-  Math.ceil(
-    response.data.count / pageSize
-  )
-);
+        console.log(response.data);
+        setTotalPages(
+          Math.ceil(
+            response.data.count / pageSize
+          )
+        );
 
-      const formattedNotifications =
-  response.data.data.map((item) => {
+        const formattedNotifications =
+          response.data.data.map((item) => {
 
-    const uiType =
-      item.type === "Reminders"
-        ? "warning"
-        : item.type === "Property"
-        ? "property"
-        : item.type === "Registration"
-        ? "registration"
-        : "system";
+            const uiType =
+              item.type === "Reminders"
+                ? "warning"
+                : item.type === "Property"
+                  ? "property"
+                  : item.type === "Registration"
+                    ? "registration"
+                    : "system";
 
-    const icon =
-  uiType === "property"
-    ? Home
-    : uiType === "registration"
-    ? UserPlus
-    : uiType === "system"
-    ? CircleCheckBig
-    : TriangleAlert;
+            const icon =
+              uiType === "property"
+                ? Home
+                : uiType === "registration"
+                  ? UserPlus
+                  : uiType === "system"
+                    ? CircleCheckBig
+                    : TriangleAlert;
 
-    return {
-      id: item.id,
+            return {
+              id: item.id,
 
-      title: item.title,
+              title: item.title,
 
-      subtitle: item.content,
+              subtitle: item.content,
 
-      time: item.createdAt,
+              time: item.createdAt,
 
-      unread: !item.isRead,
+              unread: !item.isRead,
 
-      type: uiType,
+              type: uiType,
 
-      icon: icon,
+              icon: icon,
 
-      section: getSection(item.createdAt),
-    };
-});
-      setNotifications(
-        formattedNotifications
-      );
+              section: getSection(item.createdAt),
+            };
+          });
+        setNotifications(
+          formattedNotifications
+        );
 
-    } catch (error) {
+      } catch (error) {
 
-      console.log(error);
+        console.log(error);
 
-    } finally {
+      } finally {
 
-      setLoading(false);
+        setLoading(false);
+      }
     }
-  }
 
-  fetchNotifications();
+    fetchNotifications();
 
-}, [pageIndex]);
+  }, [pageIndex]);
 
 
   // ✅ mark all
   const markAllRead = async () => {
 
-  try {
+    try {
 
-    await api.put(
-      "/Notification/MarkAllRead/read-all"
-    );
+      await api.put(
+        "/Notification/MarkAllRead/read-all"
+      );
 
-    setNotifications(prev =>
-      prev.map(n => ({
-        ...n,
-        unread: false,
-      }))
-    );
+      setNotifications(prev =>
+        prev.map(n => ({
+          ...n,
+          unread: false,
+        }))
+      );
 
-    setUnreadCount(0);
+      setUnreadCount(0);
 
-  } catch (error) {
+    } catch (error) {
 
-    console.log(error);
-  }
-};
+      console.log(error);
+    }
+  };
 
   // ✅ mark one
   const markAsRead = async (id) => {
 
-  try {
+    try {
 
-    await api.put(
-      `/Notification/MarkRead/${id}/read`
-    );
+      await api.put(
+        `/Notification/MarkRead/${id}/read`
+      );
 
-    setNotifications(prev =>
-      prev.map(n =>
-        n.id === id
-          ? { ...n, unread: false }
-          : n
-      )
-    );
+      setNotifications(prev =>
+        prev.map(n =>
+          n.id === id
+            ? { ...n, unread: false }
+            : n
+        )
+      );
 
-    setUnreadCount(prev =>
-      prev > 0 ? prev - 1 : 0
-    );
+      setUnreadCount(prev =>
+        prev > 0 ? prev - 1 : 0
+      );
 
-  } catch (error) {
+    } catch (error) {
 
-    console.log(error);
-  }
-};
+      console.log(error);
+    }
+  };
 
   // ✅ delete
   const deleteNotification = (id) => {
@@ -203,14 +203,14 @@ setUnreadCount(
   };
 
   if (loading) {
-  return (
-    <div className="skeleton-wrapper">
-      {Array.from({ length: 5 }).map((_, index) => (
-        <SkeletonCard key={index} />
-      ))}
-    </div>
-  );
-}
+    return (
+      <div className="skeleton-wrapper">
+        {Array.from({ length: 5 }).map((_, index) => (
+          <SkeletonCard key={index} />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="page-wrapper">
@@ -238,23 +238,23 @@ setUnreadCount(
 
               <div className="section-group">
                 {items.map(item => (
-<NotificationItem
-  key={item.id}
-  item={item}
-  onMarkAsRead={markAsRead}
-  onDelete={deleteNotification}
-/>                ))}
+                  <NotificationItem
+                    key={item.id}
+                    item={item}
+                    onMarkAsRead={markAsRead}
+                    onDelete={deleteNotification}
+                  />))}
               </div>
             </div>
           );
         })}
 
         <PaginationControls
-  currentPage={pageIndex}
-  totalPages={totalPages}
-  onPageChange={setPageIndex}
-  label={`Page ${pageIndex} of ${totalPages}`}
-/>
+          currentPage={pageIndex}
+          totalPages={totalPages}
+          onPageChange={setPageIndex}
+          label={`Page ${pageIndex} of ${totalPages}`}
+        />
 
       </div>
     </div>

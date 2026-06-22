@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../../context/AuthContext";
@@ -15,6 +16,10 @@ import PropertyMap from "../../components/PropertiesDetails/PropertyMap";
 import api from "../../services/api";
 import toast from "react-hot-toast";
 import "../property-details/PropertyDetails.css";
+
+import { useAuth } from "../../context/AuthContext";
+import { getPropertyDetails } from "../../services/ownerProperties";
+import OwnerPanel from "../../components/owner/PropertyDetails/OwnerPanel";
 
 export default function PropertyDetails() {
   const { id } = useParams();
@@ -203,7 +208,9 @@ useEffect(() => {
       <div style={{ textAlign: "center", padding: "80px 20px" }}>
         <h2>Property not found</h2>
         <button
-          onClick={() => navigate("/properties")}
+          onClick={() =>
+            navigate(isOwner ? "/owner-dashboard/properties" : "/properties")
+          }
           style={{
             marginTop: 16,
             padding: "10px 24px",

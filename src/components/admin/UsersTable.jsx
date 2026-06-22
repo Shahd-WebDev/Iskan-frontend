@@ -30,7 +30,9 @@ export default function UsersTable({
             </span>
           </div>
 
-          <span className="col-university">{user.id.slice(0, 8)}</span>
+          <span className="col-role">
+  {user.role}
+</span>
           <span className="col-email">{user.email}</span>
 
           <span className={`status ${user.status === "Active" ? "active" : "banned"}`}>
@@ -59,8 +61,8 @@ export default function UsersTable({
                   <Ban size={20} />
 <span>
   {user.status === "Banned"
-    ? "Unblock Owner"
-    : "Block Owner"}
+    ? `Unblock ${user.role}`
+    : `Block ${user.role}`}
 </span>
                 </button>
 
@@ -70,7 +72,7 @@ export default function UsersTable({
                   onClick={() => onDelete(user.id)}
                 >
                   <Trash2 size={20} />
-                  <span>Delete Owner</span>
+                  <span>Delete {user.role}</span>
                 </button>
 
               </div>

@@ -35,6 +35,7 @@ export const validateField = (name, value, formData = {}) => {
     case "availableFrom":
       if (!valueStr) error = "Available date is required";
       break;
+    case "rooms":
     case "bedrooms":
     case "bathrooms":
     case "sqft":
@@ -46,9 +47,45 @@ export const validateField = (name, value, formData = {}) => {
       else if (name === "price" && num > 100000000) error = "Enter a realistic price";
       break;
     case "titleDeed":
-    case "taxLicense":
-    case "utilityBill":
       if (!value) error = "Document is required";
+      break;
+    case "utilityBill":
+    case "taxLicense":
+      // Optional documents
+      break;
+    case "firstName":
+    case "lastName":
+      if (!valueStr.trim()) error = "This field is required";
+      else if (!/^[A-Za-z\s]+$/.test(valueStr.trim())) error = "Must contain letters only";
+      break;
+    case "dateOfBirth":
+      if (!valueStr) error = "Date of birth is required";
+      else {
+        const birthDate = new Date(valueStr);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+        if (age < 15 || age > 100) error = "Age must be between 15 and 100 years";
+      }
+      break;
+    case "phoneNumber":
+      if (!valueStr) error = "Phone number is required";
+      else if (valueStr.replace(/\D/g, "").length < 10) error = "Phone number must be at least 10 digits";
+      break;
+    case "currentPassword":
+      if (!valueStr) error = "Current password is required";
+      break;
+    case "newPassword":
+      if (!valueStr) error = "New password is required";
+      else if (valueStr.length < 8) error = "Password must be at least 8 characters";
+      else if (!/[A-Z]/.test(valueStr)) error = "Password must contain at least one uppercase letter";
+      else if (!/[0-9]/.test(valueStr)) error = "Password must contain at least one number";
+      else if (!/[@$!%*?&#]/.test(valueStr)) error = "Password must contain at least one special character (@$!%*?&#)";
+      break;
+    case "confirmPassword":
+      if (!valueStr) error = "Confirm password is required";
+      else if (valueStr !== formData.newPassword) error = "Passwords must match";
       break;
     default:
       break;
@@ -80,10 +117,10 @@ export const validateAll = (formData, selectedAmenities = []) => {
   };
 
   // Step 1
-  checkStep(1, ["propertyName", "propertyType", "streetAddress", "city", "state", "country", "zipCode", "description"]);
+  checkStep(1, ["propertyName", "propertyType", "description", "rooms", "bedrooms", "bathrooms", "price"]);
   
   // Step 2
-  checkStep(2, ["bedrooms", "bathrooms", "sqft", "price", "availableFrom"]);
+  checkStep(2, ["streetAddress"]);
   
   // Step 3
   if (selectedAmenities.length === 0) {
@@ -96,7 +133,7 @@ export const validateAll = (formData, selectedAmenities = []) => {
   }
 
   // Step 4
-  checkStep(4, ["titleDeed", "taxLicense", "utilityBill"]);
+  checkStep(4, ["titleDeed"]);
 
   return { errors: newErrors, firstErrorStep };
 };

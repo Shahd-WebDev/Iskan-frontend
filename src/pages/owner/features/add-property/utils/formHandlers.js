@@ -15,7 +15,7 @@ export const handlePhotoUploadLogic = (e, currentPhotos = []) => {
     } else if (file.size > 5 * 1024 * 1024) {
       error = "Each photo must be under 5MB";
     } else {
-      validFiles.push({ name: file.name, url: URL.createObjectURL(file) });
+      validFiles.push({ file, name: file.name, url: URL.createObjectURL(file) });
     }
   });
 
@@ -26,19 +26,38 @@ export const handlePhotoUploadLogic = (e, currentPhotos = []) => {
 /**
  * Handles document upload logic.
  * @param {Event} e - Input change event
- * @returns {Object} - Object with file name and optional error
+ * @returns {Object} - Object with file object, name and optional error
  */
 export const handleDocUploadLogic = (e) => {
   const file = e.target.files[0];
-  if (!file) return { fileName: null, error: null };
+  if (!file) return { file: null, fileName: null, error: null };
   
-  const validTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+  const validTypes = [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    'text/plain',
+    'text/csv',
+    'application/rtf',
+    'image/jpeg',
+    'image/png',
+    'image/jpg',
+  ];
   if (!validTypes.includes(file.type)) {
-    return { fileName: null, error: "Invalid file type (PDF, JPG, PNG only)" };
+    return {
+      file: null,
+      fileName: null,
+      error:
+        "Invalid file type. Allowed: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, TXT, CSV, RTF, JPG, PNG.",
+    };
   }
   if (file.size > 10 * 1024 * 1024) {
-    return { fileName: null, error: "File must be under 10MB" };
+    return { file: null, fileName: null, error: "File must be under 10MB" };
   }
 
-  return { fileName: file.name, error: null };
+  return { file, fileName: file.name, error: null };
 };

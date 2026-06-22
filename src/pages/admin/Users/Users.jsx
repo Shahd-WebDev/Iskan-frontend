@@ -11,14 +11,14 @@ const avatarColors = [
 ];
 
 export default function Users() {
-  const [search, setSearch] = useState("");
   const [openMenuId, setOpenMenuId] = useState(null);
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
+  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState("");
 
   // ✅ GET USERS
   const getUsers = async () => {
@@ -26,16 +26,16 @@ export default function Users() {
       setLoading(true);
 
       const response = await api.get(
-  "/AdminUser/GetAll",
+        "/AdminUser/GetAll",
         {
           params: {
             PageIndex: currentPage,
-            
+
             PageSize: 7,
             search: search,
           },
 
-          
+
         }
       );
       console.log(response.data);
@@ -45,6 +45,7 @@ export default function Users() {
         id: user.id,
         name: user.fullName,
         email: user.email,
+        role: user.role,
         status: user.status,
         ID: user.ID,
 
@@ -59,9 +60,9 @@ export default function Users() {
       }));
 
       setUsers(formattedUsers);
-setTotalPages(
-  Math.ceil(response.data.count / 7)
-);
+      setTotalPages(
+        Math.ceil(response.data.count / 7)
+      );
     } catch (error) {
       console.error("Error fetching users:", error);
     } finally {
@@ -81,52 +82,63 @@ setTotalPages(
 
     return () => document.removeEventListener("click", closeMenu);
   }, []);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearch(searchInput);
+    }, 500);
 
-  
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
+
   // ✅ block
- const handleBlock = async (id) => {
-  try {
+  const handleBlock = async (id) => {
+    try {
 
-    await api.patch(`/AdminUser/Block/${id}/block`);
+      await api.patch(`/AdminUser/Block/${id}/block`);
 
-    // ✅ update ui after success
-    setUsers((prev) =>
-      prev.map((user) =>
-        user.id === id
-          ? { ...user, 
-            status:
-  user.status === "Banned"
-    ? "Active"
-    : "Banned"
-           }
-          : user
-      )
-    );
+      // ✅ update ui after success
+      setUsers((prev) =>
+        prev.map((user) =>
+          user.id === id
+            ? {
+              ...user,
+              status:
+                user.status === "Banned"
+                  ? "Active"
+                  : "Banned"
+            }
+            : user
+        )
+      );
 
-    setOpenMenuId(null);
+      setOpenMenuId(null);
 
-  } catch (error) {
-    console.error("Block error:", error);
-  }
-};
+    } catch (error) {
+      console.error("Block error:", error);
+    }
+  };
 
-//delete
-const handleDelete = async (id) => {
-  try {
+  //delete
+  const handleDelete = async (id) => {
+    try {
 
-   await api.delete(`/AdminUser/Delete/${id}`);
+      await api.delete(`/AdminUser/Delete/${id}`);
 
-    // ✅ remove from ui after success
-    setUsers((prev) =>
-      prev.filter((user) => user.id !== id)
-    );
+      if (users.length === 1 && currentPage > 1) {
+        setCurrentPage((prev) => prev - 1);
+      } else {
+        getUsers();
+      }
 
-    setOpenMenuId(null);
+      setOpenMenuId(null);
 
-  } catch (error) {
-    console.error("Delete error:", error);
-  }
-};
+    } catch (error) {
+      console.error("Delete error:", error);
+      console.log(error.response?.status);
+      console.log(error.response?.data);
+    }
+  };
   return (
     <div className="users-page">
 
@@ -166,28 +178,28 @@ const handleDelete = async (id) => {
               type="text"
               placeholder="Search for a name"
               className="users-search-input"
-              value={search}
+              value={searchInput}
               onChange={(e) => {
-  setSearch(e.target.value);
-  setCurrentPage(1);
-}}
+                setSearchInput(e.target.value);
+                setCurrentPage(1);
+              }}
             />
           </div>
 
-          <span>ID</span>
-<span>Email</span>
-<span>Status</span>
-<span>Actions</span>
+          <span>Role</span>
+          <span>Email</span>
+          <span>Status</span>
+          <span>Actions</span>
 
         </div>
 
         {loading ? (
-  <div className="skeleton-wrapper">
-    {Array.from({ length: 6 }).map((_, index) => (
-      <SkeletonCard key={index} />
-    ))}
-  </div>
-) : (
+          <div className="skeleton-wrapper">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <SkeletonCard key={index} />
+            ))}
+          </div>
+        ) : (
           <UsersTable
             users={users}
             openMenuId={openMenuId}
@@ -197,16 +209,16 @@ const handleDelete = async (id) => {
             onDelete={handleDelete}
           />
         )}
-        
+
       </div>
       <div className="users-pagination">
-  <PaginationControls
-    currentPage={currentPage}
-totalPages={totalPages}
-    onPageChange={setCurrentPage}
-    label={`Page ${currentPage}`}
-  />
-</div>
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          label={`Page ${currentPage} of ${totalPages}`}
+        />
+      </div>
     </div>
   );
 }

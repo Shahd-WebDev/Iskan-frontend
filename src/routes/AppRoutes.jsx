@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import SignInVerifyRole from "./SignInVerifyRole";
+import ProtectedRoute from "./ProtectedRoute";
+import ProtectedOwnerRoute from "./ProtectedOwnerRoute";
 import SearchResult from "../pages/SearchResults/SearchResults";
 
 /* Layouts */
@@ -19,6 +20,7 @@ import AdminPropertyDetails from "../pages/admin/AdminPropertyDetails/AdminPrope
 
 import Users from "../pages/admin/Users/Users";
 import Reports from "../pages/admin/Reports/Reports";
+import ContactMessages from "../pages/admin/contact/ContactMessages";
 import AdminNotifications from "../pages/admin/AdminNotifications/AdminNotifications";
 
 /* Main Pages */
@@ -27,6 +29,7 @@ import Properties from "../pages/properties/Properties";
 import PropertyDetails from "../pages/property-details/PropertyDetails";
 import FAQs from "../pages/FAQs/FAQs";
 import SavedProperties from "../pages/SavedProperties/SavedProperties";
+import Terms from "../pages/Terms/Terms";
 
 import Terms from "../pages/Terms/Terms";
 import MyBooking from "../pages/MyBooking/MyBooking";
@@ -34,8 +37,19 @@ import MyBooking from "../pages/MyBooking/MyBooking";
 
 /* Auth Pages */
 import Login from "../pages/auth/Login";
-import Signup from "../pages/auth/Signup";
+// import Signup from "../pages/auth/Signup";
+import Register from "../pages/auth/Registeration/Register";
 import ChooseAccountType from "../pages/auth/ChooseAccountType";
+import ForgotPassword from "../pages/auth/forgot-password/ForgotPassword";
+import CheckEmail from "../pages/auth/forgot-password/CheckEmail";
+import ResetPassword from "../pages/auth/forgot-password/ResetPassword";
+import ConfirmEmail from "../pages/auth/ConfirmEmail";
+
+/* Verification Pages */
+import VerificationPending from "../pages/verification/VerificationPending";
+import VerificationRejected from "../pages/verification/VerificationRejected";
+import IdentityVerification from "../pages/verification/IdentityVerification";
+import VerificationCenter from "../pages/owner/pages/VerificationCenter/VerificationCenter";
 
 /* Error */
 import NotFound from "../pages/Error/NotFound";
@@ -55,7 +69,9 @@ import Messages from "../components/owner/Messages";
 import DashboardPage from "../pages/owner/pages/Dashboard/DashboardPage";
 import PropertiesPage from "../pages/owner/pages/Properties/PropertiesPage";
 import AddPropertyPage from "../pages/owner/pages/AddProperty/AddPropertyPage";
-
+import ReviewsPage from "../pages/owner/pages/Reviews/ReviewsPage";
+import OwnerPropertyDetails from "../pages/owner/pages/PropertyDetails/OwnerPropertyDetails";
+import BookingsPage from "../pages/owner/pages/Bookings/BookingsPage";
 
 export default function AppRoutes() {
   return (
@@ -63,8 +79,26 @@ export default function AppRoutes() {
       {/* ================= Authentication ================= */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        {/* <Route path="/signup" element={<Signup />} /> */}
+        <Route path="/register" element={<Register />} />
         <Route path="/choose-account" element={<ChooseAccountType />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/check-email" element={<CheckEmail />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/confirm-email" element={<ConfirmEmail />} />
+      </Route>
+
+      {/* ================= Verification Pages ================= */}
+      <Route element={<AuthLayout />}>
+        <Route
+          path="/identity-verification"
+          element={<IdentityVerification />}
+        />
+        <Route path="/verification-pending" element={<VerificationPending />} />
+        <Route
+          path="/verification-rejected"
+          element={<VerificationRejected />}
+        />
       </Route>
 
       {/* ================= Main Website ================= */}
@@ -84,52 +118,58 @@ export default function AppRoutes() {
 
         <Route path="settings" element={<SettingsLayout />}>
           <Route path="profile" element={<Profile role="student" />} />
-            
+
           <Route path="security" element={<Security />} />
           <Route path="notifications" element={<Setting_Notifications />} />
         </Route>
 
         {/* ================= Admin Dashboard ================= */}
-        <Route element={<SignInVerifyRole allowedRole="Admin" />}>
-  <Route path="admin" element={<AdminLayout />}>
-    <Route path="dashboard" element={<Dashboard />} />
-    <Route path="properties" element={<PropertyListings />} />
-    <Route path="verification" element={<PropertyVerification />} />
+        <Route element={<ProtectedRoute allowedRoles={["Admin", "admin"]} />}>
+          <Route path="admin" element={<AdminLayout />}>
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="properties" element={<PropertyListings />} />
+            <Route path="verification" element={<PropertyVerification />} />
 
-  <Route
-  path="property-details/:id"
-  element={<AdminPropertyDetails />}
-/>
-    <Route path="property/:id" element={<PropertyAIDetails />} />
-    <Route path="users" element={<Users />} />
-    <Route path="reports" element={<Reports />} />
-    <Route path="notifications" element={<AdminNotifications />} />
-  </Route>
-</Route>
+            <Route
+              path="property-details/:id"
+              element={<AdminPropertyDetails />}
+            />
+            <Route path="property/:id" element={<PropertyAIDetails />} />
+            <Route path="users" element={<Users />} />
+            <Route path="reports" element={<Reports />} />
+            <Route path="contact" element={<ContactMessages />} />
+            <Route path="notifications" element={<AdminNotifications />} />
+          </Route>
+        </Route>
 
-</Route>
+        {/* Protected Owner routes inside Layout */}
+        <Route element={<ProtectedOwnerRoute />}>
+          <Route
+            path="/owner-properties/:id"
+            element={<OwnerPropertyDetails />}
+          />
+        </Route>
+      </Route>
 
-     {/* ================= Owner Dashboard ================= */}  
-      <Route element={<SignInVerifyRole allowedRole="owner" />}>
+      {/* ================= Owner Dashboard ================= */}
+      <Route element={<ProtectedOwnerRoute />}>
         <Route path="/owner-dashboard" element={<OwnerLayout />}>
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="properties" element={<PropertiesPage />} />
           <Route path="add-property" element={<AddPropertyPage />} />
+          <Route path="reviews" element={<ReviewsPage />} />
           <Route path="messages" element={<Messages />} />
           <Route path="settings" element={<SettingsLayout />}>
             <Route index element={<Navigate to="profile" replace />} />
-<Route
-  path="profile"
-  element={
-    <Profile
-      role="owner"
-      showSuccessMessage={true}
-    />
-  }
-/>            <Route path="security" element={<Security />} />
+            <Route
+              path="profile"
+              element={<Profile role="owner" showSuccessMessage={true} />}
+            />{" "}
+            <Route path="security" element={<Security />} />
             <Route path="notifications" element={<Setting_Notifications />} />
           </Route>
-          <Route path="verification" element={<div>Verification Process...</div>} />
+          <Route path="verification" element={<VerificationCenter />} />
+          <Route path="bookings" element={<BookingsPage />} />
         </Route>
       </Route>
 

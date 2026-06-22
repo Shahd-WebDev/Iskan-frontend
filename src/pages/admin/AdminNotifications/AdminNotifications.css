@@ -72,13 +72,14 @@
 }
 
 p.section-title {
-  font-size: 14px ;
+  font-size: 14px;
   font-weight: 600;
   color: #333333;
   margin: 0px;
-    font-family: 'Urbanist', sans-serif;
+  font-family: 'Urbanist', sans-serif;
   line-height: 20px;
 }
+
 .section-group {
   display: flex;
   flex-direction: column;
@@ -90,12 +91,13 @@ p.section-title {
 .notification-container {
   position: relative;
   width: 100%;
-  height: 100px;
+  min-height: 100px;
+  height: auto;
   border-radius: 10px;
   border: 0.67px solid #0088FF;
   background: #FFFFFF;
   box-sizing: border-box;
-    margin-top: 0;
+  margin-top: 0;
 }
 
 /* النقطة الزرقاء على الكونتينر نفسه - يسار في المنتصف */
@@ -115,19 +117,22 @@ p.section-title {
 /* Card */
 .notification-card {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   width: 100%;
   height: 100%;
-  padding: 0 24px;
+  padding: 18px 24px;
   box-sizing: border-box;
+  gap: 12px;
 }
 
 .card-left {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 14px;
   overflow: hidden;
+  flex: 1;
+  min-width: 0;
 }
 
 /* Icon box - دائري */
@@ -141,15 +146,36 @@ p.section-title {
   flex-shrink: 0;
 }
 
-.icon-box.critical     { background: rgba(251, 44, 54, 0.20);  color: #FB2C36; }
-.icon-box.property     { background: rgba(0, 136, 255, 0.20);  color: #0088FF; }
-.icon-box.warning      { background: rgba(251, 44, 54, 0.20);  color: #FB2C36; }
-.icon-box.registration { background: rgba(40, 167, 69, 0.20);  color: #28a745; }
-.icon-box.system       { background: rgba(255, 193, 7, 0.20);  color: #ffc107; }
+.icon-box.critical {
+  background: rgba(251, 44, 54, 0.20);
+  color: #FB2C36;
+}
+
+.icon-box.property {
+  background: rgba(0, 136, 255, 0.20);
+  color: #0088FF;
+}
+
+.icon-box.warning {
+  background: rgba(251, 44, 54, 0.20);
+  color: #FB2C36;
+}
+
+.icon-box.registration {
+  background: rgba(40, 167, 69, 0.20);
+  color: #28a745;
+}
+
+.icon-box.system {
+  background: rgba(255, 193, 7, 0.20);
+  color: #ffc107;
+}
 
 /* Text content */
 .text-content {
   overflow: hidden;
+  flex: 1;
+  min-width: 0;
 }
 
 .text-content .title {
@@ -157,12 +183,14 @@ p.section-title {
   font-size: 14px;
   font-weight: 600;
   color: #333333;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 800px;
   font-family: 'Urbanist', sans-serif;
   line-height: 20px;
+
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+
+  max-width: 100%;
 }
 
 .text-content .subtitle {
@@ -197,6 +225,7 @@ p.section-title {
 
 .menu-wrapper {
   position: relative;
+  flex-shrink: 0;
 }
 
 .dropdown {
@@ -207,7 +236,7 @@ p.section-title {
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   width: 140px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   z-index: 10;
 }
 
@@ -220,4 +249,73 @@ p.section-title {
 
 .dropdown p:hover {
   background: #f5f7fb;
+}
+
+@media (max-width: 768px) {
+
+  .notifications-inner {
+    padding: 20px 16px;
+  }
+
+  .notification-card {
+    padding: 14px;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .notification-container {
+    height: auto;
+    min-height: 100px;
+  }
+
+  .mark-all-btn {
+    position: static;
+    margin-top: 16px;
+  }
+
+  .notif-header {
+    gap: 12px;
+  }
+
+  .text-content .title {
+    font-size: 13px;
+  }
+
+  .text-content .subtitle {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .page-wrapper {
+    padding: 20px 8px;
+  }
+
+  .notifications-inner {
+    padding: 16px 10px;
+  }
+
+  .notification-card {
+    padding: 12px;
+  }
+
+  .icon-box {
+    width: 32px;
+    height: 32px;
+  }
+
+  .text-content .title {
+    line-height: 18px;
+  }
+
+  .dropdown {
+    right: -10px;
+    width: 120px;
+  }
+}
+
+html,
+body {
+  overflow-x: hidden;
 }

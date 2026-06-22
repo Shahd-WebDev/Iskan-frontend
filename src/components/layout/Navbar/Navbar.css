@@ -238,17 +238,46 @@
 /* ================= Mobile ================= */
 @media (max-width: 480px) {
 
+  .iskan-topbar {
+    height: auto;
+    padding: 12px 16px;
+    text-align: center;
+    font-size: 14px;
+    line-height: 22px;
+  }
+
+  .iskan-close {
+    right: 12px;
+    top: 12px;
+    transform: none;
+  }
+
   .iskan-nav-content {
     padding: 14px 16px;
+    gap: 10px;
   }
 
   .iskan-logo img {
-    width: 100px;
+    width: 90px;
+    margin-top: 0;
+  }
+
+  .iskan-right {
+    gap: 8px;
   }
 
   .iskan-login-btn {
-    height: 44px;
-    padding: 10px 16px;
-    font-size: 14px;
+    height: 40px;
+    padding: 8px 14px;
+    font-size: 13px;
   }
+
+  .iskan-back-link {
+    font-size: 12px;
+    margin-right: 8px;
+  }
+}
+html,
+body {
+  overflow-x: hidden;
 }

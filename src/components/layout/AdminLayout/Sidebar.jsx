@@ -6,7 +6,8 @@ import {
   Users,
   AlertTriangle,
   Bell,
-  User
+  User,
+    Mail
 } from "lucide-react";
 
 import "./Sidebar.css";
@@ -74,6 +75,15 @@ export default function Sidebar() {
             <AlertTriangle size={20}/>
             <span>Reports & Complaints</span>
           </NavLink>
+          <NavLink
+  to="/admin/contact"
+  className={({ isActive }) =>
+    isActive ? "sidebar-item active" : "sidebar-item"
+  }
+>
+  <Mail size={20} />
+  <span>Contact Messages</span>
+</NavLink>
 
           <NavLink 
             to="/admin/notifications"

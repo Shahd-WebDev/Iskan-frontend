@@ -1,37 +1,77 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { Home, Building2, MessageSquare, Settings} from "lucide-react";
+import {
+  Home,
+  Building2,
+  MessageSquare,
+  Settings,
+  Star,
+  ShieldCheck,
+} from "lucide-react";
 
 import Navbar from "../../../components/layout/Navbar/Navbar";
 import Footer from "../../../components/layout/Footer/Footer";
+import { useAuth } from "../../../context/AuthContext";
+import { useProfile } from "../../../context/ProfileContext";
+import { useVerificationPolling } from "../../../hooks/useVerificationPolling";
 import styles from "./OwnerLayout.module.css";
 
-const NAV_ITEMS = [
-  { to: "/owner-dashboard/dashboard",  label: "Dashboard",           icon: Home },
-  { to: "/owner-dashboard/properties", label: "My Properties",       icon: Building2       },
-  { to: "/owner-dashboard/messages",   label: "Messages & Bookings", icon: MessageSquare },
-  { to: "/owner-dashboard/settings",   label: "Settings",            icon: Settings        },
-];
-
 export default function OwnerLayout() {
-  const stored = JSON.parse(localStorage.getItem("user") || "{}");
+  const { verificationStatus } = useAuth();
+
+  // Activate polling globally inside the Owner Dashboard
+  useVerificationPolling({ interval: 45000 });
+
+  const { profile } = useProfile();
+  const { user: authUser } = useAuth();
   const user = {
-    name: stored.name || "User",
-    email: stored.email || "",
-    avatar: stored.avatar || null,
-    initials: stored.name
-      ? stored.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
-      : "U",
+    name: profile
+      ? `${profile.firstName || ""} ${profile.lastName || ""}`.trim()
+      : authUser?.name || "User",
+    email: profile?.email || authUser?.email || "",
+    avatar: profile?.profileImageUrl || null,
+    initials:
+      profile && (profile.firstName || profile.lastName)
+        ? `${(profile.firstName || "").charAt(0)}${(profile.lastName || "").charAt(0)}`.toUpperCase()
+        : authUser?.name
+          ? authUser.name
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
+              .toUpperCase()
+              .slice(0, 2)
+          : "U",
   };
+
+  const navItems = [
+    { to: "/owner-dashboard/dashboard", label: "Dashboard", icon: Home },
+    {
+      to: "/owner-dashboard/properties",
+      label: "My Properties",
+      icon: Building2,
+    },
+    {
+      to: "/owner-dashboard/messages",
+      label: "Messages & Bookings",
+      icon: MessageSquare,
+    },
+    { to: "/owner-dashboard/reviews", label: "Reviews", icon: Star },
+    {
+      to: "/owner-dashboard/verification",
+      label: "Verification Center",
+      icon: ShieldCheck,
+      badge: verificationStatus === "Rejected" ? "!" : null,
+    },
+    { to: "/owner-dashboard/settings", label: "Settings", icon: Settings },
+  ];
 
   return (
     <div className={styles["od-root"]}>
-
       <Navbar variant="dashboard" />
 
       <div className={styles["od-body"]}>
         <aside className={styles["od-sidebar"]}>
           <nav className={styles["od-nav"]}>
-            {NAV_ITEMS.map(({ to, label, icon: Icon, badge }) => (
+            {navItems.map(({ to, label, icon: Icon, badge }) => (
               <NavLink
                 key={to}
                 to={to}
@@ -41,7 +81,9 @@ export default function OwnerLayout() {
               >
                 <Icon size={18} />
                 <span>{label}</span>
-                {badge && <span className={styles["od-nav-badge"]}>{badge}</span>}
+                {badge && (
+                  <span className={styles["od-nav-badge"]}>{badge}</span>
+                )}
               </NavLink>
             ))}
           </nav>

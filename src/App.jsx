@@ -12,7 +12,6 @@ function App() {
       <PropertyProvider>
         <SavedProvider>
           <AppRoutes />
-          <RoleSwitcher />
         </SavedProvider>
       </PropertyProvider>
 
