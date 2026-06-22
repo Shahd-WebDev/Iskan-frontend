@@ -5,6 +5,7 @@ import FiltersRow from "../../components/home/FiltersRow";
 import PaginationControls from "../../components/Pagination/Pagination";
 import { applyFilters, detectSearchIntent, hasAnyFilter, EMPTY_FILTERS, getAvailablePriceBuckets } from "../../components/Search/FilterSearch";
 import ResultsGrid from "../../components/Search/ResultsGrid";
+import { fetchApprovedProperties } from "../../utils/fetchApprovedProperties";
 import "./SearchResults.css";
 
 function SearchResult() {
@@ -19,17 +20,16 @@ const [facilities, setFacilities] = useState([]);
   const fetchProperties = async () => {
     try {
       const token = localStorage.getItem("token");
-      const [propertiesRes, facilitiesRes] = await Promise.all([
-        fetch(`/api/Property/GetAll?pageSize=1000`, {
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-        }),
+
+      // Fetch only Approved properties (verificationStatus from GetDetails)
+      const [approved, facilitiesRes] = await Promise.all([
+        fetchApprovedProperties(token),
         fetch(`/api/Facility/GetAll`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         }),
       ]);
-      if (!propertiesRes.ok) throw new Error("Failed");
-      const data = await propertiesRes.json();
-      setAllProperties(data.data || []);
+
+      setAllProperties(approved);
       if (facilitiesRes.ok) {
         const facilitiesData = await facilitiesRes.json();
         setFacilities(facilitiesData.data || []);

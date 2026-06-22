@@ -4,6 +4,7 @@ import PropertyCard from "../home/propertyCard";
 import { useNavigate } from "react-router-dom";
 import PaginationControls from "../../components/Pagination/Pagination";
 import { useAuth } from "../../context/AuthContext";
+import { fetchApprovedProperties } from "../../utils/fetchApprovedProperties";
 
 function PropertiesSection() {
   const [bookmarkedCount, setBookmarkedCount] = useState(0);
@@ -23,27 +24,20 @@ function PropertiesSection() {
         setLoading(true);
         const token = localStorage.getItem("token");
 
-        // Fetch properties و facilities 
-        const [propertiesRes, facilitiesRes] = await Promise.all([
-          fetch(`/api/Property/GetAll?pageSize=1000`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
+        // Fetch only Approved properties (verificationStatus from GetDetails)
+        const [approved, facilitiesRes] = await Promise.all([
+          fetchApprovedProperties(token),
           fetch(`/api/Facility/GetAll`, {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
           }),
         ]);
 
-
-        if (!propertiesRes.ok) throw new Error("Failed to fetch properties");
         if (!facilitiesRes.ok) throw new Error("Failed to fetch facilities");
-
-        const propertiesData = await propertiesRes.json();
         const facilitiesData = await facilitiesRes.json();
 
-        console.log(propertiesData.data?.[0]); 
-        setProperties(propertiesData.data || []);
-      
-        setTotalCount(propertiesData.count || 0);
+        console.log(approved[0]);
+        setProperties(approved);
+        setTotalCount(approved.length);
         setFacilities(facilitiesData.data || []);
         console.log("facilitiesData:", facilitiesData);
       } catch (err) {

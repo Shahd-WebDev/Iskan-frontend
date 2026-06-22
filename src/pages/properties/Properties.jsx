@@ -5,6 +5,7 @@ import FiltersRow from "../../components/home/FiltersRow";
 import PropertyCard from "../../components/home/PropertyCard";
 import PaginationControls from "../../components/Pagination/Pagination";
 import { applyFilters, EMPTY_FILTERS, getAvailablePriceBuckets } from "../../components/Search/FilterSearch";
+import { fetchApprovedProperties } from "../../utils/fetchApprovedProperties";
 
 import "./Properties.css";
 
@@ -58,24 +59,21 @@ useEffect(() => {
         setLoading(true);
         const token = localStorage.getItem("token");
 
-        const [propertiesRes, facilitiesRes] = await Promise.all([
-          fetch(`/api/Property/GetAll?pageSize=1000`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
+        // Fetch only Approved properties (checks verificationStatus via GetDetails)
+        const [approved, facilitiesRes] = await Promise.all([
+          fetchApprovedProperties(token),
           fetch(`/api/Facility/GetAll`, {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
           }),
         ]);
 
-        if (!propertiesRes.ok) throw new Error("Failed to fetch properties");
         if (!facilitiesRes.ok) throw new Error("Failed to fetch facilities");
 
-        const propertiesData = await propertiesRes.json();
         const facilitiesData = await facilitiesRes.json();
         console.log("facilities raw:", facilitiesData);
 console.log("facilities array:", facilitiesData.data);
 
-        setAllProperties(propertiesData.data || []);
+        setAllProperties(approved);
         setFacilities(facilitiesData.data || []);
       } catch (err) {
         setError(err.message);
