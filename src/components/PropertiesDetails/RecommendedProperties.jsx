@@ -1,4 +1,4 @@
-import PropertyCard from "../home/propertyCard";
+import PropertyCard from "../home/PropertyCard";
 import abstractDesign from "../../assets/home/Abstract Design.png";
 function RecommendedProperties({ currentPropertyId, recommendations = [], allFacilities = [] }) {
   return (
