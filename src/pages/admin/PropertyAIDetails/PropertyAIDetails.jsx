@@ -261,33 +261,8 @@ export default function PropertyAIDetails() {
 
         <hr className="divider" />
 
-        {/* Trust score */}
-        <div className="trust-section">
-          <div className="trust-header">
-            <div>
-              <p className="trust-label">Owner Trust Score</p>
-              <p className="trust-sub">Based on verification and history</p>
-            </div>
-            <div className="trust-right">
-              <span className="trust-score">
-                {property.verificationStatus === "Approved" ? "100" : "50"}
-              </span>
-              <span className="trust-excellent">
-                {property.verificationStatus}
-              </span>
-            </div>
-          </div>
-          <div className="trust-track">
-            <div className="trust-fill" style={{
-              width:
-                property.verificationStatus === "Approved"
-                  ? "100%"
-                  : "50%"
-            }}>
-              <span className="trust-dot" />
-            </div>
-          </div>
-        </div>
+       
+      
 
       </div>
     </>
