@@ -1,7 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 
-
 import {
   Bookmark,
   Settings,
@@ -49,7 +48,6 @@ export default function ProfileMenu() {
     document.addEventListener("mousedown", handleOutsideClick);
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, []);
-
 
   function handleLogout() {
     logout();
@@ -163,18 +161,6 @@ export default function ProfileMenu() {
           </Link>
 
           <hr />
-          {!isAdmin && (
-            <>
-              {/* Help */}
-              <Link to="/help" className="pm-item">
-                <LifeBuoy size={18} stroke="black" />
-                Help
-                <ChevronRight className="pm-arrow" size={18} />
-              </Link>
-
-              <hr />
-            </>
-          )}
 
           {isAdmin && (
             <Link

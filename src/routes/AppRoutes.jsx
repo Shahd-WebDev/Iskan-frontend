@@ -32,7 +32,6 @@ import SavedProperties from "../pages/SavedProperties/SavedProperties";
 import Terms from "../pages/Terms/Terms";
 import MyBooking from "../pages/MyBooking/MyBooking";
 
-
 /* Auth Pages */
 import Login from "../pages/auth/Login";
 // import Signup from "../pages/auth/Signup";
@@ -63,7 +62,6 @@ import Setting_Notifications from "../pages/user-settings/Notifications";
 
 /* Owner Dashboard */
 import OwnerLayout from "../pages/owner/layout/OwnerLayout";
-import MessagesPage from "../pages/owner/pages/Messages/MessagesPage";
 import DashboardPage from "../pages/owner/pages/Dashboard/DashboardPage";
 import PropertiesPage from "../pages/owner/pages/Properties/PropertiesPage";
 import AddPropertyPage from "../pages/owner/pages/AddProperty/AddPropertyPage";
@@ -107,7 +105,6 @@ export default function AppRoutes() {
         <Route path="/properties" element={<Properties />} />
         <Route path="/properties/:id" element={<PropertyDetails />} />
         <Route path="/faqs" element={<FAQs />} />
-
 
         <Route path="/terms" element={<Terms />} />
         <Route path="/bookings" element={<MyBooking />} />
@@ -158,7 +155,6 @@ export default function AppRoutes() {
           <Route path="properties" element={<PropertiesPage />} />
           <Route path="add-property" element={<AddPropertyPage />} />
           <Route path="reviews" element={<ReviewsPage />} />
-          <Route path="messages" element={<MessagesPage />} />
           <Route path="settings" element={<SettingsLayout />}>
             <Route index element={<Navigate to="profile" replace />} />
             <Route
@@ -171,7 +167,10 @@ export default function AppRoutes() {
           <Route path="verification" element={<VerificationCenter />} />
           <Route path="bookings" element={<BookingsPage />} />
           <Route path="bookings/:id" element={<BookingDetailsPage />} />
-          <Route path="property-bookings/:propertyId" element={<PropertyBookingsPage />} />
+          <Route
+            path="property-bookings/:propertyId"
+            element={<PropertyBookingsPage />}
+          />
         </Route>
       </Route>
 

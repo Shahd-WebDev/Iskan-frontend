@@ -8,11 +8,6 @@ export const login = async (email, password) => {
   return data;
 };
 
-export const registerByGoogle = async (payload) => {
-  const { data } = await api.post("/Authentication/RegisterByGoogle", payload);
-  return data;
-};
-
 export const forgotPassword = async (email) => {
   const { data } = await api.post("/Authentication/ForgotPassword", { email });
   return data;

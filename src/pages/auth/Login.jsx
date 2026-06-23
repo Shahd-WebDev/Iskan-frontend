@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { login as loginApi } from "../../services/auth";
-import { useGoogleAuth } from "../../hooks/useGoogleAuth";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
@@ -8,7 +7,6 @@ import {
   getRegisterErrorMessage,
   getLoginErrorMessage,
 } from "../../utils/authErrorMessages";
-import { GoogleLogin } from "@react-oauth/google";
 import { toast } from "react-toastify";
 import { decodeToken } from "../../utils/decodeToken";
 
@@ -22,8 +20,6 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
-
-  const { handleGoogleSuccess } = useGoogleAuth();
 
   // ======================
   // INPUT HANDLER
@@ -55,65 +51,64 @@ export default function Login() {
   // SUBMIT LOGIN
   // ======================
   async function handleSubmit(e) {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!validate()) return;
+    if (!validate()) return;
 
-  try {
-    const res = await loginApi(formData.email, formData.password);
+    try {
+      const res = await loginApi(formData.email, formData.password);
 
-    const token = res.token;
+      const token = res.token;
 
-    if (!token) {
-      toast.error("No token received ❌");
-      return;
+      if (!token) {
+        toast.error("No token received ❌");
+        return;
+      }
+
+      const decoded = decodeToken(token);
+
+      if (!decoded) {
+        toast.error("Invalid or expired token.");
+        return;
+      }
+
+      const role =
+        decoded[
+          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+        ] ||
+        decoded.role ||
+        "Student";
+
+      const userData = {
+        email: res.email || res.data?.email || formData.email,
+        name: res.name || res.data?.name || "User",
+        role,
+        verificationStatus:
+          res.verificationStatus || res.data?.verificationStatus || null,
+        status: res.status || res.data?.status || decoded.status || null,
+      };
+
+      login(token, userData);
+
+      toast.success("Login successful!");
+
+      const redirect = localStorage.getItem("redirectAfterLogin");
+
+      if (redirect) {
+        localStorage.removeItem("redirectAfterLogin");
+        navigate(redirect);
+      } else if (role === "Admin") {
+        navigate("/admin/dashboard");
+      } else if (role === "Owner") {
+        navigate("/owner-dashboard/dashboard");
+      } else {
+        navigate("/");
+      }
+    } catch (error) {
+      const errMsg = getLoginErrorMessage(error);
+      toast.error(errMsg);
     }
-
-    const decoded = decodeToken(token);
-
-    if (!decoded) {
-      toast.error("Invalid or expired token.");
-      return;
-    }
-
-    const role =
-      decoded[
-        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-      ] ||
-      decoded.role ||
-      "Student";
-
-    const userData = {
-      email: res.email || res.data?.email || formData.email,
-      name: res.name || res.data?.name || "User",
-      role,
-      verificationStatus:
-        res.verificationStatus || res.data?.verificationStatus || null,
-      status: res.status || res.data?.status || decoded.status || null,
-    };
-
-    login(token, userData);
-
-    toast.success("Login successful!");
-
-    const redirect = localStorage.getItem("redirectAfterLogin");
-
-    if (redirect) {
-      localStorage.removeItem("redirectAfterLogin");
-      navigate(redirect);
-    } else if (role === "Admin") {
-      navigate("/admin/dashboard");
-    } else if (role === "Owner") {
-      navigate("/owner-dashboard/dashboard");
-    } else {
-      navigate("/");
-    }
-  } catch (error) {
-    const errMsg = getLoginErrorMessage(error);
-    toast.error(errMsg);
   }
-}
-
 
   // ======================
   // UI
@@ -125,32 +120,6 @@ export default function Login() {
         <img src="/logo.png" alt="ISKAN Logo" className="iskan-logo" />
         <p className="welcome-text">Welcome back</p>
         <h1 className="login-title">Login to your account</h1>
-      </div>
-
-      {/* Google Login */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          marginBottom: "20px",
-        }}
-      >
-        <GoogleLogin
-          onSuccess={handleGoogleSuccess}
-          onError={() => toast.error("Google Login Failed")}
-          theme="filled_black"
-          shape="rectangular"
-          text="continue_with"
-          size="large"
-          width="300"
-        />
-      </div>
-
-      {/* Divider */}
-      <div className="divider">
-        <hr />
-        <span>Or</span>
-        <hr />
       </div>
 
       {/* Form */}

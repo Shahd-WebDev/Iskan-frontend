@@ -7,6 +7,7 @@ import ImageGallery from "../../../../components/PropertiesDetails/PropertyGalle
 import OwnerPropertyActions from "../../../../components/owner/PropertyDetails/OwnerPropertyActions";
 import OwnerPropertyDescription from "../../../../components/owner/PropertyDetails/OwnerPropertyDescription";
 import KeyFeatures from "../../../../components/PropertiesDetails/KeyFeatures";
+import { getImageUrl, fallbackImage } from "../../../../utils/imageLoader";
 
 import "../../../property-details/PropertyDetails.css";
 import {
@@ -186,13 +187,14 @@ export default function OwnerPropertyDetails() {
       apiProperty.owner?.phone ||
       apiProperty.owner?.phoneNumber ||
       null,
-    ownerImage:
+    ownerImage: getImageUrl(
       apiProperty.ownerImage ||
-      apiProperty.ownerProfilePicture ||
-      apiProperty.ownerProfileImageUrl ||
-      apiProperty.owner?.profileImageUrl ||
-      apiProperty.owner?.imageUrl ||
-      null,
+        apiProperty.ownerProfilePicture ||
+        apiProperty.ownerProfileImageUrl ||
+        apiProperty.owner?.profileImageUrl ||
+        apiProperty.owner?.imageUrl ||
+        null,
+    ),
     createdAt: apiProperty.createdAt,
     validationResultJson:
       apiProperty.validationResultJson ||
@@ -283,12 +285,13 @@ export default function OwnerPropertyDetails() {
               {/* Avatar */}
               {normalizedProperty.ownerImage ? (
                 <img
-                  src={
-                    normalizedProperty.ownerImage.startsWith("http")
-                      ? normalizedProperty.ownerImage
-                      : `https://isskan-1.runasp.net${normalizedProperty.ownerImage}`
-                  }
+                  src={normalizedProperty.ownerImage}
                   alt={normalizedProperty.ownerName || "Owner"}
+                  onError={(event) => {
+                    const img = event.currentTarget;
+                    img.onerror = null;
+                    img.src = fallbackImage;
+                  }}
                   style={{
                     width: "52px",
                     height: "52px",

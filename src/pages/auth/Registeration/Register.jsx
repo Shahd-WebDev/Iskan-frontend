@@ -17,7 +17,6 @@ export default function Register() {
 
   const [step, setStep] = useState(1);
   const [role, setRole] = useState(null);
-  const [googlePrefill, setGooglePrefill] = useState(null);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -34,8 +33,7 @@ export default function Register() {
   const next = () => setStep((s) => s + 1);
   const prev = () => setStep((s) => s - 1);
 
-  const updateData = (data) =>
-    setFormData((prev) => ({ ...prev, ...data }));
+  const updateData = (data) => setFormData((prev) => ({ ...prev, ...data }));
 
   // =========================
   // BUILD FORM DATA
@@ -56,8 +54,7 @@ export default function Register() {
     if (formData.gender) {
       fd.append(
         "Gender",
-        formData.gender.charAt(0).toUpperCase() +
-        formData.gender.slice(1)
+        formData.gender.charAt(0).toUpperCase() + formData.gender.slice(1),
       );
     }
 
@@ -96,9 +93,7 @@ export default function Register() {
 
       await registerApi(fd);
 
-      toast.success(
-        "Account created successfully! Please verify your email."
-      );
+      toast.success("Account created successfully! Please verify your email.");
 
       setStep(4);
     } catch (error) {
@@ -118,8 +113,7 @@ export default function Register() {
     setApiError("");
 
     try {
-      if (!files.selfie)
-        throw new Error("Selfie image is required");
+      if (!files.selfie) throw new Error("Selfie image is required");
 
       if (!files.idFront)
         throw new Error("National ID Front image is required");
@@ -138,7 +132,7 @@ export default function Register() {
       await registerApi(fd);
 
       toast.success(
-        "Registration completed successfully! Please verify your email."
+        "Registration completed successfully! Please verify your email.",
       );
 
       next();
@@ -152,22 +146,6 @@ export default function Register() {
   };
 
   // =========================
-  // GOOGLE PREFILL OWNER
-  // =========================
-  const handleGoogleOwnerPrefill = (prefillData) => {
-    setRole("owner");
-    setGooglePrefill(prefillData);
-
-    updateData({
-      firstName: prefillData.firstName || "",
-      lastName: prefillData.lastName || "",
-      email: prefillData.email || "",
-    });
-
-    setStep(3);
-  };
-
-  // =========================
   // UI
   // =========================
   return (
@@ -176,10 +154,8 @@ export default function Register() {
         <RoleStep
           onSelect={(selectedRole) => {
             setRole(selectedRole);
-            setGooglePrefill(null);
             next();
           }}
-          onGoogleOwnerPrefill={handleGoogleOwnerPrefill}
         />
       )}
 
@@ -188,11 +164,7 @@ export default function Register() {
           role={role}
           data={formData}
           updateData={updateData}
-          next={
-            role === "student"
-              ? handleStudentSubmit
-              : next
-          }
+          next={role === "student" ? handleStudentSubmit : next}
           prev={prev}
           isLoading={isLoading}
           apiError={apiError}
@@ -202,22 +174,13 @@ export default function Register() {
       {step === 3 && role === "owner" && (
         <OwnerVerificationStep
           onSubmit={handleOwnerVerificationSubmit}
-          onBack={
-            googlePrefill
-              ? () => setStep(1)
-              : prev
-          }
+          onBack={prev}
           isLoading={isLoading}
           apiError={apiError}
         />
       )}
 
-      {step === 4 && (
-        <SuccessStep
-          email={formData.email}
-          role={role}
-        />
-      )}
+      {step === 4 && <SuccessStep email={formData.email} role={role} />}
     </>
   );
 }

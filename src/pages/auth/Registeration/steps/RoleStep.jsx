@@ -1,19 +1,10 @@
 import { useState } from "react";
 import { User, Building2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { GoogleLogin } from "@react-oauth/google";
-import { useGoogleAuth } from "../../../../hooks/useGoogleAuth";
 import "../../../../styles/auth.css";
 
-export default function RoleStep({ onSelect, onGoogleOwnerPrefill }) {
+export default function RoleStep({ onSelect }) {
   const [selected, setSelected] = useState("student");
-
-  // onGoogleOwnerPrefill is passed down from Register.jsx so that when an
-  // owner clicks Google on the role-selection screen, we can skip BasicInfo
-  // and jump straight to OwnerDetailsStep with pre-filled name/email.
-  const { handleGoogleSuccess } = useGoogleAuth({
-    onOwnerNeedDetails: onGoogleOwnerPrefill,
-  });
 
   const handleContinue = () => {
     if (selected) onSelect(selected);
@@ -72,7 +63,6 @@ export default function RoleStep({ onSelect, onGoogleOwnerPrefill }) {
         <span>Or</span>
         <hr />
       </div>
-
 
       <div className="register-text" style={{ marginTop: "16px" }}>
         Already have an account? <Link to="/login">Log in</Link>

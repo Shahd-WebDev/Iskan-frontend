@@ -55,11 +55,7 @@ export default function OwnerLayout() {
       label: "Bookings",
       icon: Calendar,
     },
-    {
-      to: "/owner-dashboard/messages",
-      label: "Messages",
-      icon: MessageSquare,
-    },
+
     { to: "/owner-dashboard/reviews", label: "Reviews", icon: Star },
     {
       to: "/owner-dashboard/verification",

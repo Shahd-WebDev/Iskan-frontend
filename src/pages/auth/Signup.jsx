@@ -77,23 +77,23 @@ export default function Signup() {
 
   // ✅ Submit
   function handleSubmit(e) {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (validate()) {
-    const newUser = {
-      name: formData.firstName + " " + formData.lastName,
-      email: formData.email,
-      avatar: null,
-      accountType: null, // لسه هيختاره بعدين
-    };
+    if (validate()) {
+      const newUser = {
+        name: formData.firstName + " " + formData.lastName,
+        email: formData.email,
+        avatar: null,
+        accountType: null, // لسه هيختاره بعدين
+      };
 
-    // ✅ Save user temporarily
-    localStorage.setItem("user", JSON.stringify(newUser));
+      // ✅ Save user temporarily
+      localStorage.setItem("user", JSON.stringify(newUser));
 
-    // ✅ Go to choose account page
-    navigate("/choose-account");
+      // ✅ Go to choose account page
+      navigate("/choose-account");
+    }
   }
-}
 
   return (
     <div className="auth-container">
@@ -102,16 +102,6 @@ export default function Signup() {
         <img src="/logo.png" alt="ISKAN Logo" className="iskan-logo" />
         <h1 className="login-title">Create an account</h1>
       </div>
-{/* Google Button */}
-<button className="google-btn" type="button">
-  <img
-    src="https://www.svgrepo.com/show/475656/google-color.svg"
-    alt="Google"
-    width="18"
-  />
-  Google
-</button>
-
 
       {/* Divider */}
       <div className="divider">
@@ -149,9 +139,7 @@ export default function Signup() {
               value={formData.lastName}
               onChange={handleChange}
             />
-            {errors.lastName && (
-              <p className="error-text">{errors.lastName}</p>
-            )}
+            {errors.lastName && <p className="error-text">{errors.lastName}</p>}
           </div>
         </div>
 
@@ -225,9 +213,7 @@ export default function Signup() {
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </span>
 
-          {errors.password && (
-            <p className="error-text">{errors.password}</p>
-          )}
+          {errors.password && <p className="error-text">{errors.password}</p>}
         </div>
 
         {/* Button */}
