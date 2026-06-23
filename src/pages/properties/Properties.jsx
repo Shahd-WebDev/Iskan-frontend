@@ -83,7 +83,8 @@ export default function Properties() {
 
         const facilitiesData = await facilitiesRes.json();
 
-        setAllProperties(approved);
+        console.log(propertiesData); 
+        setAllProperties(propertiesData.data || []);
         setFacilities(facilitiesData.data || []);
       } catch (err) {
         setError(err.message);
