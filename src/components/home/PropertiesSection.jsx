@@ -35,10 +35,11 @@ function PropertiesSection() {
         if (!facilitiesRes.ok) throw new Error("Failed to fetch facilities");
         const facilitiesData = await facilitiesRes.json();
 
+      console.log("approved =", approved);
+            setProperties(approved);
+setTotalCount(approved.length);
 
-        setProperties(propertiesData.data || []);
-      
-        setTotalCount(propertiesData.count || 0);
+
 
    
         setFacilities(facilitiesData.data || []);
@@ -51,6 +52,11 @@ function PropertiesSection() {
 
     fetchData();
   }, [currentPage]);
+
+  useEffect(() => {
+  console.log("properties =", properties);
+}, [properties]);
+
 
   const itemsPerPage = 4;
  const totalPages = Math.ceil(properties.length / itemsPerPage);
