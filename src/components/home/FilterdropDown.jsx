@@ -76,7 +76,7 @@ function FilterDropdown({ icon, label, options = [], value = "", onChange }) {
           {renderDisplayValue()}
         </div>
         <img
-          src={dropdownIcon}
+          src={dropDown}
           className={`dropdown-arrow object-fit-contain ${open || hasValue ? "rotate" : ""}`}
           alt="arrow"
         />
