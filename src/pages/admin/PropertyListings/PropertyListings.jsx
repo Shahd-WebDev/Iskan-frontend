@@ -1,6 +1,5 @@
 import SkeletonCard from "../../../components/common/SkeletonCard";
-import "./propertyListings.css";
-
+import "./PropertyListings.css";
 import { useEffect, useState } from "react";
 import { getPendingProperties } from "../../../services/adminProperties";
 
