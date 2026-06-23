@@ -1,6 +1,5 @@
 import SkeletonCard from "../../../components/common/SkeletonCard";
-import "./propertyVerification.css";
-
+import "./PropertyVerification.css";
 import AdminPropertyCard from "../../../components/admin/PropertyCard/AdminPropertyCard";
 import SearchBar from "../../../components/home/SearchBar";
 import PaginationControls from "../../../components/Pagination/Pagination";
