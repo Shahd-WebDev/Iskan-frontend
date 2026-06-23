@@ -55,15 +55,15 @@ export default function DashboardPage() {
       setReviews(
         Array.isArray(reviewsData)
           ? reviewsData
-          : reviewsData?.data || reviewsData?.reviews || []
+          : reviewsData?.data || reviewsData?.reviews || [],
       );
 
       // ── Compute real active booking count from all properties ──
       if (ownedProperties.length > 0) {
         const bookingResults = await Promise.allSettled(
           ownedProperties.map((p) =>
-            getBookingsByProperty(p.id, { PageIndex: 1, PageSize: 1 })
-          )
+            getBookingsByProperty(p.id, { PageIndex: 1, PageSize: 1 }),
+          ),
         );
         const total = bookingResults.reduce((sum, result) => {
           if (result.status === "fulfilled") {
@@ -93,7 +93,6 @@ export default function DashboardPage() {
   useEffect(() => {
     fetchDashboardData();
   }, []);
-
 
   const displayName = dashboardData?.ownerName || user?.name || "Owner";
 
@@ -326,18 +325,34 @@ export default function DashboardPage() {
   const pendingActions = stats.pendingActions ?? 0;
 
   // Compute dynamic average rating from backend reviews API
-  const averageRating = reviews.length > 0
-    ? reviews.reduce((sum, r) => sum + Number(r.rating || r.stars || 0), 0) / reviews.length
-    : 0;
+  const averageRating =
+    reviews.length > 0
+      ? reviews.reduce((sum, r) => sum + Number(r.rating || r.stars || 0), 0) /
+        reviews.length
+      : 0;
 
   const renderDashboardStars = (rating) => {
     const stars = [];
     const fullStars = Math.floor(rating);
     for (let i = 1; i <= 5; i++) {
       if (i <= fullStars) {
-        stars.push(<Star key={i} size={14} className={styles["star-filled"]} style={{ fill: "#F59E0B", color: "#F59E0B" }} />);
+        stars.push(
+          <Star
+            key={i}
+            size={14}
+            className={styles["star-filled"]}
+            style={{ fill: "#F59E0B", color: "#F59E0B" }}
+          />,
+        );
       } else {
-        stars.push(<Star key={i} size={14} className={styles["star-empty"]} style={{ color: "#CBD5E1" }} />);
+        stars.push(
+          <Star
+            key={i}
+            size={14}
+            className={styles["star-empty"]}
+            style={{ color: "#CBD5E1" }}
+          />,
+        );
       }
     }
     return stars;
@@ -479,12 +494,12 @@ export default function DashboardPage() {
             </button>
           </Link>
           <Link
-            to="/owner-dashboard/messages"
+            to="/owner-dashboard/dashboard"
             style={{ textDecoration: "none" }}
           >
             <button className={`${styles["btn"]} ${styles["btn-outline"]}`}>
               <MessageSquare size={18} />
-              <span>Check Messages</span>
+              <span>Messages (removed)</span>
             </button>
           </Link>
         </div>
@@ -611,15 +626,31 @@ export default function DashboardPage() {
             </Link>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginTop: "16px" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "16px",
+              marginTop: "16px",
+            }}
+          >
             {reviews.slice(0, 3).length > 0 ? (
               reviews.slice(0, 3).map((rev) => {
                 const id = rev.id || rev.reviewId;
                 const rating = Number(rev.rating || rev.stars || 0);
-                const comment = rev.comment || rev.text || rev.reviewText || "No comment provided.";
+                const comment =
+                  rev.comment ||
+                  rev.text ||
+                  rev.reviewText ||
+                  "No comment provided.";
                 const createdAt = rev.createdAt || rev.date || rev.reviewDate;
-                const studentName = rev.studentName || rev.reviewerName || rev.user?.name || "Student Guest";
-                const propertyName = rev.propertyName || rev.propertyTitle || "My Property";
+                const studentName =
+                  rev.studentName ||
+                  rev.reviewerName ||
+                  rev.user?.name ||
+                  "Student Guest";
+                const propertyName =
+                  rev.propertyName || rev.propertyTitle || "My Property";
 
                 const formattedDate = createdAt
                   ? new Date(createdAt).toLocaleDateString(undefined, {
@@ -629,20 +660,67 @@ export default function DashboardPage() {
                   : "";
 
                 return (
-                  <div key={id} style={{ display: "flex", flexDirection: "column", padding: "12px", border: "1px solid #F3F4F6", borderRadius: "10px", gap: "6px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div
+                    key={id}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      padding: "12px",
+                      border: "1px solid #F3F4F6",
+                      borderRadius: "10px",
+                      gap: "6px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
                       <div>
-                        <span style={{ fontSize: "14px", fontWeight: "600", color: "#111827" }}>{studentName}</span>
-                        <span style={{ fontSize: "10px", backgroundColor: "#F3F4F6", color: "#4B5563", padding: "2px 6px", borderRadius: "9999px", marginLeft: "8px", fontWeight: "600" }}>
+                        <span
+                          style={{
+                            fontSize: "14px",
+                            fontWeight: "600",
+                            color: "#111827",
+                          }}
+                        >
+                          {studentName}
+                        </span>
+                        <span
+                          style={{
+                            fontSize: "10px",
+                            backgroundColor: "#F3F4F6",
+                            color: "#4B5563",
+                            padding: "2px 6px",
+                            borderRadius: "9999px",
+                            marginLeft: "8px",
+                            fontWeight: "600",
+                          }}
+                        >
                           {propertyName}
                         </span>
                       </div>
-                      <span style={{ fontSize: "11px", color: "#9CA3AF" }}>{formattedDate}</span>
+                      <span style={{ fontSize: "11px", color: "#9CA3AF" }}>
+                        {formattedDate}
+                      </span>
                     </div>
                     <div style={{ display: "flex", gap: "2px" }}>
                       {renderDashboardStars(rating)}
                     </div>
-                    <p style={{ fontSize: "13px", color: "#4B5563", margin: "4px 0 0 0", lineBreak: "anywhere", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+                    <p
+                      style={{
+                        fontSize: "13px",
+                        color: "#4B5563",
+                        margin: "4px 0 0 0",
+                        lineBreak: "anywhere",
+                        overflow: "hidden",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                      }}
+                    >
                       {comment}
                     </p>
                   </div>
@@ -661,7 +739,6 @@ export default function DashboardPage() {
             )}
           </div>
         </div>
-
       </div>
     </div>
   );

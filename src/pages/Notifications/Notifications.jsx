@@ -38,21 +38,57 @@ export default function Notifications() {
     const t = type.toLowerCase();
     const ttl = title.toLowerCase();
     if (t.includes("booking") || ttl.includes("booking")) {
-      return <Calendar size={20} className={styles.icon} style={{ color: "#10B981" }} />;
+      return (
+        <Calendar
+          size={20}
+          className={styles.icon}
+          style={{ color: "#10B981" }}
+        />
+      );
     }
-    if (t.includes("review") || ttl.includes("review") || ttl.includes("rating")) {
-      return <Star size={20} className={styles.icon} style={{ color: "#F59E0B" }} />;
+    if (
+      t.includes("review") ||
+      ttl.includes("review") ||
+      ttl.includes("rating")
+    ) {
+      return (
+        <Star size={20} className={styles.icon} style={{ color: "#F59E0B" }} />
+      );
     }
-    if (t.includes("message") || ttl.includes("message") || ttl.includes("chat")) {
-      return <MessageSquare size={20} className={styles.icon} style={{ color: "#3B82F6" }} />;
+    if (
+      t.includes("message") ||
+      ttl.includes("message") ||
+      ttl.includes("chat")
+    ) {
+      return (
+        <MessageSquare
+          size={20}
+          className={styles.icon}
+          style={{ color: "#3B82F6" }}
+        />
+      );
     }
     if (t.includes("report") || ttl.includes("report")) {
-      return <AlertTriangle size={20} className={styles.icon} style={{ color: "#EF4444" }} />;
+      return (
+        <AlertTriangle
+          size={20}
+          className={styles.icon}
+          style={{ color: "#EF4444" }}
+        />
+      );
     }
     if (t.includes("property") || ttl.includes("property")) {
-      return <Building2 size={20} className={styles.icon} style={{ color: "#8B5CF6" }} />;
+      return (
+        <Building2
+          size={20}
+          className={styles.icon}
+          style={{ color: "#8B5CF6" }}
+        />
+      );
     }
-    return <Info size={20} className={styles.icon} style={{ color: "#6B7280" }} />;
+    return (
+      <Info size={20} className={styles.icon} style={{ color: "#6B7280" }} />
+    );
   };
 
   // Filter out property verification notifications: Approved, Pending, Rejected
@@ -82,7 +118,9 @@ export default function Notifications() {
   });
 
   // Calculate unread count specifically for filtered notifications
-  const filteredUnreadCount = filteredNotifications.filter((n) => !n.isRead).length;
+  const filteredUnreadCount = filteredNotifications.filter(
+    (n) => !n.isRead,
+  ).length;
 
   const handleNotificationClick = async (item) => {
     // Mark read
@@ -94,8 +132,10 @@ export default function Notifications() {
     let detectedType = (item.type || "").toLowerCase();
     if (!detectedType) {
       if (title.includes("booking")) detectedType = "booking";
-      else if (title.includes("review") || title.includes("rating")) detectedType = "review";
-      else if (title.includes("message") || title.includes("chat")) detectedType = "message";
+      else if (title.includes("review") || title.includes("rating"))
+        detectedType = "review";
+      else if (title.includes("message") || title.includes("chat"))
+        detectedType = "message";
       else if (title.includes("report")) detectedType = "report";
       else if (title.includes("property")) detectedType = "property";
     }
@@ -117,7 +157,7 @@ export default function Notifications() {
       }
     } else if (detectedType.includes("message")) {
       if (role === "owner") {
-        navigate("/owner-dashboard/messages");
+        navigate("/owner-dashboard/dashboard");
       } else {
         navigate("/");
       }
@@ -163,7 +203,16 @@ export default function Notifications() {
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.titleRow}>
-          <h2 style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "28px", fontWeight: "700", color: "#0f172a" }}>
+          <h2
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              fontSize: "28px",
+              fontWeight: "700",
+              color: "#0f172a",
+            }}
+          >
             Notifications
             {filteredUnreadCount > 0 && (
               <span className={styles.badge}>{filteredUnreadCount}</span>
@@ -175,7 +224,9 @@ export default function Notifications() {
             </button>
           )}
         </div>
-        <p style={{ color: "#64748b", marginTop: "4px" }}>Stay updated with your bookings, reviews, and messages.</p>
+        <p style={{ color: "#64748b", marginTop: "4px" }}>
+          Stay updated with your bookings, reviews, and messages.
+        </p>
       </div>
 
       {loading && sortedNotifications.length === 0 ? (
@@ -189,7 +240,8 @@ export default function Notifications() {
                 background: "#ffffff",
                 animation: "shimmer 1.5s infinite linear",
                 backgroundSize: "200% 100%",
-                backgroundImage: "linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%)",
+                backgroundImage:
+                  "linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%)",
                 height: "80px",
                 border: "1px solid #e2e8f0",
               }}
@@ -199,7 +251,11 @@ export default function Notifications() {
       ) : error ? (
         /* Error State */
         <div className={styles.empty}>
-          <AlertTriangle size={40} color="#ef4444" style={{ marginBottom: "12px" }} />
+          <AlertTriangle
+            size={40}
+            color="#ef4444"
+            style={{ marginBottom: "12px" }}
+          />
           <h3>Failed to load notifications</h3>
           <p>{error}</p>
           <button className={styles.markAllBtn} onClick={refetch}>
@@ -212,7 +268,10 @@ export default function Notifications() {
         <div className={styles.empty}>
           <Bell size={40} style={{ color: "#94a3b8", marginBottom: "12px" }} />
           <h3>No notifications yet</h3>
-          <p>You are all caught up! When you get new notifications, they will appear here.</p>
+          <p>
+            You are all caught up! When you get new notifications, they will
+            appear here.
+          </p>
         </div>
       ) : (
         <div className={styles.list}>
@@ -230,11 +289,20 @@ export default function Notifications() {
               </div>
 
               <div className={styles.content}>
-                <h4 style={{ fontWeight: item.isRead ? "600" : "700", color: "#0f172a" }}>
+                <h4
+                  style={{
+                    fontWeight: item.isRead ? "600" : "700",
+                    color: "#0f172a",
+                  }}
+                >
                   {item.title}
                 </h4>
-                <p style={{ color: "#334155" }}>{item.message || item.description}</p>
-                <span style={{ color: "#94a3b8" }}>{formatTimeAgo(item.createdAt || item.date)}</span>
+                <p style={{ color: "#334155" }}>
+                  {item.message || item.description}
+                </p>
+                <span style={{ color: "#94a3b8" }}>
+                  {formatTimeAgo(item.createdAt || item.date)}
+                </span>
               </div>
 
               {!item.isRead && (
@@ -257,4 +325,4 @@ export default function Notifications() {
       )}
     </div>
   );
-}
+}
