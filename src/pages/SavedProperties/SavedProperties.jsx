@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { SavedContext } from "../../context/SavedContext";
-import PropertyCard from "../../components/home/propertyCard";
+import PropertyCard from "../../components/home/PropertyCard";
 import { BookmarkX } from "lucide-react";
 import "../properties/Properties.css";
 import { useAuth } from "../../context/AuthContext";
