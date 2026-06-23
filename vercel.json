@@ -1,0 +1,15 @@
+{
+
+  "rewrites": [
+
+    {
+
+      "source": "/api/(.*)",
+
+      "destination": "https://isskan-1.runasp.net/api/$1"
+
+    }
+
+  ]
+
+}
