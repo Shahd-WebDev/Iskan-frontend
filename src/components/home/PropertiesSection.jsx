@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import abstractDesign from "../../assets/home/Abstract Design.png";
-import PropertyCard from "../home/propertyCard";
+import PropertyCard from "../home/PropertyCard";
 import { useNavigate } from "react-router-dom";
 import PaginationControls from "../../components/Pagination/Pagination";
 import { useAuth } from "../../context/AuthContext";
