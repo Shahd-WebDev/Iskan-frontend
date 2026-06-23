@@ -5,7 +5,7 @@ import {
   getBookingTrends,
   getRecentActivity
 } from "../../../services/adminDashboard";
-import "./dashboard.css";
+import "./Dashboard.css";
 import StatsCard from "../../../components/admin/StatsCard";
 import ActivityItem from "../../../components/admin/ActivityItem";
 import BookingTrendsChart from "../../../components/admin/BookingTrendsChart";
