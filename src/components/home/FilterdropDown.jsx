@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import dropdownIcon from "../../assets/home/dropDown.png";
-
+import dropDown from "../../assets/home/dropdown.png";
 function FilterDropdown({ icon, label, options = [], value = "", onChange }) {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
