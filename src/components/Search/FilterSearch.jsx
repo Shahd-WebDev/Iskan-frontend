@@ -40,13 +40,42 @@ function getType(p) {
   return p.propertyType || p.type || "Room";
 }
 
+// ✅ نطاق ديناميكي للبحث الفوري: من الرقم المكتوب لحد أقرب "محطة" ثابتة (مستثناة)
+// مثال: 1000 -> [1000, 1999] | 2000 -> [2000, 2999] | 4000 -> [4000, 4999]
+const PRICE_STOPS = [1000, 2000, 3000, 4000, 5000, 6000, 7000, Infinity];
+function matchesDynamicPrice(p, numQ) {
+  const price = parseInt(p.pricePerMonth || p.price || 0);
+  const nextStop = PRICE_STOPS.find((s) => s > numQ);
+  const upper = nextStop === Infinity ? Infinity : nextStop - 1;
+  return price >= numQ && price <= upper;
+}
+
+//  بحث فوري 
+export function matchesLiveSearch(p, rawQuery, facilitiesMap = {}) {
+  const q = (rawQuery || "").trim().toLowerCase();
+  if (!q) return true;
+
+  const numQ = parseInt(q);
+  const isNumeric = !isNaN(numQ) && /^\d+$/.test(q);
+
+  if (isNumeric) {
+    return matchesDynamicPrice(p, numQ);
+  }
+
+  const title = p.title || "";
+  const location = p.address || p.location || "";
+  const type = getType(p);
+  const facilityNames = (p.facilities || []).map((id) => facilitiesMap[id]).filter(Boolean).join(" ");
+  const haystack = `${title} ${location} ${type} ${facilityNames}`.toLowerCase();
+  return haystack.includes(q);
+}
+
 
 export function applyFilters(list, filters, facilitiesMap = {}) {
   return list.filter((p) => {
     const location = p.address || p.location || "";
     const type = getType(p);
     const rooms = p.roomsNumber ?? p.rooms;
-    const title = p.title || "";
 
     if (filters.location && !location.toLowerCase().includes(filters.location.toLowerCase())) return false;
     if (filters.propertyType && type.toLowerCase() !== filters.propertyType.toLowerCase()) return false;
@@ -58,24 +87,26 @@ export function applyFilters(list, filters, facilitiesMap = {}) {
       if (!filters.facilities.every((f) => propFacilityNames.includes(f))) return false;
     }
 
-    if (filters.search?.trim()) {
-      const q = filters.search.trim().toLowerCase();
-      const haystack = `${title} ${location} ${type}`.toLowerCase();
-      if (!haystack.includes(q)) return false;
-    }
+    //  بحث فوري 
+    if (filters.search?.trim() && !matchesLiveSearch(p, filters.search, facilitiesMap)) return false;
 
     return true;
   });
 }
 
-export function detectSearchIntent(query, allProperties = []) {
+export function detectSearchIntent(query, allProperties = [], facilitiesMap = {}) {
   const q = query.toLowerCase().trim();
   if (!q) return { filters: EMPTY_FILTERS, matched: false };
 
   const allLocations = [...new Set(allProperties.map((p) => (p.address || p.location || "").toLowerCase()))];
   const allTypes     = [...new Set(allProperties.map((p) => getType(p).toLowerCase()))];
-  const allAmenities = [...new Set(allProperties.flatMap((p) => p.amenities || []).map((a) => a.toLowerCase()))];
   const allRooms     = [...new Set(allProperties.map((p) => p.roomsNumber ?? p.rooms))];
+
+  const allFacilityNames = [
+    ...new Set(
+      allProperties.flatMap((p) => (p.facilities || []).map((id) => facilitiesMap[id]).filter(Boolean))
+    )
+  ];
 
   console.log("DEBUG q:", q);
   console.log("DEBUG allLocations:", allLocations);
@@ -103,11 +134,13 @@ export function detectSearchIntent(query, allProperties = []) {
   }
 
   if (!isNaN(numQ) && numQ > 10) {
-    const bucket = PRICE_BUCKETS.find(({ min, max }) => numQ >= min && numQ <= max);
-    if (bucket) {
-      console.log("DEBUG matched price bucket");
-      return { filters: { ...EMPTY_FILTERS, priceRange: bucket.label }, matched: true };
-    }
+    const STOPS = [1000, 2000, 3000, 4000, 5000, 6000, 7000, Infinity];
+    const nextStop = STOPS.find((s) => s > numQ);
+    const upper = nextStop === Infinity ? "" : nextStop - 1;
+    const dynamicRange = `${numQ}-${upper}`;
+
+    console.log("DEBUG matched dynamic price range:", dynamicRange);
+    return { filters: { ...EMPTY_FILTERS, priceRange: dynamicRange }, matched: true };
   }
 
   const matchedBucket = PRICE_BUCKETS.find((b) => b.label.toLowerCase() === q);
@@ -116,11 +149,12 @@ export function detectSearchIntent(query, allProperties = []) {
     return { filters: { ...EMPTY_FILTERS, priceRange: matchedBucket.label }, matched: true };
   }
 
-  const matchedAmenity = allAmenities.find((a) => a.includes(q) || q.includes(a));
-  console.log("DEBUG matchedAmenity:", matchedAmenity, "allAmenities:", allAmenities);
-  if (matchedAmenity) {
-    const original = allProperties.flatMap((p) => p.amenities || []).find((a) => a.toLowerCase() === matchedAmenity);
-    return { filters: { ...EMPTY_FILTERS, facilities: [original || matchedAmenity] }, matched: true };
+  const matchedFacility = allFacilityNames.find(
+    (name) => name.toLowerCase().includes(q) || q.includes(name.toLowerCase())
+  );
+  console.log("DEBUG matchedFacility:", matchedFacility, "allFacilityNames:", allFacilityNames);
+  if (matchedFacility) {
+    return { filters: { ...EMPTY_FILTERS, facilities: [matchedFacility] }, matched: true };
   }
 
   console.log("DEBUG checking titles:", allProperties.map(p => p.title));

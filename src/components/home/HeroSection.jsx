@@ -2,7 +2,7 @@ import SearchBar from "../../components/home/SearchBar";
 import FiltersRow from "../home/FiltersRow";
 import { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAvailablePriceBuckets } from "../Search/FilterSearch";
+import { getAvailablePriceBuckets, detectSearchIntent } from "../Search/FilterSearch";
 
 function getType(p) {
   if (typeof p.propertyType === "number") {
@@ -52,6 +52,15 @@ function HeroSection() {
     fetchData();
   }, []);
 
+  // facilitiesMap 
+  const facilitiesMap = useMemo(() => {
+    const map = {};
+    facilities.forEach((f) => {
+      map[f.id] = f.name;
+    });
+    return map;
+  }, [facilities]);
+
   const dynamicOptions = useMemo(() => ({
     locations: [...new Set(allProperties.map((p) => p.address || p.location || ""))].filter(Boolean).sort(),
     types:      [...new Set(allProperties.map((p) => getType(p)))].filter(Boolean).sort(),
@@ -75,20 +84,33 @@ function HeroSection() {
 
   navigate(`/properties?${params.toString()}`);
 };
+
 const handleSearch = (e) => {
   e.preventDefault();
+  const trimmed = searchText.trim();
+
+  const { filters: detectedFilters, matched } = detectSearchIntent(trimmed, allProperties, facilitiesMap);
+
   const params = new URLSearchParams();
 
-  Object.entries(filters).forEach(([k, v]) => {
-    if (Array.isArray(v) ? v.length > 0 : v) {
-      params.set(k, Array.isArray(v) ? v.join(",") : v);
-    }
-  });
-
-  if (searchText.trim()) params.set("search", searchText.trim());
+  if (matched) {
+    Object.entries(detectedFilters).forEach(([k, v]) => {
+      if (Array.isArray(v) ? v.length > 0 : v) {
+        params.set(k, Array.isArray(v) ? v.join(",") : v);
+      }
+    });
+  } else {
+    Object.entries(filters).forEach(([k, v]) => {
+      if (Array.isArray(v) ? v.length > 0 : v) {
+        params.set(k, Array.isArray(v) ? v.join(",") : v);
+      }
+    });
+    if (trimmed) params.set("search", trimmed);
+  }
 
   navigate(`/properties?${params.toString()}`);
 };
+
   return (
   <section id="hero" className="hero-section">
     <div className="page-container">
