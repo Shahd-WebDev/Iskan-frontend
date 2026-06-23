@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { getPropertyById } from "../../../services/adminProperties";
 import { useParams } from "react-router-dom";
 import "./PropertyAIDetails.css";
+
 import {
   Sparkles,
   CheckCircle,
@@ -15,6 +16,8 @@ import {
   Calendar,
   Home,
 } from "lucide-react";
+
+
 
 /* ── Thumbnail status badge ── */
 const ThumbBadge = ({ status }) => {
@@ -38,17 +41,18 @@ export default function PropertyAIDetails() {
   const [mainImage, setMainImage] = useState(null);
   const [activeThumb, setActiveThumb] = useState(0);
 
+
+
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
-  const main = property?.images?.find(img => img.isMain);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await getPropertyById(id);
-        console.log("DETAILS:", data);
+        console.log("PROPERTY DATA", data);
         setProperty(data);
-      } catch (err) {
-        console.log(err);
+
+
       } finally {
         setLoading(false);
       }
@@ -110,8 +114,15 @@ export default function PropertyAIDetails() {
             alt="Main Property"
           />          <div className="ai-badge">
             <CheckCircle size={12} />
-            <span className="ai-badge__title">High Quality</span>
-            <span className="ai-badge__confidence">98% Confidence</span>
+            <span className="ai-badge__title">
+              {property.verificationStatus}
+            </span>
+            <span className="ai-badge__confidence">
+              {property.verificationStatus === "Approved"
+                ? "Verified Property"
+                : "Pending Review"}
+            </span>
+
           </div>
         </div>
 
@@ -139,24 +150,31 @@ export default function PropertyAIDetails() {
 
             <div className="analysis-col">
               <span className="analysis-col__label">Resolution</span>
-              <span className="analysis-col__value">1920×1080</span>
-              <span className="analysis-col__sub">HD</span>
+              <span className="analysis-col__value">
+                {property.roomsNumber}
+              </span>
+
+              <span className="analysis-col__sub">
+                Rooms
+              </span>
             </div>
 
             <span className="analysis-divider" aria-hidden="true" />
 
             <div className="analysis-col">
               <span className="analysis-col__label">Authenticity</span>
-              <span className="analysis-col__value analysis-col__value--blue">Original</span>
-              <span className="analysis-col__value analysis-col__value--blue">Image</span>
+              <span className="analysis-col__value analysis-col__value--blue">
+                {property.verificationStatus}
+              </span>
             </div>
 
             <span className="analysis-divider" aria-hidden="true" />
 
             <div className="analysis-col">
-              <span className="analysis-col__label">AI Detection</span>
-              <span className="analysis-col__value">Not AI</span>
-              <span className="analysis-col__value">Generated</span>
+              <span className="analysis-col__label">Property Type</span>
+              <span className="analysis-col__value">
+                {property.propertyType}
+              </span>
             </div>
 
           </div>
@@ -175,7 +193,12 @@ export default function PropertyAIDetails() {
               <Shield size={10} strokeWidth={2.5} />
             </span>
             <img
-              src={property.ownerImage || "/user-avatar.jpg"}
+              src={
+                property.ownerImage
+                  ? "https://isskan-1.runasp.net" + property.ownerImage
+                  : "/user-avatar.jpg"
+              }
+
               alt={property.ownerName}
               className="owner-avatar"
             />
@@ -184,19 +207,20 @@ export default function PropertyAIDetails() {
           <div className="owner-info">
             <div className="owner-name-row">
               <h4 className="owner-name">{property.ownerName}</h4>
-              <span className="verified-badge">Verified</span>
-            </div>
+              <span className="verified-badge">
+                {property.verificationStatus || "Pending"}
+              </span>            </div>
             <p className="owner-meta">
               <Star size={13} className="icon-star" />
-              4.8&nbsp;<span className="meta-muted">(24 reviews)</span>
+              {property.verificationStatus}
             </p>
             <p className="owner-meta">
               <Calendar size={13} className="icon-neutral" />
-              Member since January 2022
+              {new Date(property.createdAt).toLocaleDateString()}
             </p>
             <p className="owner-meta">
               <Home size={13} className="icon-neutral" />
-              12 Properties Listed
+              {property.propertyType}
             </p>
           </div>
         </div>
@@ -219,7 +243,9 @@ export default function PropertyAIDetails() {
             <span className="contact-icon"><Phone size={15} /></span>
             <div>
               <p className="contact-card__label">Phone Number</p>
-              <p className="contact-card__value">+20 100 123 4567</p>
+              <p className="contact-card__value">
+                Not Available
+              </p>
             </div>
           </div>
 
@@ -243,12 +269,21 @@ export default function PropertyAIDetails() {
               <p className="trust-sub">Based on verification and history</p>
             </div>
             <div className="trust-right">
-              <span className="trust-score">92</span>
-              <span className="trust-excellent">Excellent</span>
+              <span className="trust-score">
+                {property.verificationStatus === "Approved" ? "100" : "50"}
+              </span>
+              <span className="trust-excellent">
+                {property.verificationStatus}
+              </span>
             </div>
           </div>
           <div className="trust-track">
-            <div className="trust-fill" style={{ width: "92%" }}>
+            <div className="trust-fill" style={{
+              width:
+                property.verificationStatus === "Approved"
+                  ? "100%"
+                  : "50%"
+            }}>
               <span className="trust-dot" />
             </div>
           </div>
