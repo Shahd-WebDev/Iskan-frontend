@@ -4,11 +4,13 @@ import SearchBar from "../../components/home/SearchBar";
 import FiltersRow from "../../components/home/FiltersRow";
 import PropertyCard from "../../components/home/PropertyCard";
 import PaginationControls from "../../components/Pagination/Pagination";
+
 import {
   applyFilters,
   EMPTY_FILTERS,
   getAvailablePriceBuckets
 } from "../../components/Search/FilterSearch";
+
 
 import "./Properties.css";
 
@@ -67,6 +69,7 @@ export default function Properties() {
         setLoading(true);
         const token = localStorage.getItem("token");
 
+
         const [propertiesRes, facilitiesRes] = await Promise.all([
           fetch(`/api/Property/GetAll?pageSize=1000`, {
             headers: token ? { Authorization: `Bearer ${token}` } : {}
@@ -77,9 +80,10 @@ export default function Properties() {
         ]);
 
         const propertiesData = await propertiesRes.json();
+
         const facilitiesData = await facilitiesRes.json();
 
-        setAllProperties(propertiesData.data || []);
+        setAllProperties(approved);
         setFacilities(facilitiesData.data || []);
       } catch (err) {
         setError(err.message);

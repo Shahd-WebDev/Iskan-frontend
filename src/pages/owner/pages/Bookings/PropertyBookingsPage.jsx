@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Calendar,
   Building2,
@@ -16,14 +16,15 @@ import {
   Send,
   AlertCircle,
   RefreshCw,
+  ArrowLeft,
 } from "lucide-react";
 import {
-  getBookingsForOwner,
+  getBookingsByProperty,
   confirmBooking,
   rejectBooking,
 } from "../../../../services/bookings";
 import toast from "react-hot-toast";
-import styles from "./BookingsPage.module.css";
+import styles from "./PropertyBookingsPage.module.css";
 
 // ─── Status badge helper ───
 function StatusBadge({ status }) {
@@ -43,7 +44,8 @@ function StatusBadge({ status }) {
   );
 }
 
-export default function BookingsPage() {
+export default function PropertyBookingsPage() {
+  const { propertyId } = useParams();
   const navigate = useNavigate();
 
   // Booking states
@@ -78,7 +80,6 @@ export default function BookingsPage() {
       setLoading(true);
       setError(null);
 
-      // Build parameters
       const params = {
         PageIndex: pageIndex,
         PageSize: pageSize,
@@ -88,9 +89,8 @@ export default function BookingsPage() {
         params.Status = statusFilter;
       }
 
-      const result = await getBookingsForOwner(params);
+      const result = await getBookingsByProperty(propertyId, params);
       
-      // Handle different API formats defensively
       const items = Array.isArray(result) 
         ? result 
         : (result?.data || result?.items || []);
@@ -99,16 +99,18 @@ export default function BookingsPage() {
       setBookings(items);
       setTotalCount(count);
     } catch (err) {
-      console.error("Failed to load owner bookings:", err);
+      console.error("Failed to load property bookings:", err);
       setError("Failed to load bookings. Please check your network and try again.");
     } finally {
       setLoading(false);
     }
-  }, [pageIndex, pageSize, statusFilter]);
+  }, [propertyId, pageIndex, pageSize, statusFilter]);
 
   useEffect(() => {
-    fetchBookings();
-  }, [fetchBookings]);
+    if (propertyId) {
+      fetchBookings();
+    }
+  }, [fetchBookings, propertyId]);
 
   // Handle filter changes (reset pageIndex to 1)
   const handleStatusFilterChange = (status) => {
@@ -164,12 +166,11 @@ export default function BookingsPage() {
     const query = searchTerm.toLowerCase().trim();
     if (!query) return true;
     
-    const pTitle = b.propertyTitle?.toLowerCase() || "";
     const sName = b.studentName?.toLowerCase() || "";
     const sEmail = b.studentEmail?.toLowerCase() || "";
     const sPhone = b.studentPhoneNumber?.toLowerCase() || "";
     
-    return pTitle.includes(query) || sName.includes(query) || sEmail.includes(query) || sPhone.includes(query);
+    return sName.includes(query) || sEmail.includes(query) || sPhone.includes(query);
   });
 
   const totalPages = Math.ceil(totalCount / pageSize) || 1;
@@ -187,16 +188,22 @@ export default function BookingsPage() {
     }
   };
 
+  const propertyTitle = bookings.length > 0 ? bookings[0].propertyTitle : "Property";
+
   return (
     <div className={styles.container}>
+      <button className={styles.backBtn} onClick={() => navigate("/owner-dashboard/properties")}>
+        <ArrowLeft size={16} /> Back to Properties
+      </button>
+
       {/* Page Header */}
       <div className={styles.header}>
         <div>
           <h1 className={styles.title}>
-            <Calendar size={24} className={styles.titleIcon} /> Bookings
+            <Building2 size={24} className={styles.titleIcon} /> Bookings for {propertyTitle}
           </h1>
           <p className={styles.subtitle}>
-            Manage booking requests, view student applications, and approve contracts.
+            Manage booking requests for property #{propertyId}.
           </p>
         </div>
         <button className={styles.refreshBtn} onClick={fetchBookings} title="Refresh Bookings">
@@ -221,7 +228,7 @@ export default function BookingsPage() {
           <Search size={18} className={styles.searchIcon} />
           <input
             type="text"
-            placeholder="Search by student, email, property..."
+            placeholder="Search by student, email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className={styles.searchInput}
@@ -246,12 +253,12 @@ export default function BookingsPage() {
         </div>
       ) : filteredBookings.length === 0 ? (
         <div className={styles.emptyWrapper}>
-          <Building2 size={64} />
+          <Calendar size={64} />
           <h3>No Bookings Found</h3>
           <p>
             {searchTerm
               ? "No booking requests match your search filter."
-              : `You do not have any ${statusFilter !== "All" ? statusFilter.toLowerCase() : ""} bookings.`}
+              : `You do not have any ${statusFilter !== "All" ? statusFilter.toLowerCase() : ""} bookings for this property.`}
           </p>
         </div>
       ) : (
@@ -276,7 +283,7 @@ export default function BookingsPage() {
                     </div>
                   )}
                   <div className={styles.propertyMeta}>
-                    <h3 className={styles.propertyTitle}>{b.propertyTitle || "Unknown Listing"}</h3>
+                    <h3 className={styles.propertyTitle}>Booking #{b.id}</h3>
                     <StatusBadge status={b.status} />
                   </div>
                 </div>

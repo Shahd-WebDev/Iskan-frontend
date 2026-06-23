@@ -31,8 +31,8 @@ function OwnerPropertyActions({ propertyId = null }) {
         className="pd-action-btn pd-action-btn--primary d-inline-flex align-items-center booking-btn request"
         type="button"
         onClick={() => {
-          // navigate to owner bookings page with the current property id
-          navigate("/owner-dashboard/bookings", { state: { propertyId } });
+          // navigate to dedicated property bookings page
+          navigate(`/owner-dashboard/property-bookings/${propertyId}`);
         }}
       >
         <CalendarCheck size={14} />

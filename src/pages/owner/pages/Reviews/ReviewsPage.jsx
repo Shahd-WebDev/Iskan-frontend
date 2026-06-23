@@ -13,12 +13,16 @@ import {
   HelpCircle,
   Clock,
   User,
+  ChevronLeft,
+  ChevronRight,
+  Send,
 } from "lucide-react";
 import {
   getOwnerReviews,
   replyToReview,
   deleteReviewReply,
 } from "../../../../services/ownerReviews";
+import toast from "react-hot-toast";
 import styles from "./ReviewsPage.module.css";
 
 export default function ReviewsPage() {
@@ -31,9 +35,12 @@ export default function ReviewsPage() {
   const [replyFilter, setReplyFilter] = useState("all"); // "all", "replied", "unreplied"
   const [sortOption, setSortOption] = useState("newest"); // "newest", "highest", "lowest"
 
-  // Reply States
-  const [replyingToId, setReplyingToId] = useState(null);
-  const [replyText, setReplyText] = useState("");
+  // Pagination
+  const [pageIndex, setPageIndex] = useState(1);
+  const pageSize = 5;
+
+  // Reply Modal States
+  const [replyModal, setReplyModal] = useState({ open: false, reviewId: null, text: "" });
   const [submittingReply, setSubmittingReply] = useState(false);
 
   const fetchReviews = async () => {
@@ -56,18 +63,17 @@ export default function ReviewsPage() {
     fetchReviews();
   }, []);
 
-  const handleReplySubmit = async (reviewId) => {
-    if (!replyText.trim()) return;
+  const handleReplySubmit = async () => {
+    if (!replyModal.text.trim() || !replyModal.reviewId) return;
     try {
       setSubmittingReply(true);
-      await replyToReview(reviewId, replyText);
-      setReplyingToId(null);
-      setReplyText("");
-      // Refresh UI after action
+      await replyToReview(replyModal.reviewId, replyModal.text);
+      toast.success("Reply submitted successfully!");
+      setReplyModal({ open: false, reviewId: null, text: "" });
       await fetchReviews();
     } catch (err) {
       console.error("Failed to submit reply:", err);
-      alert("Failed to submit reply. Please try again.");
+      toast.error("Failed to submit reply. Please try again.");
     } finally {
       setSubmittingReply(false);
     }
@@ -77,17 +83,16 @@ export default function ReviewsPage() {
     if (!window.confirm("Are you sure you want to delete this reply?")) return;
     try {
       await deleteReviewReply(reviewId);
-      // Refresh UI after action
+      toast.success("Reply deleted successfully.");
       await fetchReviews();
     } catch (err) {
       console.error("Failed to delete reply:", err);
-      alert("Failed to delete reply. Please try again.");
+      toast.error("Failed to delete reply. Please try again.");
     }
   };
 
-  const handleEditReply = (reviewId, existingText) => {
-    setReplyingToId(reviewId);
-    setReplyText(existingText);
+  const openReplyModal = (reviewId, existingText = "") => {
+    setReplyModal({ open: true, reviewId, text: existingText });
   };
 
   // Helper to extract fields safely
@@ -158,6 +163,17 @@ export default function ReviewsPage() {
       }
       return 0;
     });
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    setPageIndex(1);
+  }, [searchTerm, replyFilter, sortOption]);
+
+  const totalPages = Math.ceil(filteredAndSortedReviews.length / pageSize) || 1;
+  const paginatedReviews = filteredAndSortedReviews.slice(
+    (pageIndex - 1) * pageSize,
+    pageIndex * pageSize
+  );
 
   const renderStars = (rating) => {
     const stars = [];
@@ -338,7 +354,7 @@ export default function ReviewsPage() {
 
           {/* Reviews List */}
           <div className={styles["reviews-list"]}>
-            {filteredAndSortedReviews.length === 0 ? (
+            {paginatedReviews.length === 0 ? (
               <div className={styles["empty-state"]}>
                 <MessageSquare
                   size={48}
@@ -351,7 +367,7 @@ export default function ReviewsPage() {
                 </p>
               </div>
             ) : (
-              filteredAndSortedReviews.map((rev) => {
+              paginatedReviews.map((rev) => {
                 const {
                   id,
                   rating,
@@ -362,7 +378,6 @@ export default function ReviewsPage() {
                   propertyName,
                   reply,
                 } = rev;
-                const isReplying = replyingToId === id;
                 const formattedDate = createdAt
                   ? new Date(createdAt).toLocaleDateString(undefined, {
                       year: "numeric",
@@ -419,10 +434,7 @@ export default function ReviewsPage() {
                           <div className={styles["reply-actions"]}>
                             <button
                               onClick={() =>
-                                handleEditReply(
-                                  id,
-                                  reply.replyText || reply.text,
-                                )
+                                openReplyModal(id, reply.replyText || reply.text)
                               }
                               className={styles["reply-action-btn"]}
                               title="Edit Response"
@@ -442,40 +454,10 @@ export default function ReviewsPage() {
                           {reply.replyText || reply.text}
                         </p>
                       </div>
-                    ) : isReplying ? (
-                      /* Inline Reply Textarea */
-                      <div className={styles["reply-input-wrapper"]}>
-                        <textarea
-                          placeholder="Write a warm, professional reply..."
-                          value={replyText}
-                          onChange={(e) => setReplyText(e.target.value)}
-                          className={styles["reply-textarea"]}
-                          rows={3}
-                        />
-                        <div className={styles["reply-input-actions"]}>
-                          <button
-                            onClick={() => {
-                              setReplyingToId(null);
-                              setReplyText("");
-                            }}
-                            className={styles["btn-text"]}
-                            disabled={submittingReply}
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            onClick={() => handleReplySubmit(id)}
-                            className={styles["btn-primary-small"]}
-                            disabled={submittingReply || !replyText.trim()}
-                          >
-                            {submittingReply ? "Submitting..." : "Send Response"}
-                          </button>
-                        </div>
-                      </div>
                     ) : (
                       /* Write Response Button */
                       <button
-                        onClick={() => setReplyingToId(id)}
+                        onClick={() => openReplyModal(id, "")}
                         className={styles["btn-reply-trigger"]}
                       >
                         <MessageSquare size={14} />
@@ -487,9 +469,75 @@ export default function ReviewsPage() {
               })
             )}
           </div>
+
+          {/* Pagination Controls */}
+          {filteredAndSortedReviews.length > pageSize && (
+            <div className={styles["pagination"]}>
+              <button
+                className={styles["page-btn"]}
+                onClick={() => setPageIndex((prev) => Math.max(prev - 1, 1))}
+                disabled={pageIndex === 1}
+              >
+                <ChevronLeft size={16} /> Prev
+              </button>
+              <span className={styles["page-info"]}>
+                Page <strong>{pageIndex}</strong> of {totalPages}
+              </span>
+              <button
+                className={styles["page-btn"]}
+                onClick={() => setPageIndex((prev) => Math.min(prev + 1, totalPages))}
+                disabled={pageIndex === totalPages}
+              >
+                Next <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
         </>
+      )}
+
+      {/* Reply Modal */}
+      {replyModal.open && (
+        <div className={styles["modal-overlay"]} onClick={() => setReplyModal({ open: false, reviewId: null, text: "" })}>
+          <div className={styles["modal-content"]} onClick={(e) => e.stopPropagation()}>
+            <div className={styles["modal-header"]}>
+              <h3>Reply to Review</h3>
+              <button
+                className={styles["close-modal-btn"]}
+                onClick={() => setReplyModal({ open: false, reviewId: null, text: "" })}
+              >
+                &times;
+              </button>
+            </div>
+            <div className={styles["modal-body"]}>
+              <p>Write a warm, professional response to your tenant's review. This will be publicly visible.</p>
+              <textarea
+                className={styles["reason-textarea"]}
+                placeholder="Thank you for your feedback..."
+                value={replyModal.text}
+                onChange={(e) => setReplyModal((prev) => ({ ...prev, text: e.target.value }))}
+                rows={5}
+                autoFocus
+              />
+            </div>
+            <div className={styles["modal-footer"]}>
+              <button
+                className={styles["modal-cancel-btn"]}
+                onClick={() => setReplyModal({ open: false, reviewId: null, text: "" })}
+                disabled={submittingReply}
+              >
+                Cancel
+              </button>
+              <button
+                className={styles["modal-submit-btn"]}
+                onClick={handleReplySubmit}
+                disabled={!replyModal.text.trim() || submittingReply}
+              >
+                <Send size={14} /> {submittingReply ? "Submitting..." : "Send Response"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
 }
-
