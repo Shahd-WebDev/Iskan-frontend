@@ -105,6 +105,7 @@
   background-color: #FFFFFF;
   padding: 10px;
   border-radius: 10px;
+  min-height: 80px;
 }
 .pd-thumbnails::-webkit-scrollbar { height: 4px; }
 .pd-thumbnails::-webkit-scrollbar-thumb {
@@ -149,7 +150,7 @@
 .pd-gallery-nav {
   gap: 8px;
   background-color: #FFFFFF;
-  height: 58px;
+  min-height: 58px;
   width: 252px;
   max-width: 100%;
   margin: 20px auto 0;
@@ -185,6 +186,10 @@
   background: #0088FF;
   width: 24px;
   border-radius: 4px;
+}
+.placeholder {
+  background: transparent; 
+  border: none;
 }
 /* ══════════════════════════
    MID SECTION
@@ -296,20 +301,23 @@
 
 /* حالة Pending - انتظار الموافقة */
 .booking-btn.pending {
-  background: #FFF3E0 !important;
-  color: #E65100 !important;
+  background: #FF8D28 !important;
+  color: #FFFFFF !important;
+  border:1px solid #FF8D28;
 }
 
 /* حالة Approved - تمت الموافقة */
 .booking-btn.approved {
-  background: #E8F5E9 !important;
-  color: #2E7D32 !important;
+background: #34C759 !important;
+  color: #FFFFFF !important;
+  border:1px solid #FFFFFF;
 }
 
 /* حالة Confirmed - تم التأكيد */
 .booking-btn.confirmed {
-  background: #E3F2FD !important;
-  color: #1565C0 !important;
+ background: #FFFFFF !important;
+  color: #34C759 !important;
+  border:1px solid #34C759;
 }
 
 
@@ -436,11 +444,14 @@
 .pd-contact-btn.whatsapp-btn.active {
   background: #FFFFFF;
   color:#34C759;
+  border-color:#34C759 ;
 }
 
 .pd-contact-btn.email-btn.active {
   background: #FFFFFF;
   color: #0088FF;
+  border-color:#0088FF ;
+
 }
 .pd-contact-btn {
   outline: none;
@@ -616,6 +627,10 @@
   color: #1a1a2e;
   margin-top: 5px;
 }
+.pd-rec-item {
+  flex: 0 0 calc(25% - 12px);
+}
+
 /* ══════════════════════════
    RESPONSIVE — Tablet (≤ 1024px)
    ══════════════════════════ */
@@ -632,6 +647,9 @@
     flex: 0 0 33.333%;
 
     max-width: 33.333%;
+  }
+    .pd-rec-item {
+    flex: 0 0 calc(33.333% - 12px);
   }
 }
 /* ══════════════════════════
@@ -707,6 +725,9 @@
     flex: 0 0 50%;
     max-width: 50%;
   }
+   .pd-rec-item {
+    flex: 0 0 calc(50% - 12px);
+  }
 }
 /* ══════════════════════════
    RESPONSIVE — Small Mobile (≤ 480px)
@@ -763,6 +784,9 @@
   max-width: 100%;
   width: 100%;
   }
+   .pd-rec-item {
+    flex: 0 0 100%;
+  }
 }
 /* ══════════════════════════
    BOOKING BUTTON STATES
@@ -774,28 +798,6 @@
   color: #FF383C;
   border: 1px solid #FF383C;
 }
-
-/* Pending */
-.booking-btn.pending {
-  background: #ff8d28;
-  color: #ffffff;
-  border: none;
-}
-
-/* Approved */
-.booking-btn.approved {
-  background: #34c759;
-  color: #ffffff;
-  border: none;
-}
-
-/* Confirmed */
-.booking-btn.confirmed {
-  background: #e9f9ef;
-  color: #34c759;
-  border: 1px solid #34c759;
-}
-
 /*======================map=========================*/
 .map-wrapper{
   position: absolute;

@@ -65,22 +65,22 @@ const [loading, setLoading] = useState(false);
 
       window.location.reload();
     }
- } catch (error) {
-  console.log(
-    error.response?.data
-  );
+      } catch (error) {
+        console.log(
+          error.response?.data
+        );
 
-  console.log(error);
+        console.log(error);
 
-  toast.error("Failed To Add FAQ ❌");
+        toast.error("Failed To Add FAQ ❌");
 
-} finally {
-  setLoading(false);
-}
-};
-const handleEditFAQ = async () => {
-  try {
-    setLoading(true);
+      } finally {
+        setLoading(false);
+      }
+      };
+    const handleEditFAQ = async () => {
+      try {
+        setLoading(true);
 
     const token = localStorage.getItem("token");
 
@@ -117,7 +117,7 @@ const handleEditFAQ = async () => {
 
     if (data.success) {
       toast.success(
-        "FAQ Updated Successfully ✅"
+        "FAQ Updated Successfully "
       );
 
       setEditingFaq(null);

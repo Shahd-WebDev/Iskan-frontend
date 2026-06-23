@@ -47,7 +47,22 @@ function FilterDropdown({ icon, label, options = [], value = "", onChange }) {
       );
     }
 
-    return <span className="filter-label">{value}</span>;
+   
+    return (
+      <div
+        style={{
+          overflowX: "auto",
+          overflowY: "hidden",
+          whiteSpace: "nowrap",
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+          maxWidth: "120px",
+        }}
+        className="location-scroll"
+      >
+        <span className="filter-label">{value}</span>
+      </div>
+    );
   };
 
   return (
@@ -57,7 +72,7 @@ function FilterDropdown({ icon, label, options = [], value = "", onChange }) {
         onClick={() => setOpen(!open)}
         type="button"
       >
-        <div className="left d-flex align-items-center gap-2" style={{ overflow: "hidden", minWidth: 0 }}>
+        <div className="left d-flex align-items-center gap-2" style={{flex: 1,minWidth: 0, overflow: "hidden",}}>
           <img src={icon} alt={label} className="filter-icon object-fit-contain" />
           {renderDisplayValue()}
         </div>

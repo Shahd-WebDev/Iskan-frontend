@@ -26,22 +26,15 @@ const facilityIconMap = {
 };
 
 function PropertyCard({ property, facilities = [], hideBookmark = false }) {
-  console.log(property.id);
-  console.log("imagesUrl:", property.imagesUrl);
-  console.log("full property:", JSON.stringify(property));
 
   const propertyFacilities = facilities.filter(f => 
   property.facilities?.includes(f.id)
 );
-console.log("facilities:", property.facilities);
-console.log("all facilities:", facilities);
-console.log("filtered:", facilities.filter(f => property.facilities?.includes(f.id)));
 
   const { token } = useAuth();
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleViewDetails = () => {
-  console.log("Navigating to property id:", property.id);
   navigate(`/properties/${property.id}`);
 };
 
@@ -65,7 +58,7 @@ const navigate = useNavigate();
     ? `https://isskan-1.runasp.net${property.mainImageUrl}`
     : "/img.webp";
 
-const handleSave = async (e) => {
+  const handleSave = async (e) => {
   e.stopPropagation();
 
   if (!token) {
@@ -80,8 +73,6 @@ const handleSave = async (e) => {
     console.error(err);
   }
 };
-
-  console.log("facility icons:", propertyFacilities.map(f => f.icon));
 
   return (
     <div className="property-card overflow-hidden w-100 h-100 d-flex flex-column">

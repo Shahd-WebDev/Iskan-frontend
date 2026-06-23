@@ -6,8 +6,8 @@ import participant4 from "../../assets/PropertiesDetails/participant4.png";
 
 
 const mockReview = {
-  text: "Easy application and tracking: Many users mentioned that the platform saved them from going to offices, and they can now submit applications and track their status online easily. User-friendly interface: Several reviews praised the app for being organized and easy to navigate, especially after the recent updates. Time-saving: Users pointed out that the procedures have become faster compared to relying on paper transactions.",
-  reviewer: "Mary Hilll",
+  text: "The whole process was easy and stress-free, especially since I'm an international student and didn't know the local details. Everything was explained to me in a simple and clear way, as if someone was holding my hand step by step. The information provided about each apartment was accurate and matched reality, which saved me a lot of time and effort in the viewings.",
+    reviewer: "Mary Hilll",
   rating: 4.9,
   participants: [
     participant1,participant2,participant3,participant4

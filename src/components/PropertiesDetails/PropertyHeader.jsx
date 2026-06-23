@@ -16,7 +16,6 @@ function PropertyHeader({ property, onLocationClick, showMap }){  return (
       </div>
       <div className="pd-topbar-right d-flex flex-column text-start">
         <span className="pd-price-label d-block ">Price</span>
-        {/* <span className="pd-price-value">{property.pricePerMonth || property.price}</span> */}
         <span className="pd-price-value">
             {property.pricePerMonth || property.price} EGP
         </span>

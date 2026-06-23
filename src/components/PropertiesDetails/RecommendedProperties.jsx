@@ -9,9 +9,9 @@ function RecommendedProperties({ currentPropertyId, recommendations = [], allFac
 
       <h2 className="pd-rec-title">Recommended For You</h2>
 
-      <div className="d-flex flex-wrap gap-3">
+      <div className="d-flex flex-wrap gap-3 pd-rec-grid">
         {recommendations.map((property) => (
-          <div key={property.id} style={{ flex: "0 0 calc(25% - 12px)" }}>
+          <div key={property.id}  className="pd-rec-item">
             <PropertyCard
               property={property}
               facilities={allFacilities}
