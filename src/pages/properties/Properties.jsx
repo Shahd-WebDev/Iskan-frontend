@@ -8,7 +8,8 @@ import PaginationControls from "../../components/Pagination/Pagination";
 import {
   applyFilters,
   EMPTY_FILTERS,
-  getAvailablePriceBuckets
+  getAvailablePriceBuckets,
+  detectSearchIntent
 } from "../../components/Search/FilterSearch";
 
 
@@ -22,7 +23,7 @@ function getType(p) {
 }
 
 export default function Properties() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [searchText, setSearchText] = useState(searchParams.get("search") || "");
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -86,6 +87,7 @@ export default function Properties() {
         console.log(propertiesData); 
         setAllProperties(propertiesData.data || []);
         setFacilities(facilitiesData.data || []);
+        console.log("propertiesData.data prices:", propertiesData.data.map(p => p.pricePerMonth));
       } catch (err) {
         setError(err.message);
       } finally {
@@ -153,13 +155,32 @@ export default function Properties() {
 
   if (loading) return <div className="text-center py-5">Loading...</div>;
   if (error) return <div className="text-center text-danger py-5">{error}</div>;
+
 const handleSearch = (e) => {
   e.preventDefault();
 
+  const trimmed = searchText.trim();
+  const result = detectSearchIntent(trimmed, allProperties, facilitiesMap);
+  console.log("RESULT:", result);
+
+  const { filters: detectedFilters, matched } = result;
+
   const params = new URLSearchParams(searchParams);
 
-  if (searchText.trim()) {
-    params.set("search", searchText.trim());
+  if (matched) {
+    Object.entries(detectedFilters).forEach(([key, val]) => {
+      if (key === "facilities") {
+        if (val.length > 0) params.set("facilities", val.join(","));
+        else params.delete("facilities");
+      } else if (val) {
+        params.set(key, val);
+      } else {
+        params.delete(key);
+      }
+    });
+    params.delete("search");
+  } else if (trimmed) {
+    params.set("search", trimmed);
   } else {
     params.delete("search");
   }
@@ -179,7 +200,7 @@ const handleSearch = (e) => {
               setSearchText(e.target.value);
               setCurrentPage(1);
             }}
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={handleSearch}
           />
 
           <FiltersRow
