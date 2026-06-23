@@ -13,10 +13,8 @@ function PropertiesSection() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const sectionRef = useRef(null);
-
   const [totalCount, setTotalCount] = useState(0);
   const [facilities, setFacilities] = useState([]);
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,7 +25,7 @@ function PropertiesSection() {
         // Fetch only Approved properties (verificationStatus from GetDetails)
         const [approved, facilitiesRes] = await Promise.all([
           fetchApprovedProperties(token),
-          fetch(`/api/Facility/GetAll`, {
+          fetch("/api/Facility/GetAll", {
             headers: token ? { Authorization: `Bearer ${token}` } : {},
           }),
         ]);
@@ -35,13 +33,9 @@ function PropertiesSection() {
         if (!facilitiesRes.ok) throw new Error("Failed to fetch facilities");
         const facilitiesData = await facilitiesRes.json();
 
-      console.log("approved =", approved);
-            setProperties(approved);
-setTotalCount(approved.length);
-
-
-
-   
+        console.log("approved =", approved);
+        setProperties(approved);
+        setTotalCount(approved.length);
         setFacilities(facilitiesData.data || []);
       } catch (err) {
         setError(err.message);
@@ -54,15 +48,13 @@ setTotalCount(approved.length);
   }, [currentPage]);
 
   useEffect(() => {
-  console.log("properties =", properties);
-}, [properties]);
-
+    console.log("properties =", properties);
+  }, [properties]);
 
   const itemsPerPage = 4;
- const totalPages = Math.ceil(properties.length / itemsPerPage);
+  const totalPages = Math.ceil(properties.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentProperties = properties.slice(startIndex, startIndex + itemsPerPage);
-
 
   const handleBookmarkChange = (isAdding) => {
     setBookmarkedCount(prev => isAdding ? prev + 1 : Math.max(0, prev - 1));
@@ -80,12 +72,10 @@ setTotalCount(approved.length);
             </div>
             <h2 className="section-title text-black">Discover a World of Possibilities</h2>
             <p className="section-description">
-              Our portfolio of properties is as diverse as your dreams. Explore
-              the following categories to find the perfect property that resonates
-              with your vision of home.
+              Our portfolio of properties is as diverse as your dreams. Explore the following categories to find the perfect property that resonates with your vision of home.
             </p>
           </div>
-          <button
+          <button 
             className="view-all-btn border-0 mt-auto text-white"
             onClick={() => navigate("/properties")}
           >
@@ -98,16 +88,16 @@ setTotalCount(approved.length);
 
         {!loading && !error && (
           <>
-                
             <div className="property-grid">
               {currentProperties.map((property) => (
-                <PropertyCard
-                  key={property.id}
-                  property={property}
-                  facilities={facilities}
+                <PropertyCard 
+                  key={property.id} 
+                  property={property} 
+                  facilities={facilities} 
                 />
               ))}
             </div>
+
             <PaginationControls
               currentPage={currentPage}
               totalPages={totalPages}
