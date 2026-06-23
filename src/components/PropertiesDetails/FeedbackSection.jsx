@@ -4,14 +4,22 @@ import abstractDesign from "../../assets/home/Abstract Design.png";
 import api from "../../services/api";
 import toast from "react-hot-toast";
 
-export default function FeedbackSection({ propertyId, bookingStatus }){
+export default function FeedbackSection({
+  propertyId,
+  bookingStatus,
+  bookingId,
+}) {
   const [rating, setRating] = useState(0);
   const [feedback, setFeedback] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async () => {
-  const bookingId = localStorage.getItem(`bookingId_${propertyId}`);
+  // const bookingId = localStorage.getItem(`bookingId_${propertyId}`);
     
+
+  console.log("bookingStatus:", bookingStatus);
+console.log("bookingId:", bookingId);
+
     if (!bookingId || bookingStatus !== "confirmed") {
       toast.error("You can only review after your booking is confirmed");
       return;
@@ -28,21 +36,21 @@ export default function FeedbackSection({ propertyId, bookingStatus }){
     }
 
     try {
-      await api.post(`/Review/${bookingId}`, {
-        rating: rating,
-        comment: feedback,
-      });
-
+    await api.post(`/Reviews/CreateReview/bookings/${bookingId}`, {
+      rating,
+      comment: feedback,
+    });
       setSubmitted(true);
       toast.success("Review submitted successfully");
       setTimeout(() => setSubmitted(false), 3000);
       setFeedback("");
       setRating(0);
 
-    } catch (error) {
+    }   catch (error) {
       console.error(error);
-      toast.error("Failed to submit review");
+      toast.error(error.message || "Failed to submit review");
     }
+  
 };
 
   return (

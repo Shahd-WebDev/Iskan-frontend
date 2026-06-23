@@ -59,20 +59,22 @@ export default function PropertyDetails() {
       console.log("🔍 First booking object:", bookings[0]);
 console.log("🔍 Property ID we're looking for:", property.id);
 
-      const booking = bookings.find(
-  (b) =>
+
+const booking = bookings.find((b) => {
+  const isSameProperty =
     b.propertyId === property.id ||
     b.property?.id === property.id ||
-    b.propertyTitle === property.title
-);
+    b.propertyTitle === property.title;
 
-      if (!booking) {
-        console.log(" No booking found for this property");
-        setBookingStatus(null);
-        setBookingId(null);
-        return;
-      }
+  const isNotCancelled = b.status?.toLowerCase() !== "cancelled";
 
+  return isSameProperty && isNotCancelled;
+});
+if (!booking) {
+  setBookingStatus(null);
+  setBookingId(null);
+  return;
+}
       console.log(" Found booking with status:", booking.status);
       setBookingStatus(booking.status.toLowerCase());
       setBookingId(booking.id);
@@ -84,32 +86,65 @@ console.log("🔍 Property ID we're looking for:", property.id);
   }
   }, [token, property?.id]);
 
+
+  const fetchImages = async () => {
+  try {
+    const res = await fetch(`/api/Property/GetImages?id=${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch images");
+
+    const data = await res.json();
+
+    console.log("📸 Images API:", data);
+
+    const imageUrls = data.map((img) => img.imageUrl);
+
+    setGalleryImages(imageUrls);
+  } catch (err) {
+    console.error("❌ Error fetching images:", err);
+    setGalleryImages([]);
+  }
+};
+
   // جلب بيانات العقار
   useEffect(() => {
-    const fetchProperty = async () => {
-      try {
-        const res = await fetch(`/api/Property/GetDetails?id=${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+  const fetchProperty = async () => {
+    try {
+      const res = await fetch(`/api/Property/GetDetails?id=${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-        if (!res.ok) throw new Error("Not found");
+      if (!res.ok) throw new Error("Not found");
 
-        const data = await res.json();
-        setProperty(data.property ?? data);
-      } catch {
-        setProperty(null);
-      } finally {
-        setLoading(false);
-      }
-    };
+      const data = await res.json();
 
-    fetchProperty();
-  }, [id, token]);
+      const propertyData = data.property ?? data;
+      setProperty(propertyData);
 
-  // ✅ جلب حالة الحجز عند تحميل العقار
+      await fetchImages();
+
+    } catch {
+      setProperty(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchProperty();
+}, [id, token]);
+
+  //  جلب حالة الحجز عند تحميل العقار
   useEffect(() => {
-    if (property?.id && token) {
-      refreshBookingStatus();
+    if (property?.id) {
+      if (token) {
+        refreshBookingStatus();
+      } else {
+        setBookingStatusLoading(false);
+      }
     }
   }, [property?.id, token, refreshBookingStatus]);
 
@@ -192,6 +227,17 @@ useEffect(() => {
   setShowAlert(true); 
 };
 
+useEffect(() => {
+  const handler = () => {
+    console.log("🔄 Booking changed event received");
+    refreshBookingStatus();
+  };
+
+  window.addEventListener("bookingChanged", handler);
+
+  return () => window.removeEventListener("bookingChanged", handler);
+}, [refreshBookingStatus]);
+
   if (loading) {
     return (
       <div style={{ textAlign: "center", padding: "80px" }}>
@@ -234,12 +280,12 @@ useEffect(() => {
           showMap={showMap}
         />
 
-        <ImageGallery
-          images={galleryImages}
-          showMap={showMap}
-          setShowMap={setShowMap}
-          propertyId={id}
-        />
+       <ImageGallery
+  images={galleryImages}
+  showMap={showMap}
+  setShowMap={setShowMap}
+  propertyId={id}
+/>
 
         <div className="pd-mid-section align-items-start">
           <div className="pd-left-col">
@@ -269,10 +315,11 @@ useEffect(() => {
 
         <BookingContact property={property} bookingStatus={bookingStatus} />
 
-        <ReviewSection
-          propertyId={property.id}
-          bookingStatus={bookingStatus}
-        />
+       <ReviewSection
+        propertyId={property.id}
+        bookingId={bookingId}
+        bookingStatus={bookingStatus}
+      />
 
         {recommendations && recommendations.length > 0 && (
               <RecommendedProperties

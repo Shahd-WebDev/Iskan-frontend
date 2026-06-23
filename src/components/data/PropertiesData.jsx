@@ -14,7 +14,7 @@ import imgProperty7 from "../../assets/PropertiesDetails/imgProperty7.png"
 import imgProperty8 from "../../assets/PropertiesDetails/imgProperty8.png"
 import imgProperty9 from "../../assets/PropertiesDetails/imgProperty9.png"
 
-// const propertyImages = [img1, img2, img3, img4];
+const propertyImages = [img1, img2, img3, img4];
 const types = ["Apartment", "Room", "Bed"];
 const locations = ["Helwan", "Tanta", "Cairo", "Alexandria", "Giza","banha","Mansoura","Aswan","Luxor","Ismailia"];
 const titles = ["Elmorshdy Apartment", "Nile View Flat", "Garden Suite", "Downtown Room", "Elstad Apartment"];

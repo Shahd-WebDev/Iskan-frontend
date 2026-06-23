@@ -13,6 +13,12 @@ function BookingContact({ property, bookingStatus }) {
     const second = parts[1]?.charAt(0) || "";
     return (first + second).toUpperCase();
   };
+const BASE_URL = "https://isskan-1.runasp.net";
+
+const getImageUrl = (path) => {
+  if (!path) return "";
+  return `${BASE_URL}${path.startsWith("/") ? path : "/" + path}`;
+};
 
   const owner = {
     id: property?.ownerId,
@@ -24,21 +30,28 @@ function BookingContact({ property, bookingStatus }) {
 
   const isConfirmed = bookingStatus === BOOKING_STATUS.CONFIRMED;
 
-  const handleWhatsApp = () => {
-    if (!isConfirmed) {
-      toast.error("You can contact owner only after booking is confirmed");
-      return;
-    }
+const handleWhatsApp = () => {
+  if (!isConfirmed) {
+    toast.error("You can contact owner only after booking is confirmed");
+    return;
+  }
 
-    if (!owner.phone) {
-      toast.error("Owner phone number is not available");
-      return;
-    }
+  if (!owner.phone) {
+    toast.error("Owner phone number is not available");
+    return;
+  }
 
-    const formattedPhone = owner.phone.replace(/\D/g, "");
-    window.open(`https://wa.me/${formattedPhone}`, "_blank");
-  };
+ let formattedPhone = owner.phone.replace(/\D/g, "");
 
+if (formattedPhone.startsWith("0")) {
+  formattedPhone = "2" + formattedPhone;
+}
+
+  console.log(owner.phone);
+  console.log(formattedPhone);
+
+  window.open(`https://wa.me/${formattedPhone}`, "_blank");
+};
   const handleEmail = () => {
     if (!isConfirmed) {
       toast.error("You can contact owner only after booking is confirmed");
@@ -77,7 +90,7 @@ function BookingContact({ property, bookingStatus }) {
 
             {owner.avatar ? (
               <img
-                src={owner.avatar}
+                src={getImageUrl(owner.avatar)}
                 className="pd-agent-avatar rounded-circle flex-shrink-0"
                 alt="owner"
               />

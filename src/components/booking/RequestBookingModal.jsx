@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./RequestBookingModal.css";
 import { useAuth } from "../../context/AuthContext";
 import api from "../../services/api";
@@ -23,6 +24,7 @@ export default function RequestBookingModal({
 }) {
   const { token } = useAuth();
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!open) return null;
 
@@ -31,6 +33,8 @@ export default function RequestBookingModal({
 
   async function handleSubmit(e) {
     e.preventDefault();
+
+    if (isSubmitting) return; // guard against double-submit
 
     if (!token) {
       navigate("/login");
@@ -42,6 +46,8 @@ export default function RequestBookingModal({
     const duration = fd.get("duration");
     const occupants = fd.get("occupants").replace("+", "");
     const message = fd.get("message") || "";
+
+    setIsSubmitting(true);
 
     try {
       console.log("📝 Submitting booking for property:", propertyId);
@@ -66,6 +72,8 @@ export default function RequestBookingModal({
     } catch (err) {
       console.error("❌ Booking submission error:", err);
       toast.error(err.response?.data?.message || "Failed to submit booking");
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -158,11 +166,11 @@ export default function RequestBookingModal({
           </div>
 
           <div className="modal-actions">
-            <button type="button" className="cancel-btn" onClick={onClose}>
+            <button type="button" className="cancel-btn" onClick={onClose} disabled={isSubmitting}>
               Cancel
             </button>
-            <button type="submit" className="submit-btn">
-              Submit Booking Request
+            <button type="submit" className="submit-btn" disabled={isSubmitting}>
+              {isSubmitting ? "Submitting" : "Submit Booking Request"}
             </button>
           </div>
         </form>

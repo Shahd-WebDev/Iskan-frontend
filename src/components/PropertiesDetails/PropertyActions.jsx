@@ -1,5 +1,5 @@
 import { SavedContext } from "../../context/SavedContext";
-import { Bookmark, Share2, CalendarCheck } from "lucide-react";
+import { Bookmark, Share2, CalendarCheck, Clock, BadgeCheck } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
@@ -45,54 +45,59 @@ export default function PropertyActions({
       return;
     }
 
-  
     if (bookingStatus) {
-      onOpenStatusAlert?.(); 
+      onOpenStatusAlert?.();
     } else {
-      onOpenBooking?.(); 
+      onOpenBooking?.();
     }
   };
 
   //  تحديد حالة الزر
   const getBookingButton = () => {
     if (bookingStatus === "loading") {
-    return {
-      text: "Loading...",
-      className: "booking-btn request",
-      disabled: true,
-    };
-  }
+      return {
+        text: "Loading...",
+        className: "booking-btn request",
+        disabled: true,
+        Icon: CalendarCheck,
+      };
+    }
 
     if (bookingStatus === "pending") {
-      return { 
-        text: "Pending", 
+      return {
+        text: "Pending",
         className: "booking-btn pending",
-        disabled: true 
+        disabled: true,
+        Icon: Clock,
       };
     }
     if (bookingStatus === "approved") {
-      return { 
-        text: "Approved", 
+      return {
+        text: "Approved",
         className: "booking-btn approved",
-        disabled: false 
+        disabled: false,
+        Icon: BadgeCheck,
       };
     }
     if (bookingStatus === "confirmed") {
-      return { 
-        text: "Confirmed", 
+      return {
+        text: "Confirmed",
         className: "booking-btn confirmed",
-        disabled: true 
+        disabled: true,
+        Icon: BadgeCheck,
       };
     }
     // لا يوجد حجز
-    return { 
-      text: "Request Booking", 
+    return {
+      text: "Request Booking",
       className: "booking-btn request",
-      disabled: false 
+      disabled: false,
+      Icon: CalendarCheck,
     };
   };
 
   const bookingBtn = getBookingButton();
+  const BookingIcon = bookingBtn.Icon;
 
   return (
     <div className="pd-actions d-flex justify-content-between align-items-center flex-wrap mb-4">
@@ -101,7 +106,7 @@ export default function PropertyActions({
         onClick={handleBookingClick}
         disabled={bookingBtn.disabled}
       >
-        <CalendarCheck size={14} />
+        <BookingIcon size={14} />
         {bookingBtn.text}
       </button>
 

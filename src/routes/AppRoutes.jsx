@@ -30,7 +30,7 @@ import PropertyDetails from "../pages/property-details/PropertyDetails";
 import FAQs from "../pages/FAQs/FAQs";
 import SavedProperties from "../pages/SavedProperties/SavedProperties";
 import Terms from "../pages/Terms/Terms";
-
+import MyBooking from "../pages/MyBooking/MyBooking";
 
 
 /* Auth Pages */
@@ -110,10 +110,7 @@ export default function AppRoutes() {
 
 
         <Route path="/terms" element={<Terms />} />
-        <Route
-  path="/bookings"
-  element={<div>My Bookings Page (Student Only)</div>}
-/>
+        <Route path="/bookings" element={<MyBooking />} />
 
         <Route path="/saved" element={<SavedProperties />} />
         <Route path="/search" element={<SearchResult />} />

@@ -88,24 +88,23 @@ const [facilities, setFacilities] = useState([]);
     const baseList = titleResults || allProperties;
 
     if (!hasAnyFilter(activeFilters)) {
-      return {
-        locations: [...new Set(baseList.map((p) => p.address || p.location || ""))].filter(Boolean).sort(),
-        types:      [...new Set(baseList.map((p) => getType(p)))].sort(),
-        prices:     getAvailablePriceBuckets(baseList).map((b) => b.label),
-        rooms:      [...new Set(baseList.map((p) => String(p.roomsNumber ?? p.rooms)))].sort((a, b) => a - b),
-        facilities: [...new Set(baseList.flatMap((p) => p.amenities || []))].sort(),
-      };
-    }
+  return {
+    locations: [...new Set(baseList.map((p) => p.address || p.location || ""))].filter(Boolean).sort(),
+    types:      [...new Set(baseList.map((p) => getType(p)))].sort(),
+    prices:     getAvailablePriceBuckets(baseList).map((b) => b.label),
+    rooms:      [...new Set(baseList.map((p) => String(p.roomsNumber ?? p.rooms)))].sort((a, b) => a - b),
+    facilities: [...new Set(baseList.flatMap((p) => p.amenities || []))].sort(),
+  };
+}
 
-    const without = (key) => applyFilters(baseList, { ...activeFilters, [key]: key === "facilities" ? [] : "" });
-    return {
-      locations:  [...new Set(without("location").map((p) => (p.address || p.location || "").split(",")[0].trim()))].sort(),
-      types:      [...new Set(without("propertyType").map((p) => getType(p)))].sort(),
-      prices:     getAvailablePriceBuckets(without("priceRange")).map((b) => b.label),
-      rooms:      [...new Set(without("rooms").map((p) => String(p.roomsNumber ?? p.rooms)))].sort((a, b) => a - b),
-      facilities: [...new Set(without("facilities").flatMap((p) => p.amenities || []))].sort(),
-    };
-  }, [activeFilters, titleResults, allProperties]);
+   const without = (key) => applyFilters(baseList, { ...activeFilters, [key]: key === "facilities" ? [] : "" });
+return {
+  locations:  [...new Set(without("location").map((p) => (p.address || p.location || "").split(",")[0].trim()))].sort(),
+  types:      [...new Set(without("propertyType").map((p) => getType(p)))].sort(),
+  prices:     getAvailablePriceBuckets(without("priceRange")).map((b) => b.label),
+  rooms:      [...new Set(without("rooms").map((p) => String(p.roomsNumber ?? p.rooms)))].sort((a, b) => a - b),
+  facilities: [...new Set(baseList.flatMap((p) => p.amenities || []))].sort(), 
+}}, [activeFilters, titleResults, allProperties]);
 
   const handleFilterChange = useCallback((key, value) => {
     setActiveFilters((prev) => ({ ...prev, [key]: value }));

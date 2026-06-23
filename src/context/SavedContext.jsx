@@ -37,28 +37,34 @@ export function SavedProvider({ children }) {
     loadSaved();
   }, [token]);
 
-  const toggleSave = async (property) => {
-    const exists = savedProperties.some(p => p.id === property.id);
+const toggleSave = async (property) => {
+  const exists = savedProperties.some(p => p.id === property.id);
 
-    const url = exists
-      ? `/api/SavedProperty/Unsave/${property.id}`
-      : `/api/SavedProperty/Save/${property.id}`;
+  const url = exists
+    ? `/api/SavedProperty/Unsave/${property.id}`
+    : `/api/SavedProperty/Save/${property.id}`;
 
-    const method = exists ? "DELETE" : "POST";
+  const method = exists ? "DELETE" : "POST";
 
-    const res = await fetch(url, {
-      method,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  const res = await fetch(url, {
+    method,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-    if (!res.ok) {
-      throw new Error("Failed to update saved property");
-    }
+  if (!res.ok) {
+    throw new Error("Failed to update saved property");
+  }
 
-    await loadSaved(); // sync with backend
-  };
+  if (exists) {
+    setSavedProperties(prev =>
+      prev.filter(p => p.id !== property.id)
+    );
+  } else {
+    setSavedProperties(prev => [...prev, property]);
+  }
+};
 
   const value = {
     savedProperties,

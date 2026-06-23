@@ -20,7 +20,7 @@ function HeroSection() {
   const [searchText, setSearchText] = useState("");
   const [filters, setFilters] = useState(EMPTY_FILTERS);
   const [allProperties, setAllProperties] = useState([]);
-  const [facilities, setFacilities] = useState([]); // جديد
+  const [facilities, setFacilities] = useState([]); 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -90,31 +90,44 @@ const handleSearch = (e) => {
   navigate(`/properties?${params.toString()}`);
 };
   return (
-    <section id="hero" className="hero-section">
-      <div className="page-container">
-        <div className="hero-content">
-          <h1 className="hero-title">Find Your Dream Property</h1>
-          <p className="hero-description">
-            Welcome to Iskan, where your dream property awaits in every corner of our beautiful world.
-            Explore our curated selection of properties, each offering a unique story and a chance to redefine your life.
-            With categories to suit every dreamer, your journey
-          </p>
-        </div>
-        <div className="search-section position-relative">
+  <section id="hero" className="hero-section">
+    <div className="page-container">
+
+      <div className="hero-content">
+        <h1 className="hero-title">Find Your Dream Property</h1>
+        <p className="hero-description">
+         Welcome to Iskan, where your dream property awaits in every corner of our beautiful world.
+          Explore our curated selection of properties, each offering a unique story and a chance to redefine your life.
+           With categories to suit every dreamer, your journey
+        
+        </p>
+      </div>
+
+      <div className="search-section">
+
+        {/* 🔍 SEARCH  */}
+        <div className="search-wrapper">
           <SearchBar
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             onSubmit={handleSearch}
           />
+        </div>
+
+        {/*  FILTERS (Full width) */}
+        <div className="filters-wrapper">
           <FiltersRow
             filters={filters}
             dynamicOptions={dynamicOptions}
             onFilterChange={handleFilterChange}
           />
         </div>
-      </div>
-    </section>
-  );
-}
 
+      </div>
+
+    </div>
+  </section>
+);
+
+}
 export default HeroSection;

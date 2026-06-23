@@ -16,15 +16,10 @@ function FAQSection() {
   useEffect(() => {
     fetch("/api/FAQ/GetFAQs/items")
       .then((res) => res.json())
-     .then((data) => {
-  console.log("FULL RESPONSE:", data);
-  console.log("TYPE:", typeof data);
-  console.log("IS ARRAY:", Array.isArray(data));
-
+     .then((data) => 
+  {
+  
   if (data.success) {
-    console.log("FAQS:", data.data);
-    console.log("COUNT:", data.data.length);
-
     setFaqs(data.data);
   }
 })
@@ -38,36 +33,37 @@ function FAQSection() {
 
   return (
     <section className="faq-section">
-      <div className="section-header d-flex justify-content-between align-items-start">
-        <div>
-          <div className="section-badge">
-            <img src={abstractDesign} alt="Abstract Design" />
+      <div className="page-container">
+        <div className="section-header d-flex justify-content-between align-items-start">
+          <div>
+            <div className="section-badge">
+              <img src={abstractDesign} alt="Abstract Design" />
+            </div>
+            <h2 className="section-title text-black">Frequently Asked Questions</h2>
+            <p className="section-description">
+              Find answers to common questions about Iskan's services, property
+              listings, and the real estate process. We're here to provide clarity
+              and assist you every step of the way.
+            </p>
           </div>
-          <h2 className="section-title text-black">Frequently Asked Questions</h2>
-          <p className="section-descripntion">
-            Find answers to common questions about Iskan's services, property
-            listings, and the real estate process. We're here to provide clarity
-            and assist you every step of the way.
-          </p>
+          <button className="view-all-Faq mt-auto"  onClick={() => navigate("/faqs")} >View All FAQ's</button>
+          
         </div>
-        <button className="view-all-Faq mt-auto"  onClick={() => navigate("/faqs")} >View All FAQ's</button>
-        
+       
+        <div className="faq-grid">
+          {currentFaqs.map((faq) => (
+            <div key={faq.id}>
+              <FAQCard faq={faq} />
+            </div>
+          ))}
+        </div>
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={Math.ceil(faqs.length / ITEMS_PER_PAGE)}
+          onPageChange={setCurrentPage}
+          label={`${currentPage} of ${Math.ceil(faqs.length / ITEMS_PER_PAGE)}`}
+        />
       </div>
-
-      <div className="row g-3 mb-4">
-        {currentFaqs.map((faq) => (
-          <div key={faq.id} className="col-12 col-md-6 col-lg-4" style={{ maxWidth: "33.333%" }}> {/* هنا */}
-            <FAQCard faq={faq} />
-          </div>
-        ))}
-      </div>
-
-      <PaginationControls
-        currentPage={currentPage}
-        totalPages={Math.ceil(faqs.length / ITEMS_PER_PAGE)}
-        onPageChange={setCurrentPage}
-        label={`${currentPage} of ${Math.ceil(faqs.length / ITEMS_PER_PAGE)}`}
-      />
     </section>
   );
 }
